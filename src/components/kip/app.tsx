@@ -1,0 +1,148 @@
+'use client'
+
+import { useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useHashRoute, routeTitle } from '@/components/kip/lib/router'
+import { useAuthStore } from '@/components/kip/stores/auth-store'
+import { Header } from '@/components/kip/site/header'
+import { Footer } from '@/components/kip/site/footer'
+import { ChatWidget } from '@/components/kip/chat-widget'
+import { StudentPortal } from '@/components/kip/portal/student/StudentPortal'
+import { LecturerPortal } from '@/components/kip/portal/lecturer/LecturerPortal'
+import { AdminDashboard } from '@/components/kip/admin/AdminDashboard'
+
+import { HomeView } from '@/components/kip/site/views/home-view'
+import { AboutView } from '@/components/kip/site/views/about-view'
+import { AcademicsView } from '@/components/kip/site/views/academics-view'
+import { CourseDetailView } from '@/components/kip/site/views/course-detail-view'
+import { AdmissionsView } from '@/components/kip/site/views/admissions-view'
+import { ApplyView } from '@/components/kip/site/views/apply-view'
+import { CampusesView } from '@/components/kip/site/views/campuses-view'
+import { NewsView } from '@/components/kip/site/views/news-view'
+import { NewsDetailView } from '@/components/kip/site/views/news-detail-view'
+import { EventsView } from '@/components/kip/site/views/events-view'
+import { GalleryView } from '@/components/kip/site/views/gallery-view'
+import { ContactView } from '@/components/kip/site/views/contact-view'
+import { LoginView } from '@/components/kip/site/views/login-view'
+import { FaqView } from '@/components/kip/site/views/faq-view'
+import { DownloadsView } from '@/components/kip/site/views/downloads-view'
+
+/**
+ * KIP College single-page application shell.
+ *
+ * ROUTE TABLE (hash routing):
+ *   ''              → HomeView          (home-view.tsx)
+ *   about           → AboutView
+ *   academics       → AcademicsView     (supports ?category=)
+ *   course/:id      → CourseDetailView
+ *   admissions      → AdmissionsView
+ *   apply           → ApplyView         (supports ?course=)
+ *   campuses        → CampusesView
+ *   news            → NewsView
+ *   news/:id        → NewsDetailView
+ *   events          → EventsView
+ *   gallery         → GalleryView
+ *   faq             → FaqView
+ *   downloads       → DownloadsView
+ *   contact         → ContactView
+ *   login           → LoginView
+ *   portal/*        → StudentPortal (Task 5-b) — sub-routes: dashboard, learning,
+ *                      fees, results, timetable, announcements, profile
+ *   lecturer/*      → LecturerPortal (Task 5-b) — sub-routes: dashboard, classes,
+ *                      timetable, class/:unitId, results, results/:unitId
+ *   admin/*         → AdminDashboard (Task 5-c) — sub-routes: overview, students,
+ *                      students/:id, applications, courses, courses/:id, fees,
+ *                      results, timetable, announcements, news, messages
+ */
+function resolveView(path: string, params: string[], query: Record<string, string>) {
+  switch (path) {
+    case '':
+      return <HomeView />
+    case 'about':
+      return <AboutView />
+    case 'academics':
+      return <AcademicsView initialCategory={query.category ?? ''} />
+    case 'course':
+      return <CourseDetailView courseId={params[0] ?? ''} />
+    case 'admissions':
+      return <AdmissionsView />
+    case 'apply':
+      return <ApplyView preselectedCourseId={query.course ?? ''} />
+    case 'campuses':
+      return <CampusesView />
+    case 'news':
+      return params[0] ? <NewsDetailView newsId={params[0]} /> : <NewsView />
+    case 'events':
+      return <EventsView />
+    case 'gallery':
+      return <GalleryView />
+    case 'faq':
+      return <FaqView />
+    case 'downloads':
+      return <DownloadsView />
+    case 'contact':
+      return <ContactView />
+    case 'login':
+      return <LoginView />
+    case 'portal':
+      return <StudentPortal sub={params[0] ?? 'dashboard'} />
+    case 'lecturer':
+      return <LecturerPortal sub={params[0] ?? 'dashboard'} unitId={params[1] ?? ''} />
+    case 'admin':
+      return <AdminDashboard sub={params[0] ?? 'overview'} id={params[1] ?? ''} />
+    default:
+      return <NotFoundView />
+  }
+}
+
+function NotFoundView() {
+  return (
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
+      <p className="text-5xl font-black tracking-tight text-primary">404</p>
+      <h1 className="text-xl font-semibold">Page not found</h1>
+      <p className="max-w-sm text-sm text-muted-foreground">
+        The page you are looking for does not exist or may have been moved.
+      </p>
+    </div>
+  )
+}
+
+export default function KipApp() {
+  const route = useHashRoute()
+  const refresh = useAuthStore((s) => s.refresh)
+
+  // hydrate the auth session once on mount
+  useEffect(() => {
+    void refresh()
+  }, [refresh])
+
+  // document title + scroll restoration per view
+  useEffect(() => {
+    document.title = routeTitle(route)
+    window.scrollTo({ top: 0 })
+  }, [route.path, route.params.join('/'), route])
+
+  const view = resolveView(route.path, route.params, route.query)
+  const viewKey = `${route.path}/${route.params.join('/')}`
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <Header />
+      <main id="main-content" className="flex-1">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={viewKey}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            {view}
+          </motion.div>
+        </AnimatePresence>
+      </main>
+      <Footer />
+      <ChatWidget />
+    </div>
+  )
+}

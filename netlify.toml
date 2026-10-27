@@ -1,0 +1,7 @@
+[build]
+  command = "bunx prisma generate && next build"
+  publish = ".next"
+
+# The Next.js runtime is enabled automatically by Netlify for Next.js sites.
+# Demo mode: set DATABASE_URL=file:/tmp/custom.db in Site settings →
+# Environment variables (see DEPLOYMENT.md).

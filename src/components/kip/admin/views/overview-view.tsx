@@ -1,0 +1,669 @@
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
+import {
+  ArrowUpRight,
+  Building2,
+  CheckCircle2,
+  Inbox,
+  Landmark,
+  TrendingUp,
+  Users,
+  Wallet,
+  XCircle,
+} from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { KpiCard } from '@/components/kip/components/stat-card'
+import { QueryBoundary } from '@/components/kip/components/loading'
+import { api } from '@/components/kip/lib/api'
+import { navigate } from '@/components/kip/lib/router'
+import { fmtKES, fmtDate } from '@/components/kip/lib/format'
+import { KpiGridSkeleton, TableSkeleton, ViewHeading } from '@/components/kip/portal/shared'
+import type { AdminOverview } from '@/components/kip/admin/types'
+
+/** Brand chart palette — greens + gold + amber only (no blue/indigo). */
+const BLUE = '#1a4fd0'
+const SKY = '#38bdf8'
+const AMBER = '#d97706'
+const EMERALD = '#0d9488'
+
+const CATEGORY_COLORS: Record<string, string> = {
+  TECHNICAL: BLUE,
+  BUSINESS: SKY,
+  KASNEB: AMBER,
+}
+
+function monthLabel(month: string): string {
+  const [y, m] = month.split('-')
+  const d = new Date(Number(y), Number(m) - 1, 1)
+  return d.toLocaleDateString('en-GB', { month: 'short' })
+}
+
+/** Task 8-c — collections vs outstanding + fee collection rate + applications funnel. */
+function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
+  const billed = data.totalBilled || data.collectionsTotal + data.outstandingBalance
+  const collected = data.collectionsTotal
+  const outstanding = data.outstandingBalance
+  const collectionRate = billed > 0 ? Math.min(100, Math.round((collected / billed) * 1000) / 10) : 0
+  const outstandingShare = billed > 0 ? Math.min(100, Math.round((outstanding / billed) * 1000) / 10) : 0
+
+  const funnel = [
+    {
+      key: 'PENDING',
+      label: 'Pending review',
+      count: data.applicationsPending,
+      icon: Inbox,
+      bar: 'bg-amber-400',
+      text: 'text-amber-600 dark:text-amber-400',
+    },
+    {
+      key: 'ACCEPTED',
+      label: 'Accepted & enrolled',
+      count: data.applicationsAccepted,
+      icon: CheckCircle2,
+      bar: 'bg-green-500',
+      text: 'text-green-600 dark:text-green-400',
+    },
+    {
+      key: 'REJECTED',
+      label: 'Rejected',
+      count: data.applicationsRejected,
+      icon: XCircle,
+      bar: 'bg-red-500',
+      text: 'text-red-600 dark:text-red-400',
+    },
+  ]
+  const applicationsTotal = funnel.reduce((sum, f) => sum + f.count, 0)
+
+  return (
+    <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+      {/* Collections vs outstanding */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Wallet className="h-4 w-4 text-primary" aria-hidden="true" />
+            Collections vs outstanding
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Confirmed payments against total fees billed, all students
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {/* fee collection rate KPI */}
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-medium text-muted-foreground">Fee collection rate</p>
+              <p className="text-3xl font-bold tracking-tight text-primary">
+                {collectionRate.toLocaleString('en-KE', { maximumFractionDigits: 1 })}%
+              </p>
+            </div>
+            <Badge
+              variant="secondary"
+              className="text-[10px]"
+              aria-label={`${collectionRate}% of billed fees collected`}
+            >
+              {fmtKES(collected)} of {fmtKES(billed)}
+            </Badge>
+          </div>
+          <div
+            className="h-2.5 w-full overflow-hidden rounded-full bg-muted"
+            role="progressbar"
+            aria-valuenow={Math.round(collectionRate)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Fee collection rate"
+          >
+            <div
+              className="h-full rounded-full bg-green-500"
+              style={{ width: `${Math.min(100, collectionRate)}%` }}
+            />
+          </div>
+
+          {/* mini comparison bars */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-medium text-muted-foreground">Collected</p>
+                <p className="text-sm font-bold text-green-600 dark:text-green-400">
+                  {fmtKES(collected)}
+                </p>
+              </div>
+              <div
+                className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-muted"
+                role="progressbar"
+                aria-valuenow={Math.round(collectionRate)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label="Share of billed fees collected"
+              >
+                <div
+                  className="h-full rounded-full bg-green-500"
+                  style={{ width: `${Math.min(100, collectionRate)}%` }}
+                />
+              </div>
+              <p className="mt-1.5 text-[11px] text-muted-foreground">
+                {collectionRate.toLocaleString('en-KE', { maximumFractionDigits: 1 })}% of billed
+              </p>
+            </div>
+            <div className="rounded-xl border p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-medium text-muted-foreground">Outstanding</p>
+                <p className="text-sm font-bold text-amber-600 dark:text-amber-400">
+                  {fmtKES(outstanding)}
+                </p>
+              </div>
+              <div
+                className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-muted"
+                role="progressbar"
+                aria-valuenow={Math.round(outstandingShare)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label="Share of billed fees outstanding"
+              >
+                <div
+                  className="h-full rounded-full bg-amber-400"
+                  style={{ width: `${Math.min(100, outstandingShare)}%` }}
+                />
+              </div>
+              <p className="mt-1.5 text-[11px] text-muted-foreground">
+                {outstandingShare.toLocaleString('en-KE', { maximumFractionDigits: 1 })}% of billed
+              </p>
+            </div>
+          </div>
+
+          <Button
+            variant="outline"
+            className="min-h-11 w-full"
+            onClick={() => navigate('/admin/reports')}
+          >
+            Export the outstanding-fees CSV
+            <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Applications funnel */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Inbox className="h-4 w-4 text-primary" aria-hidden="true" />
+            Applications funnel
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">
+            {applicationsTotal} application{applicationsTotal === 1 ? '' : 's'} received to date
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {funnel.map((stage) => {
+            const Icon = stage.icon
+            const pct = applicationsTotal > 0 ? Math.round((stage.count / applicationsTotal) * 100) : 0
+            return (
+              <div key={stage.key} className="rounded-xl border p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                    <Icon className={`h-4 w-4 ${stage.text}`} aria-hidden="true" />
+                    {stage.label}
+                  </p>
+                  <p className={`text-sm font-bold ${stage.text}`}>
+                    {stage.count}
+                    <span className="ml-1.5 text-[11px] font-medium text-muted-foreground">{pct}%</span>
+                  </p>
+                </div>
+                <div
+                  className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-muted"
+                  role="progressbar"
+                  aria-valuenow={pct}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${stage.label} share of applications`}
+                >
+                  <div
+                    className={`h-full rounded-full ${stage.bar}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </div>
+            )
+          })}
+          <Button
+            variant="outline"
+            className="min-h-11 w-full"
+            onClick={() => navigate('/admin/applications')}
+          >
+            Review applications
+            <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function methodBadgeVariant(method: string): string {
+  switch (method) {
+    case 'MPESA':
+      return 'border-transparent bg-green-600/15 text-green-700 dark:text-green-400'
+    case 'BANK':
+      return 'border-transparent bg-amber-500/15 text-amber-700 dark:text-amber-400'
+    default:
+      return 'border-transparent bg-muted text-muted-foreground'
+  }
+}
+
+function ChartTooltipStyle() {
+  return {
+    backgroundColor: 'rgba(13, 40, 24, 0.94)',
+    border: '1px solid rgba(255,255,255,0.15)',
+    borderRadius: '8px',
+    color: '#fff',
+    fontSize: '12px',
+  } as const
+}
+
+export function OverviewView() {
+  const { data, status, error, refetch } = useQuery<AdminOverview>({
+    queryKey: ['admin-overview'],
+    queryFn: () => api<AdminOverview>('/api/admin/overview'),
+  })
+
+  return (
+    <div className="space-y-6">
+      <ViewHeading
+        title="Overview"
+        description="Registrar's snapshot of enrolment, applications and finances across all campuses."
+      />
+
+      <QueryBoundary
+        status={status}
+        error={error}
+        onRetry={() => void refetch()}
+        skeleton={<KpiGridSkeleton count={4} />}
+      >
+        {data && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <KpiCard icon={Users} label="Active students" value={data.studentsActive} />
+            <button
+              type="button"
+              onClick={() => navigate('/admin/applications')}
+              aria-label="Pending applications — open applications"
+              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:rounded-xl"
+            >
+              <KpiCard
+                icon={Inbox}
+                label="Pending applications"
+                value={data.applicationsPending}
+                delta={{ text: 'Review now →', positive: data.applicationsPending > 0 }}
+                className="h-full w-full text-left transition-colors hover:border-primary/40 hover:bg-primary/5"
+              />
+            </button>
+            <KpiCard
+              icon={Wallet}
+              label="Collected this term"
+              value={fmtKES(data.collectionsThisTerm)}
+            />
+            <KpiCard
+              icon={Landmark}
+              label="Outstanding balances"
+              value={fmtKES(data.outstandingBalance)}
+              delta={{ text: `All-time collected ${fmtKES(data.collectionsTotal)}`, positive: true }}
+            />
+          </div>
+        )}
+      </QueryBoundary>
+
+      {/* Task 8-c: collections comparison + applications funnel */}
+      <QueryBoundary
+        status={status}
+        error={error}
+        onRetry={() => void refetch()}
+        skeleton={<KpiGridSkeleton count={2} />}
+      >
+        {data && <CollectionsAndFunnelSection data={data} />}
+      </QueryBoundary>
+
+      <QueryBoundary
+        status={status}
+        error={error}
+        onRetry={() => void refetch()}
+        skeleton={<TableSkeleton rows={4} />}
+      >
+        {data && (
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+            {/* Revenue trend */}
+            <Card className="xl:col-span-2">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <TrendingUp className="h-4 w-4 text-primary" aria-hidden="true" />
+                  Revenue — last 8 months
+                </CardTitle>
+                <p className="text-xs text-muted-foreground">
+                  Confirmed payments per month (KES)
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div aria-label="Revenue by month chart" role="img">
+                  <ResponsiveContainer width="100%" height={260}>
+                    <AreaChart
+                      data={data.revenueByMonth}
+                      margin={{ top: 8, right: 12, left: 4, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={BLUE} stopOpacity={0.35} />
+                          <stop offset="100%" stopColor={BLUE} stopOpacity={0.03} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" vertical={false} />
+                      <XAxis
+                        dataKey="month"
+                        tickFormatter={monthLabel}
+                        tick={{ fontSize: 11 }}
+                        stroke="rgba(0,0,0,0.45)"
+                      />
+                      <YAxis
+                        tick={{ fontSize: 11 }}
+                        stroke="rgba(0,0,0,0.45)"
+                        tickFormatter={(v: number) => (v >= 1000 ? `${Math.round(v / 1000)}k` : String(v))}
+                      />
+                      <Tooltip
+                        contentStyle={ChartTooltipStyle()}
+                        formatter={(value: number | string) => [
+                          fmtKES(Number(value)),
+                          'Collected',
+                        ]}
+                        labelFormatter={(label: string) => monthLabel(label)}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="total"
+                        stroke={BLUE}
+                        strokeWidth={2.5}
+                        fill="url(#revenueFill)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Students by category donut */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Students by category</CardTitle>
+                <p className="text-xs text-muted-foreground">Active enrolments</p>
+              </CardHeader>
+              <CardContent>
+                <div aria-label="Students by category chart" role="img">
+                  <ResponsiveContainer width="100%" height={260}>
+                    <PieChart>
+                      <Pie
+                        data={data.studentsByCategory}
+                        dataKey="count"
+                        nameKey="category"
+                        innerRadius="55%"
+                        outerRadius="80%"
+                        paddingAngle={3}
+                        strokeWidth={2}
+                      >
+                        {data.studentsByCategory.map((entry) => (
+                          <Cell
+                            key={entry.category}
+                            fill={CATEGORY_COLORS[entry.category] ?? EMERALD}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={ChartTooltipStyle()}
+                        formatter={(value: number | string, name: string) => [
+                          `${value} student${Number(value) === 1 ? '' : 's'}`,
+                          name,
+                        ]}
+                      />
+                      <Legend
+                        iconType="circle"
+                        formatter={(value: string) => (
+                          <span style={{ fontSize: 12 }}>{value}</span>
+                        )}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </QueryBoundary>
+
+      <QueryBoundary
+        status={status}
+        error={error}
+        onRetry={() => void refetch()}
+        skeleton={<TableSkeleton rows={5} />}
+      >
+        {data && (
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+            {/* Top courses bar */}
+            <Card className="xl:col-span-2">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Top courses by enrollment</CardTitle>
+                <p className="text-xs text-muted-foreground">Active students per course (top 8)</p>
+              </CardHeader>
+              <CardContent>
+                <div aria-label="Top courses by enrollment chart" role="img">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart
+                      data={data.enrollmentsByCourse}
+                      layout="vertical"
+                      margin={{ top: 4, right: 24, left: 8, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" horizontal={false} />
+                      <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} stroke="rgba(0,0,0,0.45)" />
+                      <YAxis
+                        type="category"
+                        dataKey="course"
+                        width={190}
+                        tick={{ fontSize: 10.5 }}
+                        stroke="rgba(0,0,0,0.45)"
+                        tickFormatter={(v: string) =>
+                          v.length > 30 ? `${v.slice(0, 29)}…` : v
+                        }
+                      />
+                      <Tooltip
+                        contentStyle={ChartTooltipStyle()}
+                        cursor={{ fill: 'rgba(38, 122, 72, 0.08)' }}
+                        formatter={(value: number | string) => [
+                          `${value} student${Number(value) === 1 ? '' : 's'}`,
+                          'Enrolled',
+                        ]}
+                      />
+                      <Bar dataKey="count" fill={BLUE} radius={[0, 6, 6, 0]} barSize={18} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Students by campus */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Building2 className="h-4 w-4 text-primary" aria-hidden="true" />
+                  Students by campus
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {data.studentsByCampus.map((c) => {
+                  const pct =
+                    data.studentsActive > 0
+                      ? Math.round((c.count / data.studentsActive) * 100)
+                      : 0
+                  return (
+                    <div key={c.campusId} className="rounded-xl border p-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-sm font-semibold">{c.campus}</p>
+                        <Badge variant="secondary" className="shrink-0">
+                          {c.count}
+                        </Badge>
+                      </div>
+                      <div
+                        className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted"
+                        role="progressbar"
+                        aria-valuenow={pct}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label={`${c.campus} share of active students`}
+                      >
+                        <div
+                          className="h-full rounded-full bg-primary"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <p className="mt-1.5 text-[11px] text-muted-foreground">{pct}% of active students</p>
+                    </div>
+                  )
+                })}
+                <Button
+                  variant="outline"
+                  className="min-h-11 w-full"
+                  onClick={() => navigate('/admin/students')}
+                >
+                  Manage students
+                  <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </QueryBoundary>
+
+      {/* Recent payments */}
+      <QueryBoundary
+        status={status}
+        error={error}
+        onRetry={() => void refetch()}
+        skeleton={<TableSkeleton rows={5} />}
+      >
+        {data && (
+          <Card>
+            <CardHeader className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between">
+              <CardTitle className="text-base">Recent payments</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-h-11"
+                onClick={() => navigate('/admin/fees')}
+              >
+                Fees &amp; payments
+                <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {data.recentPayments.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  No payments recorded yet.
+                </p>
+              ) : (
+                <>
+                  {/* Desktop table */}
+                  <div className="hidden overflow-x-auto md:block">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Student</TableHead>
+                          <TableHead>Course</TableHead>
+                          <TableHead className="text-right">Amount</TableHead>
+                          <TableHead>Method</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead className="text-right">Date</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {data.recentPayments.map((p) => (
+                          <TableRow key={p.id}>
+                            <TableCell>
+                              <p className="text-sm font-semibold">{p.studentName}</p>
+                              <p className="font-mono text-[11px] text-muted-foreground">
+                                {p.admissionNo}
+                              </p>
+                            </TableCell>
+                            <TableCell className="max-w-56 truncate text-sm text-muted-foreground">
+                              {p.course}
+                            </TableCell>
+                            <TableCell className="text-right text-sm font-bold text-primary">
+                              {fmtKES(p.amount)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={`text-[10px] ${methodBadgeVariant(p.method)}`}>
+                                {p.method}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-mono text-[11px] text-muted-foreground">
+                              {p.reference}
+                            </TableCell>
+                            <TableCell className="text-right text-xs text-muted-foreground">
+                              {fmtDate(p.paidAt)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  {/* Mobile stacked cards */}
+                  <ul className="space-y-3 md:hidden">
+                    {data.recentPayments.map((p) => (
+                      <li key={p.id} className="rounded-xl border p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold">{p.studentName}</p>
+                            <p className="font-mono text-[11px] text-muted-foreground">
+                              {p.admissionNo}
+                            </p>
+                          </div>
+                          <p className="shrink-0 text-sm font-bold text-primary">
+                            {fmtKES(p.amount)}
+                          </p>
+                        </div>
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                          <Badge className={`text-[10px] ${methodBadgeVariant(p.method)}`}>
+                            {p.method}
+                          </Badge>
+                          <span className="font-mono text-[11px]">{p.reference}</span>
+                          <span>· {fmtDate(p.paidAt)}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </QueryBoundary>
+    </div>
+  )
+}
