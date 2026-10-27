@@ -4,16 +4,21 @@ Three deployment paths, from fastest to most robust.
 
 ---
 
-## Option A — Vercel (demo mode, ~3 minutes)
+## Option A — Vercel (demo mode, ~3 minutes, ZERO configuration)
 
 1. Click the **Deploy with Vercel** button in the README (or fork the repo and import it at [vercel.com/new](https://vercel.com/new)).
-2. When prompted for the `DATABASE_URL` environment variable, enter:
+2. Deploy — **no environment variables required.**
 
-   ```
-   DATABASE_URL=file:/tmp/custom.db
-   ```
+When `DATABASE_URL` is not set, the app automatically detects the serverless
+environment (Vercel/Netlify), copies the bundled seeded SQLite database to the
+function's writable `/tmp` storage, and runs from there. The site, portals and
+demo accounts all work out of the box.
 
-3. Deploy. The bundled `src/instrumentation.ts` copies the seeded SQLite database to the serverless function's writable `/tmp` storage on cold start, so the site, portals and demo accounts all work.
+Optionally, you can still set it explicitly (identical behaviour):
+
+```
+DATABASE_URL=file:/tmp/custom.db
+```
 
 **Demo-mode caveat:** writes (sign-in sessions, new applications, payments) live in the function's ephemeral storage. When the serverless instance recycles, that data resets — users simply sign in again. This is fine for evaluation and demos.
 
@@ -23,9 +28,11 @@ Three deployment paths, from fastest to most robust.
 npm i -g vercel
 vercel login
 vercel link
-vercel env add DATABASE_URL production    # value: file:/tmp/custom.db
 vercel --prod
 ```
+
+(No env setup needed — demo mode is automatic. Add `DATABASE_URL` only when
+switching to PostgreSQL as per Option C.)
 
 ---
 
@@ -33,13 +40,8 @@ vercel --prod
 
 1. Click the **Deploy to Netlify** button in the README (or import the repo at [app.netlify.com](https://app.netlify.com)).
 2. Netlify auto-detects Next.js and uses the build command from `netlify.toml`.
-3. Add the environment variable in **Site settings → Environment variables**:
-
-   ```
-   DATABASE_URL=file:/tmp/custom.db
-   ```
-
-4. Deploy. The same `/tmp` demo-mode behaviour as Vercel applies.
+3. Deploy — no environment variables required (the same zero-config `/tmp`
+   demo-mode behaviour as Vercel applies automatically).
 
 ---
 

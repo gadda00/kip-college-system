@@ -112,7 +112,7 @@ export function Header() {
 
       {/* top utility bar */}
       <div className="hidden bg-primary text-primary-foreground md:block">
-        <div className="mx-auto flex h-10 max-w-7xl items-center justify-between gap-4 px-6 text-xs lg:px-8">
+        <div className="mx-auto flex h-11 max-w-7xl items-center justify-between gap-4 px-6 text-xs lg:px-8">
           <div className="flex min-w-0 items-center gap-4">
             <span className="inline-flex items-center gap-1.5 truncate">
               <MapPin className="h-3.5 w-3.5 shrink-0 text-sky-300" aria-hidden="true" />
@@ -154,7 +154,7 @@ export function Header() {
 
       {/* main bar */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
           <button
             type="button"
             onClick={() => navigate('/')}
@@ -173,7 +173,7 @@ export function Header() {
                     type="button"
                     onClick={() => navigate(item.to)}
                     className={cn(
-                      'relative rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                      'relative whitespace-nowrap rounded-full px-3.5 py-2 text-[15px] font-medium tracking-wide transition-colors duration-200 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                       isActive(current, item.to)
                         ? 'text-primary'
                         : 'text-muted-foreground hover:text-foreground',
@@ -183,7 +183,7 @@ export function Header() {
                     {isActive(current, item.to) && (
                       <span
                         aria-hidden="true"
-                        className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-primary"
+                        className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-primary"
                       />
                     )}
                   </button>
@@ -193,7 +193,7 @@ export function Header() {
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     className={cn(
-                      'inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium outline-none transition-colors',
+                      'inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-2 text-[15px] font-medium tracking-wide outline-none transition-colors duration-200 hover:bg-muted',
                       newsActive
                         ? 'text-primary'
                         : 'text-muted-foreground hover:text-foreground',
@@ -220,7 +220,7 @@ export function Header() {
                   type="button"
                   onClick={() => navigate('/faq')}
                   className={cn(
-                    'relative rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    'relative whitespace-nowrap rounded-full px-3.5 py-2 text-[15px] font-medium tracking-wide transition-colors duration-200 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                     faqActive
                       ? 'text-primary'
                       : 'text-muted-foreground hover:text-foreground',
@@ -230,7 +230,7 @@ export function Header() {
                   {faqActive && (
                     <span
                       aria-hidden="true"
-                      className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-primary"
+                      className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-primary"
                     />
                   )}
                 </button>
@@ -240,7 +240,7 @@ export function Header() {
                   type="button"
                   onClick={() => navigate('/contact')}
                   className={cn(
-                    'relative rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    'relative whitespace-nowrap rounded-full px-3.5 py-2 text-[15px] font-medium tracking-wide transition-colors duration-200 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                     current === 'contact'
                       ? 'text-primary'
                       : 'text-muted-foreground hover:text-foreground',
@@ -250,7 +250,7 @@ export function Header() {
                   {current === 'contact' && (
                     <span
                       aria-hidden="true"
-                      className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-primary"
+                      className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-primary"
                     />
                   )}
                 </button>

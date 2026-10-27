@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
@@ -10,6 +11,7 @@ import {
   Building2,
   CalendarClock,
   CalendarDays,
+  ChevronDown,
   GraduationCap,
   Handshake,
   MapPin,
@@ -104,6 +106,29 @@ const WHY_FEATURES = [
   },
 ]
 
+/** Decorative scroll cue: chevron bottom-right of the hero, fades out on scroll. */
+function HeroScrollCue() {
+  const [faded, setFaded] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setFaded(window.scrollY > 120)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  return (
+    <div
+      aria-hidden="true"
+      className={`pointer-events-none absolute bottom-6 right-6 hidden text-white/60 transition-opacity duration-500 sm:block ${
+        faded ? 'opacity-0' : 'opacity-100'
+      }`}
+    >
+      <ChevronDown className="h-6 w-6 animate-bounce" />
+    </div>
+  )
+}
+
 export function HomeView() {
   const overview = useQuery({
     queryKey: ['public-overview'],
@@ -133,35 +158,51 @@ export function HomeView() {
           alt="KIP College campus"
           className="absolute inset-0 h-full w-full object-cover"
         />
+        {/* base left-to-right navy scrim (kept) */}
         <div
           className="absolute inset-0 bg-gradient-to-r from-[#0b1f3f]/90 via-[#0b1f3f]/60 to-transparent"
           aria-hidden="true"
         />
+        {/* extra mobile bottom scrim (kept) */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b1f3f]/70 via-transparent to-transparent md:hidden" aria-hidden="true" />
+        {/* radial darkening behind the text column for extra depth/readability */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 60% 70% at 26% 42%, rgba(11,31,63,0.55) 0%, rgba(11,31,63,0) 70%)',
+          }}
+        />
+        {/* bottom vignette anchoring the hero to the next section */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0b1f3f]/75 to-transparent sm:h-52"
+        />
 
-        <div className="relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-36">
+        <div className="relative mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-44">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
             className="max-w-2xl text-white"
           >
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-300/40 bg-sky-400/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-300 backdrop-blur-sm sm:text-xs">
+            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-300/40 bg-sky-400/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-300 backdrop-blur-sm sm:text-xs">
               <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
               Admissions Open 2026 &middot; Kitui Institute of Professionals
             </p>
             <h1
               id="home-hero-title"
-              className="text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl"
+              className="text-balance text-3xl font-black leading-[1.08] tracking-tight text-white sm:text-[2.6rem] sm:leading-[1.05] lg:text-6xl lg:leading-[1.02]"
             >
-              Choose a path that matches your ambition.
+              Choose a path that matches your <span className="text-sky-300">ambition.</span>
             </h1>
-            <p className="mt-4 max-w-xl text-pretty text-sm leading-relaxed text-white/85 sm:text-base">
+            <p className="mt-5 max-w-xl text-pretty text-sm leading-relaxed text-white/85 sm:text-base">
               <span className="font-semibold text-sky-300">Training for Excellence</span> — KIP
               College offers KASNEB professional courses, TVET diplomas and certificates across
               three campuses in Kitui County. January, May and September intakes are open.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <Button
                 size="lg"
                 onClick={() => navigate('/apply')}
@@ -181,7 +222,7 @@ export function HomeView() {
             </div>
 
             {/* floating stat pills */}
-            <dl className="mt-10 flex flex-wrap gap-2.5 sm:gap-3">
+            <dl className="mt-12 flex flex-wrap gap-2.5 sm:gap-3">
               {[
                 { label: 'Students', value: '1,500+' },
                 { label: 'Courses', value: '20+' },
@@ -190,10 +231,12 @@ export function HomeView() {
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 backdrop-blur-sm"
+                  className="rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 shadow-lg shadow-[#0b1f3f]/25 backdrop-blur-md"
                 >
-                  <dd className="text-lg font-bold leading-none text-sky-300">{item.value}</dd>
-                  <dt className="mt-1 text-[11px] uppercase tracking-wider text-white/70">
+                  <dd className="text-lg font-extrabold leading-none tracking-tight tabular-nums text-sky-300">
+                    {item.value}
+                  </dd>
+                  <dt className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/75">
                     {item.label}
                   </dt>
                 </div>
@@ -201,6 +244,8 @@ export function HomeView() {
             </dl>
           </motion.div>
         </div>
+
+        <HeroScrollCue />
       </section>
 
       {/* ── 2. ACCREDITATION STRIP ──────────────────────────── */}
@@ -251,7 +296,7 @@ export function HomeView() {
           {overview.isPending ? (
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-24 rounded-xl" />
+                <Skeleton key={i} className="h-28 rounded-xl" />
               ))}
             </div>
           ) : (

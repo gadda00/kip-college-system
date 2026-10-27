@@ -3,5 +3,6 @@
   publish = ".next"
 
 # The Next.js runtime is enabled automatically by Netlify for Next.js sites.
-# Demo mode: set DATABASE_URL=file:/tmp/custom.db in Site settings →
-# Environment variables (see DEPLOYMENT.md).
+# Demo mode is ZERO-CONFIG: when DATABASE_URL is not set, the app detects the
+# serverless environment and bootstraps the bundled seeded SQLite database in
+# /tmp automatically (see DEPLOYMENT.md).

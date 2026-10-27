@@ -102,7 +102,7 @@ export function FaqView() {
             <Input
               id="faq-search"
               type="search"
-              placeholder="Search questions — e.g. fees, intakes, hostels…"
+              placeholder="Search FAQs — fees, intakes…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="h-12 pl-10"

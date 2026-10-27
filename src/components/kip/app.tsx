@@ -7,6 +7,7 @@ import { useAuthStore } from '@/components/kip/stores/auth-store'
 import { Header } from '@/components/kip/site/header'
 import { Footer } from '@/components/kip/site/footer'
 import { ChatWidget } from '@/components/kip/chat-widget'
+import { BackToTop } from '@/components/kip/components/back-to-top'
 import { StudentPortal } from '@/components/kip/portal/student/StudentPortal'
 import { LecturerPortal } from '@/components/kip/portal/lecturer/LecturerPortal'
 import { AdminDashboard } from '@/components/kip/admin/AdminDashboard'
@@ -143,6 +144,7 @@ export default function KipApp() {
       </main>
       <Footer />
       <ChatWidget />
+      <BackToTop />
     </div>
   )
 }

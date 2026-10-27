@@ -37,18 +37,20 @@ export function StatCard({
   }, [value, duration])
 
   return (
-    <Card className={cn('border-primary/10 bg-card', className)}>
-      <CardContent className="flex items-center gap-4 p-5 sm:p-6">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Icon className="h-5 w-5" aria-hidden="true" />
-        </span>
-        <div className="min-w-0">
-          <p className="text-2xl font-bold tracking-tight text-primary sm:text-3xl">
-            {display.toLocaleString('en-KE')}
-            {suffix}
+    <Card className={cn('relative overflow-hidden border-border/60 py-0', className)}>
+      {/* 3px left accent bar */}
+      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px] bg-primary" />
+      <CardContent className="p-5 sm:p-6">
+        <div className="flex items-center gap-2">
+          <Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+          <p className="truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            {label}
           </p>
-          <p className="truncate text-xs font-medium text-muted-foreground sm:text-sm">{label}</p>
         </div>
+        <p className="mt-3 text-3xl font-black tabular-nums tracking-tight text-foreground sm:text-4xl">
+          {display.toLocaleString('en-KE')}
+          {suffix}
+        </p>
       </CardContent>
     </Card>
   )

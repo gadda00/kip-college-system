@@ -36,7 +36,15 @@ export function PageHero({
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover opacity-30"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0b1f3f]/95 via-primary/85 to-sky-700/70" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-r from-[#0b1f3f]/95 via-[#0b1f3f]/80 to-primary/55"
+          />
+          {/* bottom vignette for depth (matches homepage hero) */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0b1f3f]/60 to-transparent"
+          />
         </>
       ) : (
         <>
@@ -54,7 +62,7 @@ export function PageHero({
         </>
       )}
 
-      <div className="relative mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="relative mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8">
         {breadcrumb && breadcrumb.length > 0 && (
           <nav aria-label="Breadcrumb" className="mb-4">
             <ol className="flex flex-wrap items-center gap-1.5 text-xs text-primary-foreground/80 sm:text-sm">
@@ -97,7 +105,7 @@ export function PageHero({
         )}
         <h1
           id="page-hero-title"
-          className="text-balance text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl"
+          className="text-balance text-2xl font-black leading-tight tracking-tight sm:text-3xl lg:text-4xl"
         >
           {title}
         </h1>

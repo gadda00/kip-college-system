@@ -15,7 +15,7 @@ One platform, four experiences: a modern **public website**, a self-service **st
 
 | Platform | Button | What you get |
 |---|---|---|
-| **Vercel** | [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fgadda00%2Fkip-college-system&env=DATABASE_URL&project-name=kip-college&repository-name=kip-college) | Demo deployment (SQLite in `/tmp` — see note below) |
+| **Vercel** | [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fgadda00%2Fkip-college-system&project-name=kip-college&repository-name=kip-college) | Demo deployment — **zero configuration** (seeded SQLite auto-bootstraps in `/tmp`) |
 | **Netlify** | [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/gadda00/kip-college-system) | Demo deployment (same demo mode) |
 
 > **Demo mode on serverless:** the site renders and all accounts work, but data writes (logins, new applications) live in the function's ephemeral `/tmp` storage and reset on cold starts. For a persistent production deployment, follow the 10-minute guide in [DEPLOYMENT.md](./DEPLOYMENT.md) (Neon PostgreSQL, free tier).
