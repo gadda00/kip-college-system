@@ -1,0 +1,356 @@
+generator client {
+  provider      = "prisma-client-js"
+  // LOCAL DEV ONLY — PostgreSQL production uses prisma/schema.prisma
+  
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============ AUTH & USERS ============
+
+enum Role {
+  ADMIN
+  LECTURER
+  STUDENT
+}
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  passwordHash    String
+  name            String
+  phone           String?
+  role            Role             @default(STUDENT)
+  createdAt       DateTime         @default(now())
+  sessions        Session[]
+  studentProfile  StudentProfile?
+  lecturerProfile LecturerProfile?
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model LecturerProfile {
+  id               String            @id @default(cuid())
+  userId           String            @unique
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  staffNo          String            @unique
+  title            String
+  department       String
+  specialization   String
+  bio              String?
+  timetableEntries TimetableEntry[]
+}
+
+// ============ ACADEMIC STRUCTURE ============
+
+model Campus {
+  id           String           @id @default(cuid())
+  code         String           @unique
+  name         String
+  location     String
+  description  String
+  image        String
+  phone        String
+  email        String
+  facilities   String // CSV e.g. "ICT Labs,Library,Hostels"
+  sortOrder    Int              @default(0)
+  students     StudentProfile[]
+  applications Application[]
+  timetables   TimetableEntry[]
+}
+
+model Course {
+  id              String            @id @default(cuid())
+  code            String            @unique
+  title           String
+  category        String // TECHNICAL | BUSINESS | KASNEB
+  level           String // Certificate | Diploma | Professional | Artisan
+  examBody        String // KNEC | KASNEB | NITA | TVET-CDACC
+  durationMonths  Int
+  intakeMonths    String // CSV e.g. "January,May,September"
+  tuitionPerTerm  Float
+  registrationFee Float
+  examFee         Float
+  description     String
+  requirements    String
+  image           String
+  isActive        Boolean           @default(true)
+  isFeatured      Boolean           @default(false)
+  sortOrder       Int               @default(0)
+  units           Unit[]
+  students        StudentProfile[]
+  applications    Application[]
+  timetables      TimetableEntry[]
+  materials       StudyMaterial[]
+}
+
+model Unit {
+  id           String            @id @default(cuid())
+  courseId     String
+  course       Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  code         String
+  name         String
+  stage        Int               @default(1) // 1..6 (term/module/level number)
+  stageLabel   String            @default("Term 1") // e.g. "Term 1" | "Module I" | "Level I"
+  weekHours    Int               @default(4)
+  results      Result[]
+  timetables   TimetableEntry[]
+  materials    StudyMaterial[]
+
+  @@unique([courseId, code])
+  @@index([courseId, stage])
+}
+
+model TimetableEntry {
+  id         String           @id @default(cuid())
+  courseId   String
+  course     Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  unitId     String?
+  unit       Unit?            @relation(fields: [unitId], references: [id], onDelete: SetNull)
+  dayOfWeek  Int // 1-5 (Monday-Friday)
+  startTime  String // "08:00"
+  endTime    String // "10:00"
+  room       String
+  campusId   String?
+  campus     Campus?          @relation(fields: [campusId], references: [id], onDelete: SetNull)
+  lecturerId String?
+  lecturer   LecturerProfile? @relation(fields: [lecturerId], references: [id], onDelete: SetNull)
+
+  @@index([courseId])
+  @@index([lecturerId])
+  @@index([campusId])
+}
+
+// ============ STUDENT RECORDS ============
+
+model StudentProfile {
+  id            String      @id @default(cuid())
+  userId        String      @unique
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  admissionNo   String      @unique
+  courseId      String
+  course        Course      @relation(fields: [courseId], references: [id])
+  campusId      String
+  campus        Campus      @relation(fields: [campusId], references: [id])
+  yearOfStudy   Int         @default(1)
+  currentTerm   Int         @default(1)
+  status        String      @default("ACTIVE") // ACTIVE | GRADUATED | SUSPENDED
+  kcseGrade     String?
+  gender        String? // MALE | FEMALE
+  dob           DateTime?
+  address       String?
+  guardianName  String?
+  guardianPhone String?
+  admittedAt    DateTime    @default(now())
+  feeItems      FeeItem[]
+  payments      Payment[]
+  results       Result[]
+
+  @@index([courseId])
+  @@index([campusId])
+  @@index([status])
+}
+
+model FeeItem {
+  id          String        @id @default(cuid())
+  studentId   String
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  term        String // e.g. "2025/2026 T1"
+  description String
+  amount      Float
+  type        String        @default("TUITION") // TUITION | REGISTRATION | EXAM | OTHER
+  dueDate     DateTime?
+  createdAt   DateTime      @default(now())
+
+  @@index([studentId, term])
+}
+
+model Payment {
+  id         String        @id @default(cuid())
+  studentId  String
+  student    StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amount     Float
+  method     String        @default("MPESA") // MPESA | BANK | CASH
+  reference  String        @unique
+  paidAt     DateTime      @default(now())
+  status     String        @default("CONFIRMED") // CONFIRMED | PENDING
+  note       String?
+  recordedBy String?
+
+  @@index([studentId])
+  @@index([status])
+}
+
+model Result {
+  id        String        @id @default(cuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  unitId    String
+  unit      Unit          @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  term      String
+  marks     Float
+  grade     String // A | B | C | D | E
+  remark    String?
+  published Boolean       @default(false)
+  examBody  String?
+
+  @@unique([studentId, unitId])
+  @@index([unitId])
+  @@index([term])
+}
+
+model Application {
+  id            String    @id @default(cuid())
+  applicantName String
+  email         String
+  phone         String
+  courseId      String
+  course        Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  campusId      String
+  campus        Campus    @relation(fields: [campusId], references: [id], onDelete: Cascade)
+  kcseGrade     String
+  kcseYear      Int
+  gender        String?
+  dob           DateTime?
+  guardianName  String?
+  guardianPhone String?
+  message       String?
+  status        String    @default("PENDING") // PENDING | ACCEPTED | REJECTED
+  adminNote     String?
+  createdAt     DateTime  @default(now())
+  reviewedAt    DateTime?
+
+  @@index([status])
+  @@index([courseId])
+}
+
+// ============ CONTENT & ENGAGEMENT ============
+
+model Announcement {
+  id         String   @id @default(cuid())
+  title      String
+  body       String
+  audience   String   @default("ALL") // ALL | STUDENTS | STAFF
+  pinned     Boolean  @default(false)
+  active     Boolean  @default(true)
+  authorName String   @default("Registrar")
+  createdAt  DateTime @default(now())
+}
+
+model NewsPost {
+  id          String   @id @default(cuid())
+  title       String
+  excerpt     String
+  body        String
+  image       String
+  category    String   @default("News")
+  author      String   @default("Communications Office")
+  published   Boolean  @default(false)
+  publishedAt DateTime @default(now())
+
+  @@index([published])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  venue       String
+  image       String?
+}
+
+model GalleryItem {
+  id      String  @id @default(cuid())
+  title   String
+  image   String
+  caption String?
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  subject   String
+  message   String
+  status    String   @default("NEW") // NEW | READ | REPLIED
+  createdAt DateTime @default(now())
+
+  @@index([status])
+}
+
+model StudyMaterial {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  unitId      String?
+  unit        Unit?    @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  type        String   @default("NOTES") // NOTES | PAST_PAPER | ASSIGNMENT
+  fileLabel   String
+  createdAt   DateTime @default(now())
+
+  @@index([courseId])
+}
+
+model Testimonial {
+  id     String @id @default(cuid())
+  name   String
+  role   String
+  course String
+  quote  String
+  rating Int    @default(5)
+}
+
+model FAQ {
+  id       String  @id @default(cuid())
+  question String
+  answer   String
+  category String  @default("Admissions") // Admissions | Fees | Courses | Exams | General
+  sortOrder Int    @default(0)
+  active   Boolean @default(true)
+}
+
+model DownloadResource {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String   @default("Forms") // Forms | Fees | Academic | Guides
+  fileLabel   String   // e.g. "PDF · 240 KB"
+  fileUrl     String   @default("#") // link to generated doc or '#'
+  sortOrder    Int     @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+// ============ SECURITY & COMPLIANCE ============
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String? // User.id when authenticated
+  actorEmail String? // convenience for display
+  action     String // e.g. AUTH_LOGIN, APPLICATION_SUBMITTED, RESULTS_PUBLISHED
+  entity     String? // e.g. "application", "payment"
+  entityId   String?
+  meta       String? // JSON string with action-specific context
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([action])
+  @@index([entityId])
+  @@index([createdAt])
+}

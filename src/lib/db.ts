@@ -1,86 +1,85 @@
 import { PrismaClient } from '@prisma/client'
-import fs from 'node:fs'
 import path from 'node:path'
+import { ensureProvisioned } from './provision'
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+  kipBasePrisma: PrismaClient | undefined
 }
 
 /**
- * Resolve the SQLite database URL for runtime use.
+ * Resolve the database URL for runtime use.
  *
- * Priority:
- *  1. DATABASE_URL as provided (postgres://… or file:…). Relative `file:` paths
- *     are resolved the way the Prisma CLI resolves them (relative to
- *     prisma/schema.prisma) so `file:../db/custom.db` works for CLI + app alike.
- *  2. Zero-config serverless fallback (Vercel / Netlify demo mode): the bundled
- *     seeded database is copied to the function's writable /tmp storage.
- *  3. Local fallback: <project>/db/custom.db (works out of the box after clone).
+ *  1. DATABASE_URL as provided — `postgres://`, `postgresql://` and
+ *     `prisma://` (Prisma Postgres) URLs pass straight through to the
+ *     PostgreSQL engine used in production (Vercel).
+ *  2. Local fallback: <project>/db/custom.db (works out of the box after
+ *     clone). Relative `file:` paths are resolved the way the Prisma CLI
+ *     resolves them (relative to prisma/schema.prisma).
  */
 function resolveDatabaseUrl(): string {
-  let url = process.env.DATABASE_URL || ''
+  const url = process.env.DATABASE_URL || ''
 
-  if (!url) {
-    const serverless = !!(process.env.VERCEL || process.env.NETLIFY)
-    url = serverless
-      ? 'file:/tmp/custom.db'
-      : 'file:' + path.join(process.cwd(), 'db', 'custom.db')
+  if (url) {
+    if (!url.startsWith('file:')) return url // postgres://, postgresql://, prisma:// — as-is
+    const p = url.slice('file:'.length)
+    if (p.startsWith('/')) return url // absolute — as-is
+    const base = p.startsWith('../')
+      ? path.join(process.cwd(), 'prisma') // CLI convention: relative to schema dir
+      : process.cwd()
+    return 'file:' + path.resolve(base, p)
   }
 
-  if (!url.startsWith('file:')) return url // postgres/mysql/etc — use as-is
-  const p = url.slice('file:'.length)
-  if (p.startsWith('/')) return url // absolute — use as-is
-  const base = p.startsWith('../')
-    ? path.join(process.cwd(), 'prisma') // CLI convention: relative to schema dir
-    : process.cwd()
-  return 'file:' + path.resolve(base, p)
-}
-
-/**
- * Serverless demo bootstrap: SQLite needs a writable location, and the lambda
- * filesystem is read-only except /tmp. Copy the bundled seeded database there
- * (once per instance) so the whole platform — demo accounts included — works
- * with zero environment configuration. Production Postgres URLs are untouched.
- */
-function bootstrapServerlessSqlite(url: string): void {
-  if (!url.startsWith('file:/tmp/')) return
-  const dest = url.slice('file:'.length)
-  try {
-    fs.accessSync(dest)
-    return // already bootstrapped on this instance
-  } catch {
-    // not present yet — copy the bundled seed database below
+  if (process.env.VERCEL || process.env.NETLIFY) {
+    console.error(
+      '[kip-college] DATABASE_URL is not set. Add your Prisma Postgres connection string ' +
+        '(Vercel → Project → Settings → Environment Variables → DATABASE_URL), then redeploy.',
+    )
   }
-
-  const candidates = [
-    path.join(process.cwd(), 'db', 'custom.db'),
-    'db/custom.db',
-    path.join(process.cwd(), '../db/custom.db'),
-    path.join(process.cwd(), '../../db/custom.db'),
-  ]
-  for (const src of candidates) {
-    try {
-      fs.mkdirSync(path.dirname(dest), { recursive: true })
-      fs.copyFileSync(src, dest)
-      console.log(`[kip-college] demo database bootstrapped at ${dest}`)
-      return
-    } catch {
-      // try the next candidate
-    }
-  }
-  console.warn(
-    '[kip-college] demo database not found for /tmp bootstrap — set DATABASE_URL to a PostgreSQL URL for production (see DEPLOYMENT.md)',
-  )
+  return 'file:' + path.join(process.cwd(), 'db', 'custom.db')
 }
 
 const resolvedUrl = resolveDatabaseUrl()
-bootstrapServerlessSqlite(resolvedUrl)
 
-export const db =
-  globalForPrisma.prisma ??
+/** True when running against PostgreSQL (production / Prisma Postgres). */
+export const isPostgres = /^(postgres(?:ql)?|prisma):\/\//.test(resolvedUrl)
+
+const base =
+  globalForPrisma.kipBasePrisma ??
   new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     datasources: { db: { url: resolvedUrl } },
   })
+if (process.env.NODE_ENV !== 'production') globalForPrisma.kipBasePrisma = base
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
+/**
+ * One-time PostgreSQL provisioning (schema + demo dataset). Called lazily
+ * before the first model query on serverless instances. Failures reset the
+ * promise so the next request retries instead of caching the error.
+ */
+let readyPromise: Promise<void> | null = null
+export function ensureDbReady(): Promise<void> {
+  if (!isPostgres) return Promise.resolve()
+  if (!readyPromise) {
+    readyPromise = ensureProvisioned(base).catch((err) => {
+      readyPromise = null
+      throw err
+    })
+  }
+  return readyPromise
+}
+
+/**
+ * The shared Prisma client. On PostgreSQL every model operation first awaits
+ * `ensureDbReady()`, so a brand-new database is schema-provisioned and seeded
+ * automatically before the first query — no deploy-time migration step needed.
+ */
+export const db = base.$extends({
+  query: {
+    $allModels: {
+      async $allOperations({ query, args }) {
+        if (isPostgres) await ensureDbReady()
+        return query(args)
+      },
+    },
+  },
+})

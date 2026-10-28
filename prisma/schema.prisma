@@ -6,9 +6,13 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// NOTE: production (Vercel + Prisma Postgres) uses THIS schema.
+// Local development uses prisma/schema.sqlite.prisma — `bun run db:generate`
+// picks the right one automatically from DATABASE_URL (see scripts/prisma-generate.mjs).
 
 // ============ AUTH & USERS ============
 

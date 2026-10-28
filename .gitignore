@@ -48,3 +48,8 @@ next-env.d.ts
 .idea/
 .claude
 .z-ai-config
+
+# sandbox tooling artifacts — never ship
+tool-results/
+skills/
+db/*.db-journal

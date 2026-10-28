@@ -1,0 +1,103 @@
+/* KIP College System — presentation deck stylesheet (blue institutional theme)
+   Palette matches the proposal PDF (pdf skill Template 07 "Crystal Blue"). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700;900&display=swap');
+
+:root {
+  /* palette */
+  --bg: #f5f8fc;            /* light slide background */
+  --bg-dark: #0a1628;       /* deep blue night sky (title / demo / closing) */
+  --primary: #1a4a7a;       /* deep blue */
+  --accent: #2d7ab3;        /* mid blue accent */
+  --accent-bright: #4da8da; /* luminous blue (on dark) */
+  --text: #142840;          /* deep blue-black */
+  --muted: #5a7a96;         /* blue-gray secondary */
+  --card: #ffffff;          /* card surface on light slides */
+  --card-tint: #e4ecf5;     /* soft blue card tint */
+  --border: #c0d0e2;        /* blue-gray lines */
+  --on-dark: #e8f0f8;       /* cool white on dark */
+  --on-dark-muted: #7a9bb8; /* muted on dark */
+
+  /* typography tokens (families + sizes only — no bundled classes) */
+  --font-heading: 'Playfair Display', 'Inter', serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-num: 'Inter', sans-serif;
+  --fs-display: 60px;
+  --fs-h1: 38px;
+  --fs-h2: 26px;
+  --fs-h3: 19px;
+  --fs-body: 16px;
+  --fs-small: 13.5px;
+  --fs-micro: 11.5px;
+}
+
+/* slide canvas */
+.slide {
+  width: 1280px;
+  height: 720px;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+.slide--dark { background: var(--bg-dark); color: var(--on-dark); }
+
+/* surfaces */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.card--tint { background: var(--card-tint); }
+.card--dark {
+  background: rgba(77, 168, 218, 0.08);
+  border: 1px solid rgba(77, 168, 218, 0.35);
+  border-radius: 14px;
+}
+
+/* accents */
+.rule-accent { height: 4px; width: 84px; background: var(--accent); border-radius: 2px; }
+.rule-accent--bright { background: var(--accent-bright); }
+.kicker {
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 300;
+}
+.kicker--dark { color: var(--accent-bright); }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 14px;
+  color: var(--muted);
+}
+.icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--card-tint);
+  color: var(--primary);
+  flex: none;
+}
+.icon-badge--dark { background: rgba(77, 168, 218, 0.14); color: var(--accent-bright); }
+.frame {
+  position: absolute;
+  inset: 34px 44px;
+  border: 2px solid var(--accent-bright);
+  border-radius: 4px;
+  pointer-events: none;
+}
+.glow {
+  position: absolute;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45, 122, 179, 0.16) 0%, rgba(45, 122, 179, 0) 70%);
+  pointer-events: none;
+}

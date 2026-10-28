@@ -9,7 +9,6 @@ import {
   FileQuestion,
   FileSignature,
   FolderOpen,
-  Info,
   MessageSquareText,
   Receipt,
 } from 'lucide-react'
@@ -67,10 +66,14 @@ export function DownloadsView() {
     return category === 'all' ? items : items.filter((d) => d.category === category)
   }, [downloads.data, category])
 
-  const handleDownload = () => {
-    toast.info('Demo document', {
-      description: 'The college will publish the official file here.',
-    })
+  const handleDownload = (item: DownloadResource) => {
+    if (!item.fileUrl || item.fileUrl === '#') {
+      toast.info('Coming soon', {
+        description: 'This document will be published by the college office shortly.',
+      })
+      return
+    }
+    window.open(item.fileUrl, '_blank', 'noopener,noreferrer')
   }
 
   return (
@@ -78,7 +81,7 @@ export function DownloadsView() {
       <PageHero
         eyebrow="Resources"
         title="Downloads & Resources"
-        subtitle="Application forms, fee structures, the college prospectus and academic calendars — everything you need in one place."
+        subtitle="Platform documents, guides and official college publications — free to download in one place."
         breadcrumb={[{ label: 'Downloads' }]}
       />
 
@@ -88,8 +91,8 @@ export function DownloadsView() {
       >
         <SectionHeading
           eyebrow="Document library"
-          title="Official College Documents"
-          description="Free to download and use. Prefer paper copies? Every campus front office stocks printed versions."
+          title="Official Documents"
+          description="Download, share and review. Additional college publications are added here as they are verified and released."
         />
         <h2 id="downloads-list-title" className="sr-only">
           Downloadable resources
@@ -164,11 +167,6 @@ export function DownloadsView() {
           </Card>
         </div>
 
-        {/* demo notice */}
-        <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-          <Info className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          Documents on this page are demonstration files pending publication by the college.
-        </p>
       </section>
     </div>
   )
@@ -179,7 +177,7 @@ function DownloadCard({
   onDownload,
 }: {
   item: DownloadResource
-  onDownload: () => void
+  onDownload: (item: DownloadResource) => void
 }) {
   const meta = CATEGORY_META[item.category] ?? CATEGORY_META.Forms!
   const Icon = meta.icon
@@ -207,7 +205,7 @@ function DownloadCard({
           </span>
           <Button
             size="sm"
-            onClick={onDownload}
+            onClick={() => onDownload(item)}
             aria-label={`Download ${item.title} (${item.fileLabel})`}
             className="h-11 font-semibold"
           >

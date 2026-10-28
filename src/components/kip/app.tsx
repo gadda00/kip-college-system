@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useHashRoute, routeTitle } from '@/components/kip/lib/router'
 import { useAuthStore } from '@/components/kip/stores/auth-store'
@@ -8,9 +9,6 @@ import { Header } from '@/components/kip/site/header'
 import { Footer } from '@/components/kip/site/footer'
 import { ChatWidget } from '@/components/kip/chat-widget'
 import { BackToTop } from '@/components/kip/components/back-to-top'
-import { StudentPortal } from '@/components/kip/portal/student/StudentPortal'
-import { LecturerPortal } from '@/components/kip/portal/lecturer/LecturerPortal'
-import { AdminDashboard } from '@/components/kip/admin/AdminDashboard'
 
 import { HomeView } from '@/components/kip/site/views/home-view'
 import { AboutView } from '@/components/kip/site/views/about-view'
@@ -27,6 +25,41 @@ import { ContactView } from '@/components/kip/site/views/contact-view'
 import { LoginView } from '@/components/kip/site/views/login-view'
 import { FaqView } from '@/components/kip/site/views/faq-view'
 import { DownloadsView } from '@/components/kip/site/views/downloads-view'
+
+/**
+ * Authenticated portals are code-split: public visitors never download the
+ * student/lecturer/admin bundles (recharts, data tables, mark-entry forms…).
+ */
+function PortalSkeleton() {
+  return (
+    <div
+      className="mx-auto w-full max-w-7xl animate-pulse px-4 py-12 sm:px-6 lg:px-8"
+      aria-busy="true"
+      aria-label="Loading portal"
+    >
+      <div className="h-8 w-48 rounded-lg bg-muted" />
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-24 rounded-xl bg-muted" />
+        ))}
+      </div>
+      <div className="mt-6 h-64 rounded-xl bg-muted" />
+    </div>
+  )
+}
+
+const StudentPortal = dynamic(
+  () => import('@/components/kip/portal/student/StudentPortal').then((m) => m.StudentPortal),
+  { ssr: false, loading: () => <PortalSkeleton /> },
+)
+const LecturerPortal = dynamic(
+  () => import('@/components/kip/portal/lecturer/LecturerPortal').then((m) => m.LecturerPortal),
+  { ssr: false, loading: () => <PortalSkeleton /> },
+)
+const AdminDashboard = dynamic(
+  () => import('@/components/kip/admin/AdminDashboard').then((m) => m.AdminDashboard),
+  { ssr: false, loading: () => <PortalSkeleton /> },
+)
 
 /**
  * KIP College single-page application shell.
