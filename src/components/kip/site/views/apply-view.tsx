@@ -208,19 +208,19 @@ export function ApplyView({ preselectedCourseId = '' }: { preselectedCourseId?: 
                 <p className="mt-2 text-sm text-muted-foreground">
                   Thank you, <strong>{success.applicantName}</strong>. Your application reference is{' '}
                   <span className="rounded bg-primary/10 px-2 py-0.5 font-mono text-xs font-bold text-primary">
-                    {success.id.slice(-8).toUpperCase()}
+                    {success.reference ?? success.adminNote ?? success.id.slice(-8).toUpperCase()}
                   </span>
                 </p>
               </div>
               <div className="w-full rounded-xl border bg-muted/40 p-5 text-left">
                 <p className="text-sm font-semibold">What happens next?</p>
                 <ol className="mt-3 space-y-3 text-sm text-muted-foreground">
-                  {[
+                  {(success.nextSteps ?? [
                     'Our admissions team verifies your details (within 48 hours).',
                     'You receive an acceptance letter, admission number and fee structure by email.',
                     'Pay registration + first-term fees via M-Pesa, bank or cash.',
                     'Report to your campus, register units and begin classes.',
-                  ].map((step, i) => (
+                  ]).map((step, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                         {i + 1}

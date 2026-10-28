@@ -124,7 +124,7 @@ function HeroScrollCue() {
         faded ? 'opacity-0' : 'opacity-100'
       }`}
     >
-      <ChevronDown className="h-6 w-6 animate-bounce" />
+      <ChevronDown className="h-6 w-6 motion-safe:animate-bounce" />
     </div>
   )
 }

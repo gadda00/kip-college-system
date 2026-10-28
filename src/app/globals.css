@@ -209,3 +209,18 @@
     width: 100% !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Accessibility: honour prefers-reduced-motion — kill decorative CSS
+ * animation/transitions (framer-motion entrances are subtle & short).
+ * --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -176,7 +176,11 @@ export type Application = {
   kcseGrade: string
   kcseYear: number
   status: string
+  adminNote?: string | null
   createdAt: string
   course?: { title: string; code: string }
   campus?: { name: string }
+  /** present on submission responses */
+  reference?: string
+  nextSteps?: string[]
 }

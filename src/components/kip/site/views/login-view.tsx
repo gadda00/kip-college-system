@@ -23,6 +23,9 @@ import { KipLogo } from '@/components/kip/components/kip-logo'
 import { useAuthStore, portalHomeFor } from '@/components/kip/stores/auth-store'
 import { navigate } from '@/components/kip/lib/router'
 
+/** Demo credentials are only shown when explicitly enabled via env. */
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === '1'
+
 const DEMO_ACCOUNTS = [
   {
     role: 'Admin' as const,
@@ -206,7 +209,8 @@ export function LoginView() {
             </CardContent>
           </Card>
 
-          {/* demo accounts */}
+          {/* demo accounts — only shown when NEXT_PUBLIC_DEMO_MODE=1 */}
+          {DEMO_MODE && (
           <Card className="mt-5 border-white/20 bg-white/95 shadow-lg dark:bg-card/95">
             <CardContent className="p-5">
               <div className="flex items-center gap-2">
@@ -249,6 +253,7 @@ export function LoginView() {
               </ul>
             </CardContent>
           </Card>
+          )}
         </motion.div>
       </div>
     </div>
