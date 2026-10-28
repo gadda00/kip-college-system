@@ -61,3 +61,18 @@ Stage Summary:
 - Both deliverables exist at the required exact paths and carry the live deployment URL https://kip-college-system.vercel.app with the three demo accounts and the exact contractual pricing (KES 64,000 one-off; 10,000/yr hosting; 36,000/yr support; 50/25/25 milestones).
 - Owner-verification items carried in both documents: phone +254 703 710 879 (flagged "to be verified by owner") and fee figures (footnoted as pending owner verification), plus programme list/fee structures to be confirmed in Phase 1.
 - No files outside public/downloads/** and proposal-build/** were touched; no git commands run; worklog.md not appended (this entry is the integration record).
+
+
+---
+Task ID: 19
+Agent: shipper-subagent
+Task: PG provisioning fix, E2E re-verify, docs overhaul, quality gates, commit+push, live verification
+
+Work Log:
+- Confirmed/applied advisory-lock fix ($executeRawUnsafe) in src/lib/provision.ts (P2010 void-deserialization bug found by Task 18 E2E).
+- Re-ran PostgreSQL E2E; integrated Task 16 deliverables entry; rewrote README.md + DEPLOYMENT.md for the dual-database auto-provisioning architecture.
+- Quality gates: tsc, eslint, unit tests, integration smoke suite; deliverables verified locally and live.
+- Committed + pushed to origin/main (Vercel auto-deploy) and verified the live site end to end.
+
+Stage Summary:
+- Live site healthy on PostgreSQL with full demo dataset; see /tmp/live.log for evidence.
