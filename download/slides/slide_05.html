@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>KIP College — Module 01: Public Website</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f5f8fc; }
+  .slide { font-family: var(--font-body); }
+  .feature-item {
+    flex: 1; display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid #dde7f2; box-sizing: border-box;
+  }
+  .feature-item:last-child { border-bottom: none; }
+  .feature-item .material-icons { font-size: 20px; color: #1a4fd0; flex: none; }
+  .feature-item p { font-size: 15.5px; line-height: 1.5; color: #142840; margin: 0; }
+  .feature-item b { color: #0b1f3f; }
+  /* Browser chrome bar for the screenshot */
+  .chrome {
+    display: flex; align-items: center; gap: 12px;
+    height: 38px; background: #eef3fa; border-bottom: 1px solid var(--border);
+    padding: 0 14px; box-sizing: border-box;
+  }
+  .chrome-dots { display: flex; gap: 6px; }
+  .chrome-dots span { width: 10px; height: 10px; border-radius: 50%; background: #c0d0e2; display: block; }
+  .chrome-label { font-size: 12px; color: #4a6885; font-weight: 500; }
+  .chrome-live { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #1a4fd0; }
+  .chrome-live i.dot { width: 8px; height: 8px; border-radius: 50%; background: #1a4fd0; display: block; }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Decorative corner glow behind screenshot -->
+  <div data-decor aria-hidden="true"
+       style="position:absolute; right:-160px; bottom:-180px; width:520px; height:520px; border-radius:50%; background:radial-gradient(circle, rgba(26,79,208,0.08) 0%, rgba(26,79,208,0) 68%);"></div>
+
+  <div style="position:relative; height:100%; display:flex; flex-direction:column; padding:52px 64px 46px; box-sizing:border-box;">
+
+    <!-- Header -->
+    <header>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span class="accent-bar" data-decor aria-hidden="true" style="width:42px; height:4px;"></span>
+        <span class="kicker" style="color:#1a4fd0;">Module 01 — Public Website</span>
+      </div>
+      <h1 style="font-family:var(--font-heading); font-weight:900; font-size:40px; line-height:1.12; color:#0b1f3f; margin:14px 0 0 0;">A front door that converts visitors into applicants.</h1>
+    </header>
+
+    <!-- Body -->
+    <div style="flex:1; display:flex; gap:30px; margin-top:24px; min-height:0;">
+
+      <!-- Left: feature bullets -->
+      <div style="width:446px; flex:none; display:flex; flex-direction:column;">
+        <div class="feature-item">
+          <i class="material-icons">check_circle</i>
+          <p><b>Hero invitation</b> — Choose a path that matches your ambition</p>
+        </div>
+        <div class="feature-item">
+          <i class="material-icons">check_circle</i>
+          <p><b>All 28 programmes</b> with tuition, registration &amp; exam fees per term</p>
+        </div>
+        <div class="feature-item">
+          <i class="material-icons">check_circle</i>
+          <p><b>Filtering</b> by Technical, Business &amp; KASNEB streams</p>
+        </div>
+        <div class="feature-item">
+          <i class="material-icons">check_circle</i>
+          <p><b>Online admissions form</b> feeding straight into the admin console</p>
+        </div>
+        <div class="feature-item">
+          <i class="material-icons">check_circle</i>
+          <p><b>Accreditation strip:</b> KNEC, CDACC, NITA, KASNEB</p>
+        </div>
+        <div class="feature-item">
+          <i class="material-icons">check_circle</i>
+          <p><b>News &amp; events,</b> downloadable resources, FAQ and contact pages</p>
+        </div>
+      </div>
+
+      <!-- Right: live screenshot -->
+      <div style="flex:1; display:flex; flex-direction:column; justify-content:center; min-width:0;">
+        <div class="screenshot-frame">
+          <div class="chrome">
+            <div class="chrome-dots" data-decor aria-hidden="true"><span></span><span></span><span></span></div>
+            <span class="chrome-label">KIP College — Public Website</span>
+            <span class="chrome-live"><i class="dot" aria-hidden="true"></i>LIVE</span>
+          </div>
+          <img src="../../screenshots/proposal-hero.png" alt="Homepage of the live KIP College system">
+        </div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:7px; margin-top:12px;">
+          <i class="material-icons" style="font-size:15px; color:#1a4fd0;">verified</i>
+          <span style="font-size:13px; color:#4a6885;">Live system — not a mock-up.</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

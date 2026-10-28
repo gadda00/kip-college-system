@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>KIP College — Demo Access &amp; Next Steps</title>
+<link rel="stylesheet" href="global.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#0b1f3f;overflow:hidden;}
+  .role-badge{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(77,168,218,0.15);flex:0 0 auto;}
+  .role-badge .material-icons{font-size:21px;color:var(--accent-bright);}
+  .role-title{font-size:17px;font-weight:700;color:#ffffff;letter-spacing:0.2px;}
+  .cred-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(201,216,234,0.7);}
+  .cred-email{font-family:ui-monospace,'Cascadia Mono',Consolas,Menlo,monospace;font-size:16px;font-weight:600;color:#ffffff;margin-top:3px;letter-spacing:0.2px;}
+  .cred-pass{font-family:ui-monospace,'Cascadia Mono',Consolas,Menlo,monospace;font-size:19px;font-weight:700;color:var(--accent-bright);margin-top:3px;letter-spacing:0.3px;}
+  .acct-card{background-color:rgba(11,31,63,0.45);background-image:linear-gradient(180deg,rgba(255,255,255,0.09) 0%,rgba(255,255,255,0.03) 100%);border:1px solid rgba(255,255,255,0.17);border-radius:16px;backdrop-filter:blur(5px);}
+  .acct-divider{height:1px;background:rgba(255,255,255,0.14);margin:14px 0 12px;}
+  .acct-feats{font-size:13.5px;line-height:1.5;color:#c9d8ea;margin:0;}
+  .step-ic{font-size:17px;color:var(--accent-bright);}
+  .step-txt{font-size:15px;font-weight:600;color:#ffffff;}
+</style>
+</head>
+<body>
+<div class="slide slide-dark">
+  <img src="https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/75ed45ef17fa.jpg" alt="" aria-hidden="true" class="absolute" style="inset:0;width:100%;height:100%;object-fit:cover;">
+  <div class="absolute" style="inset:0;background:rgba(11,31,63,0.9);"></div>
+  <!-- luminous frame echoing the cover -->
+  <div data-decor aria-hidden="true" class="absolute" style="inset:24px;border:1.5px solid rgba(77,168,218,0.4);border-radius:3px;pointer-events:none;"></div>
+
+  <div class="relative h-full flex flex-col items-center justify-center text-center" style="padding:56px 76px 64px;">
+    <div class="kicker" style="color:var(--accent-bright);letter-spacing:5px;">SEE IT LIVE TODAY</div>
+    <h1 style="font-family:var(--font-heading);font-weight:900;font-size:48px;line-height:1.1;color:#ffffff;margin:12px 0 0;">Every feature is live right now.</h1>
+
+    <div class="grid grid-cols-3 w-full" style="gap:20px;margin-top:34px;">
+      <div class="acct-card text-left" style="padding:22px 24px;">
+        <div class="flex items-center" style="gap:13px;">
+          <div class="role-badge"><i class="material-icons" aria-hidden="true">admin_panel_settings</i></div>
+          <div class="role-title">Administrator</div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="cred-label">Email</div>
+          <div class="cred-email">admin@kipskitui.com</div>
+          <div class="cred-label" style="margin-top:11px;">Password</div>
+          <div class="cred-pass">Admin@123</div>
+        </div>
+        <div class="acct-divider"></div>
+        <p class="acct-feats">analytics, students, admissions, payments, exports</p>
+      </div>
+
+      <div class="acct-card text-left" style="padding:22px 24px;">
+        <div class="flex items-center" style="gap:13px;">
+          <div class="role-badge"><i class="material-icons" aria-hidden="true">cast_for_education</i></div>
+          <div class="role-title">Lecturer</div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="cred-label">Email</div>
+          <div class="cred-email">lecturer@kipskitui.com</div>
+          <div class="cred-label" style="margin-top:11px;">Password</div>
+          <div class="cred-pass">Lecturer@123</div>
+        </div>
+        <div class="acct-divider"></div>
+        <p class="acct-feats">classes, marks, analytics</p>
+      </div>
+
+      <div class="acct-card text-left" style="padding:22px 24px;">
+        <div class="flex items-center" style="gap:13px;">
+          <div class="role-badge"><i class="material-icons" aria-hidden="true">badge</i></div>
+          <div class="role-title">Student</div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="cred-label">Email</div>
+          <div class="cred-email">student@kipskitui.com</div>
+          <div class="cred-label" style="margin-top:11px;">Password</div>
+          <div class="cred-pass">Student@123</div>
+        </div>
+        <div class="acct-divider"></div>
+        <p class="acct-feats">fees, results, ID card, AI Study Buddy</p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center" style="margin-top:32px;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:999px;padding:12px 32px;">
+      <i class="material-icons step-ic" aria-hidden="true">rate_review</i>
+      <span class="step-txt">Review</span>
+      <span style="color:#c9d8ea;">·</span>
+      <i class="material-icons step-ic" aria-hidden="true">travel_explore</i>
+      <span class="step-txt">Explore the demo</span>
+      <span style="color:#c9d8ea;">·</span>
+      <i class="material-icons step-ic" aria-hidden="true">history_edu</i>
+      <span class="step-txt">Sign</span>
+      <span style="font-size:15px;font-weight:600;color:#c9d8ea;">— go live in four weeks.</span>
+    </div>
+
+    <div class="flex items-center justify-center" style="margin-top:26px;gap:16px;">
+      <span data-decor aria-hidden="true" style="display:inline-block;width:46px;height:1.5px;background:linear-gradient(90deg,rgba(217,164,65,0) 0%,rgba(217,164,65,0.6) 100%);"></span>
+      <span style="font-family:var(--font-heading);font-style:italic;font-size:26px;color:var(--gold);">Training for Excellence.</span>
+      <span data-decor aria-hidden="true" style="display:inline-block;width:46px;height:1.5px;background:linear-gradient(90deg,rgba(217,164,65,0.6) 0%,rgba(217,164,65,0) 100%);"></span>
+    </div>
+  </div>
+
+  <div class="absolute" style="right:40px;bottom:34px;font-size:12px;letter-spacing:1px;color:rgba(201,216,234,0.85);">October 2026 · Ref KIP/WEB/2026/01</div>
+</div>
+</body>
+</html>

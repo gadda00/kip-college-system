@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>KIP College — Technology &amp; Security</title>
+<link rel="stylesheet" href="global.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:var(--bg);overflow:hidden;}
+  .h1{font-family:var(--font-heading);font-weight:900;color:var(--primary);font-size:40px;line-height:1.14;letter-spacing:-0.3px;margin:0;}
+  .icon-badge{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(26,79,208,0.10);color:var(--accent);flex:0 0 auto;}
+  .icon-badge .material-icons{font-size:24px;}
+  .card-title{font-size:19px;font-weight:700;color:var(--primary);line-height:1.2;margin:0;}
+  .card-detail{font-size:16px;line-height:1.5;color:var(--muted);margin:12px 0 0;}
+  .ghost-num{position:absolute;top:16px;right:20px;font-family:var(--font-heading);font-weight:700;font-size:25px;color:rgba(26,79,208,0.15);line-height:1;}
+</style>
+</head>
+<body>
+<div class="slide">
+  <!-- decorative corner washes -->
+  <div data-decor aria-hidden="true" class="absolute" style="top:-170px;right:-150px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(26,79,208,0.09) 0%,rgba(26,79,208,0) 65%);"></div>
+  <div data-decor aria-hidden="true" class="absolute" style="bottom:-210px;left:-170px;width:540px;height:540px;border-radius:50%;background:radial-gradient(circle,rgba(45,122,179,0.08) 0%,rgba(45,122,179,0) 65%);"></div>
+
+  <div class="relative h-full flex flex-col" style="padding:54px 64px 48px;">
+    <header>
+      <div class="kicker" style="color:var(--accent);">UNDER THE HOOD</div>
+      <h1 class="h1" style="margin-top:10px;">Modern engineering. <span style="color:var(--accent);">Full ownership.</span></h1>
+      <div style="margin-top:14px;"><span class="accent-bar"></span></div>
+    </header>
+
+    <div class="grid grid-cols-3 flex-1" style="gap:20px;margin-top:26px;grid-template-rows:1fr 1fr;">
+      <div class="card relative flex flex-col justify-center" style="padding:20px 22px;">
+        <div class="ghost-num" aria-hidden="true">01</div>
+        <div class="flex items-center" style="gap:14px;">
+          <div class="icon-badge"><i class="material-icons" aria-hidden="true">web</i></div>
+          <h3 class="card-title">Frontend</h3>
+        </div>
+        <p class="card-detail">Next.js 16, TypeScript, Tailwind CSS, shadcn/ui</p>
+      </div>
+
+      <div class="card relative flex flex-col justify-center" style="padding:20px 22px;">
+        <div class="ghost-num" aria-hidden="true">02</div>
+        <div class="flex items-center" style="gap:14px;">
+          <div class="icon-badge"><i class="material-icons" aria-hidden="true">dns</i></div>
+          <h3 class="card-title">Backend</h3>
+        </div>
+        <p class="card-detail">Server-side API routes, nothing sensitive in the browser</p>
+      </div>
+
+      <div class="card relative flex flex-col justify-center" style="padding:20px 22px;">
+        <div class="ghost-num" aria-hidden="true">03</div>
+        <div class="flex items-center" style="gap:14px;">
+          <div class="icon-badge"><i class="material-icons" aria-hidden="true">storage</i></div>
+          <h3 class="card-title">Database</h3>
+        </div>
+        <p class="card-detail">Prisma ORM over SQL (PostgreSQL in production)</p>
+      </div>
+
+      <div class="card relative flex flex-col justify-center" style="padding:20px 22px;">
+        <div class="ghost-num" aria-hidden="true">04</div>
+        <div class="flex items-center" style="gap:14px;">
+          <div class="icon-badge"><i class="material-icons" aria-hidden="true">security</i></div>
+          <h3 class="card-title">Security</h3>
+        </div>
+        <p class="card-detail">bcrypt password hashing, session cookies, role-based access</p>
+      </div>
+
+      <div class="card relative flex flex-col justify-center" style="padding:20px 22px;">
+        <div class="ghost-num" aria-hidden="true">05</div>
+        <div class="flex items-center" style="gap:14px;">
+          <div class="icon-badge"><i class="material-icons" aria-hidden="true">smart_toy</i></div>
+          <h3 class="card-title">AI services</h3>
+        </div>
+        <p class="card-detail">Server-side large language model SDK</p>
+      </div>
+
+      <div class="card relative flex flex-col justify-center" style="padding:20px 22px;">
+        <div class="ghost-num" aria-hidden="true">06</div>
+        <div class="flex items-center" style="gap:14px;">
+          <div class="icon-badge"><i class="material-icons" aria-hidden="true">cloud_done</i></div>
+          <h3 class="card-title">Hosting</h3>
+        </div>
+        <p class="card-detail">Vercel or Netlify, automatic HTTPS, continuous deployment</p>
+      </div>
+    </div>
+
+    <div class="card-navy flex items-center" style="margin-top:22px;padding:15px 26px;gap:18px;">
+      <div style="width:42px;height:42px;border-radius:12px;background:rgba(77,168,218,0.16);display:flex;align-items:center;justify-content:center;flex:0 0 auto;">
+        <i class="material-icons" aria-hidden="true" style="color:var(--accent-bright);font-size:23px;">code</i>
+      </div>
+      <p style="font-size:17px;line-height:1.45;color:#e8f0f8;margin:0;">Delivered as a complete codebase in a <strong style="color:#ffffff;font-weight:700;">GitHub repository</strong> — <strong style="color:var(--accent-bright);font-weight:700;">the college owns the platform outright.</strong></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

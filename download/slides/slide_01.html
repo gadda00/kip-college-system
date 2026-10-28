@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>KIP College — Digital Transformation Proposal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #0b1f3f; }
+  .slide { font-family: var(--font-body); }
+  .chip-campus {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; border-radius: 999px;
+    background: rgba(18, 58, 138, 0.5);
+    border: 1px solid rgba(77, 168, 218, 0.38);
+    color: #ffffff; font-size: 13px; font-weight: 500; letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .chip-campus .material-icons { font-size: 16px; color: #4da8da; }
+</style>
+</head>
+<body>
+<div class="slide slide-dark">
+
+  <!-- Full-bleed background image (brief URL; local fallback if unreachable) -->
+  <img src="https://z-cdn.chatglm.cn/image-search-mcp/images/6771373e3f41.jpg"
+       alt="African students in a computer training room"
+       onerror="this.onerror=null; this.src='images/cover-bg.jpg';"
+       style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+
+  <!-- Deep navy gradient overlay for contrast -->
+  <div data-decor aria-hidden="true"
+       style="position:absolute; inset:0; background:linear-gradient(118deg, rgba(11,31,63,0.88) 0%, rgba(11,31,63,0.84) 42%, rgba(18,58,138,0.72) 100%);"></div>
+
+  <!-- Soft luminous glow, top-left -->
+  <div data-decor aria-hidden="true"
+       style="position:absolute; left:-150px; top:-170px; width:580px; height:580px; border-radius:50%; background:radial-gradient(circle, rgba(77,168,218,0.16) 0%, rgba(77,168,218,0) 70%);"></div>
+
+  <!-- Thin luminous blue frame line, inset 24px -->
+  <div data-decor aria-hidden="true"
+       style="position:absolute; inset:24px; border:1.5px solid rgba(77,168,218,0.4); border-radius:3px; pointer-events:none;"></div>
+
+  <!-- Content -->
+  <div style="position:relative; height:100%; display:flex; flex-direction:column; padding:66px 78px 58px; box-sizing:border-box;">
+
+    <!-- Kicker -->
+    <div style="display:flex; align-items:center; gap:16px;">
+      <span data-decor aria-hidden="true" style="width:44px; height:2px; background:#4da8da; flex:none;"></span>
+      <span style="font-size:12px; font-weight:600; letter-spacing:4.5px; text-transform:uppercase; color:#4da8da;">Website &amp; College Management System — Project Proposal</span>
+    </div>
+
+    <!-- Hero block -->
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding-bottom:10px;">
+      <h1 style="font-family:var(--font-heading); font-weight:900; font-size:122px; line-height:1; color:#ffffff; letter-spacing:0.015em; margin:0;">KIP COLLEGE</h1>
+      <div style="display:flex; align-items:center; gap:20px; margin-top:24px;">
+        <span data-decor aria-hidden="true" style="width:64px; height:2px; background:linear-gradient(90deg, #4da8da, rgba(77,168,218,0)); flex:none;"></span>
+        <p style="font-family:var(--font-heading); font-style:italic; font-weight:700; font-size:30px; color:#4da8da; margin:0;">Digital Transformation Proposal</p>
+      </div>
+      <p style="margin:30px 0 0 0; max-width:660px; font-size:16px; line-height:1.75; color:#c9d8ea;">One platform for three campuses: a modern public website, a self-service student portal, lecturer tools and a full administrative console — <span style="color:#ffffff; font-weight:600;">already built, live and demonstrated.</span></p>
+    </div>
+
+    <!-- Bottom bar: campus chips + meta -->
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:24px;">
+      <div style="display:flex; gap:12px;">
+        <span class="chip-campus"><i class="material-icons">location_on</i>Main Campus · Wikililye</span>
+        <span class="chip-campus"><i class="material-icons">location_on</i>Town Campus · Muli Mall</span>
+        <span class="chip-campus"><i class="material-icons">location_on</i>Mwingi Campus · Sunrise Building</span>
+      </div>
+      <div style="font-size:13px; color:rgba(201,216,234,0.85); letter-spacing:0.6px; white-space:nowrap;">October 2026&nbsp;&nbsp;·&nbsp;&nbsp;Ref KIP/WEB/2026/01</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

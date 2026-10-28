@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>KIP College — The Challenge</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f5f8fc; }
+  .slide { font-family: var(--font-body); }
+  .pain {
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 22px; height: 88px; box-sizing: border-box;
+  }
+  .pain-icon {
+    width: 46px; height: 46px; border-radius: 11px; flex: none;
+    background: rgba(26, 79, 208, 0.09);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pain-icon .material-icons { font-size: 23px; color: #1a4fd0; }
+  .pain-title { font-size: 16px; font-weight: 700; color: #0b1f3f; line-height: 1.25; }
+  .pain-detail { font-size: 13.5px; color: #4a6885; line-height: 1.35; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Decorative corner glow -->
+  <div data-decor aria-hidden="true"
+       style="position:absolute; left:-180px; bottom:-200px; width:520px; height:520px; border-radius:50%; background:radial-gradient(circle, rgba(26,79,208,0.07) 0%, rgba(26,79,208,0) 68%);"></div>
+
+  <div style="position:relative; height:100%; display:flex; flex-direction:column; padding:56px 64px 46px; box-sizing:border-box;">
+
+    <!-- Body: editorial split -->
+    <div style="flex:1; display:flex; min-height:0;">
+
+      <!-- Left column: kicker, headline, lead -->
+      <div style="width:430px; flex:none; position:relative; padding-right:36px; border-right:1px solid #d9e4f0; display:flex; flex-direction:column;">
+
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span class="accent-bar" data-decor aria-hidden="true" style="width:42px; height:4px;"></span>
+          <span class="kicker" style="color:#1a4fd0;">The Problem</span>
+        </div>
+
+        <h1 style="font-family:var(--font-heading); font-weight:900; font-size:38px; line-height:1.15; color:#0b1f3f; margin:18px 0 0 0;">A great college deserves a greater digital presence.</h1>
+
+        <div style="border-left:4px solid #1a4fd0; padding-left:22px; margin-top:24px; position:relative; z-index:1;">
+          <p style="font-size:16.5px; line-height:1.8; color:#142840; margin:0;">The current website is <b>a static brochure</b>. It lists courses, but it cannot serve students, process applications, or support staff. Meanwhile operations run on <b>paper and spreadsheets</b>.</p>
+        </div>
+
+        <!-- Ghost icons (decor): today's paper & spreadsheet reality -->
+        <div data-decor aria-hidden="true" style="position:absolute; left:0; bottom:4px; color:rgba(11,31,63,0.07); line-height:0.8;">
+          <i class="material-icons" style="font-size:196px;">description</i>
+        </div>
+        <div data-decor aria-hidden="true" style="position:absolute; left:182px; bottom:78px; color:rgba(11,31,63,0.055); line-height:0.8;">
+          <i class="material-icons" style="font-size:128px;">table_view</i>
+        </div>
+        <div data-decor aria-hidden="true" style="position:absolute; left:66px; bottom:158px; color:rgba(11,31,63,0.05); line-height:0.8;">
+          <i class="material-icons" style="font-size:74px;">print</i>
+        </div>
+      </div>
+
+      <!-- Right column: 5 pain points -->
+      <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between; margin-left:40px;">
+
+        <div class="card pain">
+          <div class="pain-icon"><i class="material-icons">edit_off</i></div>
+          <div>
+            <div class="pain-title">No online admissions</div>
+            <div class="pain-detail">Applicants must travel to campus for paper forms</div>
+          </div>
+        </div>
+
+        <div class="card pain">
+          <div class="pain-icon"><i class="material-icons">table_view</i></div>
+          <div>
+            <div class="pain-title">Manual fee tracking</div>
+            <div class="pain-detail">Balances live in spreadsheets, invisible to students</div>
+          </div>
+        </div>
+
+        <div class="card pain">
+          <div class="pain-icon"><i class="material-icons">history_edu</i></div>
+          <div>
+            <div class="pain-title">Hand-made documents</div>
+            <div class="pain-detail">Fee statements, transcripts and ID cards produced on request</div>
+          </div>
+        </div>
+
+        <div class="card pain">
+          <div class="pain-icon"><i class="material-icons">folder_off</i></div>
+          <div>
+            <div class="pain-title">No central records</div>
+            <div class="pain-detail">Student data fragmented across campuses</div>
+          </div>
+        </div>
+
+        <div class="card pain">
+          <div class="pain-icon"><i class="material-icons">campaign</i></div>
+          <div>
+            <div class="pain-title">Fragmented communication</div>
+            <div class="pain-detail">Announcements rely on noticeboards</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Accent callout strip -->
+    <div style="margin-top:24px; height:58px; border-radius:12px; background:linear-gradient(90deg, #1a4fd0 0%, #123a8a 100%); display:flex; align-items:center; justify-content:center; gap:12px; box-shadow:0 8px 22px rgba(11,31,63,0.18);">
+      <i class="material-icons" style="font-size:21px; color:#7cc4e8;">verified</i>
+      <span style="font-size:16.5px; font-weight:600; color:#ffffff; letter-spacing:0.2px;">Every one of these gaps is closed by the proposed platform — on day one.</span>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

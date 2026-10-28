@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* KIP Crystal Blue palette */
+  --bg: #f5f8fc;
+  --primary: #0b1f3f;
+  --accent: #1a4fd0;
+  --accent-bright: #4da8da;
+  --accent-soft: #2d7ab3;
+  --navy-800: #123a8a;
+  --navy-600: #1565C0;
+  --card: #ffffff;
+  --card-tint: #e4ecf5;
+  --stripe: #eef3fa;
+  --border: #c0d0e2;
+  --text: #142840;
+  --muted: #5a7a96;
+  --gold: #d9a441;
+
+  /* Typography tokens (families + sizes only) */
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-num: 'Inter', Arial, sans-serif;
+  --fs-display: 64px;
+  --fs-h1: 40px;
+  --fs-h2: 28px;
+  --fs-h3: 20px;
+  --fs-body: 16px;
+  --fs-small: 13px;
+  --fs-micro: 11px;
+}
+
+/* Slide canvas */
+.slide {
+  width: 1280px;
+  height: 720px;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+  font-family: var(--font-body);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.slide-dark {
+  background: var(--primary);
+  color: #e8f0f8;
+}
+
+/* Surfaces */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(11, 31, 63, 0.07);
+}
+
+.card-tint {
+  background: var(--card-tint);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.card-navy {
+  background: linear-gradient(135deg, #0b1f3f 0%, #123a8a 100%);
+  color: #e8f0f8;
+  border-radius: 14px;
+}
+
+/* Accent helpers */
+.accent-text { color: var(--accent); }
+.accent-bar {
+  display: inline-block;
+  width: 56px;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+}
+
+.kicker {
+  font-family: var(--font-body);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(26, 79, 208, 0.09);
+  color: var(--accent);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+.screenshot-frame {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 34px rgba(11, 31, 63, 0.16);
+  background: #fff;
+}
+
+.screenshot-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}

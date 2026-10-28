@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KIP College — AI-Powered Assistance</title>
+<link rel="stylesheet" href="global.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;overflow:hidden;background:#0b1f3f}
+  .slide{padding:52px 64px 44px;display:flex;flex-direction:column}
+  .kicker{color:var(--accent-bright);font-weight:700}
+  .h1{font-family:var(--font-heading);font-weight:900;font-size:38px;line-height:1.16;letter-spacing:-.3px;color:#fff;margin:10px 0 0}
+  .accent-bar{margin-top:16px}
+  .body{flex:1;display:flex;gap:44px;align-items:center;margin-top:22px;min-height:0}
+  /* decorative glow + luminous frame */
+  .glow{position:absolute;width:760px;height:760px;right:-210px;top:-300px;background:radial-gradient(circle,rgba(26,79,208,.38) 0%,rgba(26,79,208,0) 62%);pointer-events:none}
+  .frame-line{position:absolute;inset:24px;border:1.5px solid rgba(77,168,218,.28);border-radius:6px;pointer-events:none}
+  /* screenshot assembly — dark variant */
+  .shot{flex:0 0 auto;border:1px solid rgba(77,168,218,.4);background:#0d2347;box-shadow:0 22px 60px rgba(0,0,0,.5)}
+  .shot-chrome{display:flex;align-items:center;justify-content:space-between;height:32px;padding:0 14px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.12)}
+  .dots{display:flex;gap:6px}
+  .dots span{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.28);display:block}
+  .live{display:flex;align-items:center;gap:7px;font-size:var(--fs-micro);font-weight:700;letter-spacing:2.5px;color:var(--accent-bright)}
+  .live span{width:7px;height:7px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 0 3px rgba(77,168,218,.22);display:block}
+  .shot img{width:100%;object-fit:cover;object-position:top;display:block}
+  .shot-cap{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.12)}
+  .shot-cap .material-icons{font-size:16px;color:var(--accent-bright)}
+  .shot-cap p{margin:0;font-size:var(--fs-small);font-weight:500;color:#c9d8ea;letter-spacing:.2px}
+  /* AI feature blocks */
+  .ai-col{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;min-width:0}
+  .ai-card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:18px 20px;display:flex;gap:16px;align-items:flex-start}
+  .ai-tile{flex:0 0 46px;width:46px;height:46px;border-radius:12px;background:rgba(77,168,218,.16);display:flex;align-items:center;justify-content:center}
+  .ai-tile .material-icons{font-size:24px;color:var(--accent-bright)}
+  .ai-card h3{margin:0 0 6px;font-size:18px;font-weight:700;color:#fff;letter-spacing:.2px}
+  .ai-card p{margin:0;font-size:15px;line-height:1.55;color:#c9d8ea}
+  .first-line{margin-top:16px;padding-top:16px;border-top:1px solid rgba(77,168,218,.35);display:flex;align-items:center;gap:10px}
+  .first-line .material-icons{font-size:20px;color:var(--accent-bright)}
+  .first-line p{margin:0;font-size:16px;font-style:italic;font-weight:600;color:var(--accent-bright);letter-spacing:.3px}
+</style>
+</head>
+<body>
+<div class="slide slide-dark">
+  <div class="glow" data-decor aria-hidden="true"></div>
+  <div class="frame-line" data-decor aria-hidden="true"></div>
+
+  <header>
+    <div class="kicker">INTELLIGENCE</div>
+    <h1 class="h1">A 24/7 admissions officer.<br>A personal tutor for every student.</h1>
+    <span class="accent-bar"></span>
+  </header>
+
+  <div class="body">
+    <!-- Screenshot: AI Study Buddy conversation -->
+    <div class="shot screenshot-frame" style="width:560px">
+      <div class="shot-chrome">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="live"><span></span>LIVE</div>
+      </div>
+      <img src="../../screenshots/task8b-study-buddy.png" alt="AI Study Buddy conversation inside the live KIP College student portal" style="height:394px">
+      <div class="shot-cap"><i class="material-icons">check_circle</i><p>AI Study Buddy in conversation — live system.</p></div>
+    </div>
+
+    <!-- Two AI features -->
+    <div class="ai-col">
+      <div class="ai-card">
+        <div class="ai-tile"><i class="material-icons">support_agent</i></div>
+        <div>
+          <h3>Website AI Assistant</h3>
+          <p>Answers course, fee, intake and campus questions around the clock, drawing answers from the live course database so it never quotes stale fees.</p>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-tile"><i class="material-icons">psychology</i></div>
+        <div>
+          <h3>AI Study Buddy</h3>
+          <p>Inside the student portal: knows the student&rsquo;s actual units and materials; explains concepts, generates practice questions and quiz drills for the exact syllabus being studied.</p>
+        </div>
+      </div>
+      <div class="first-line">
+        <i class="material-icons">auto_awesome</i>
+        <p>A regional first for a college platform.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

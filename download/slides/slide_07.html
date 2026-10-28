@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KIP College — Module 02 · Official Documents</title>
+<link rel="stylesheet" href="global.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;overflow:hidden;background:#f5f8fc}
+  .slide{padding:52px 64px 44px;display:flex;flex-direction:column}
+  .kicker{color:var(--accent);font-weight:700}
+  .h1{font-family:var(--font-heading);font-weight:900;font-size:var(--fs-h1);line-height:1.12;letter-spacing:-.4px;color:var(--primary);margin:10px 0 0}
+  .accent-bar{margin-top:16px}
+  .body{flex:1;display:flex;gap:40px;align-items:center;margin-top:24px;min-height:0}
+  /* left document cards */
+  .docs{flex:0 0 502px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .doc{display:flex;gap:14px;align-items:flex-start;padding:16px 18px}
+  .tile{flex:0 0 44px;width:44px;height:44px;border-radius:12px;background:rgba(26,79,208,.09);display:flex;align-items:center;justify-content:center}
+  .tile .material-icons{font-size:23px;color:var(--accent)}
+  .doc p{margin:0;font-size:15px;line-height:1.5;color:var(--text);padding-top:1px}
+  .doc b{font-weight:700;color:var(--primary);font-size:16px}
+  .note{display:flex;gap:12px;align-items:center;padding:14px 18px;margin-top:6px}
+  .note .material-icons{font-size:22px;color:var(--accent)}
+  .note p{margin:0;font-size:15px;line-height:1.5;color:var(--text)}
+  /* screenshot assembly */
+  .shot{flex:0 0 auto}
+  .shot-chrome{display:flex;align-items:center;justify-content:space-between;height:32px;padding:0 14px;background:var(--stripe);border-bottom:1px solid var(--border)}
+  .dots{display:flex;gap:6px}
+  .dots span{width:9px;height:9px;border-radius:50%;background:var(--border);display:block}
+  .live{display:flex;align-items:center;gap:7px;font-size:var(--fs-micro);font-weight:700;letter-spacing:2.5px;color:var(--accent)}
+  .live span{width:7px;height:7px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 0 3px rgba(77,168,218,.28);display:block}
+  .shot img{width:100%;object-fit:cover;object-position:top;display:block}
+  .shot-cap{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#fff;border-top:1px solid var(--border)}
+  .shot-cap .material-icons{font-size:16px;color:var(--accent)}
+  .shot-cap p{margin:0;font-size:var(--fs-small);font-weight:500;color:var(--muted);letter-spacing:.2px}
+</style>
+</head>
+<body>
+<div class="slide">
+  <header>
+    <div class="kicker">MODULE 02 — OFFICIAL DOCUMENTS</div>
+    <h1 class="h1">Documents the college can be proud of.</h1>
+    <span class="accent-bar"></span>
+  </header>
+
+  <div class="body">
+    <!-- Three official documents -->
+    <div class="docs">
+      <div class="card doc">
+        <div class="tile"><i class="material-icons">receipt_long</i></div>
+        <p><b>Fee statement</b> — full ledger of charges and payments, M-PESA paybill in the footer</p>
+      </div>
+      <div class="card doc">
+        <div class="tile"><i class="material-icons">history_edu</i></div>
+        <p><b>Academic transcript</b> — every unit, mark, grade and remark, grouped by term, with examination body of record</p>
+      </div>
+      <div class="card doc">
+        <div class="tile"><i class="material-icons">badge</i></div>
+        <p><b>Student ID card</b> — crest, admission number, course, campus, validity period, barcode</p>
+      </div>
+      <div class="card-tint note">
+        <i class="material-icons">print</i>
+        <p>All print-ready on ordinary office printers — generated straight from live data, no word-processing, no delays.</p>
+      </div>
+    </div>
+
+    <!-- Screenshot: printable transcript -->
+    <div class="shot screenshot-frame" style="width:610px">
+      <div class="shot-chrome">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="live"><span></span>LIVE</div>
+      </div>
+      <img src="../../screenshots/proposal-student-results.png" alt="Printable academic transcript in the live KIP College system" style="height:381px">
+      <div class="shot-cap"><i class="material-icons">check_circle</i><p>Printable transcript view — live system.</p></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

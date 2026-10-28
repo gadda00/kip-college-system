@@ -1,0 +1,101 @@
+{
+  "design": {
+    "title": "KIP College — Website & College Management System Proposal",
+    "style_name": "KIP Crystal Blue",
+    "palette": {
+      "background": "#f5f8fc",
+      "primary": "#0b1f3f",
+      "accent": "#1a4fd0"
+    },
+    "typography": {
+      "heading": "Playfair Display",
+      "body": "Inter",
+      "numeric": "Inter"
+    },
+    "reference": "Premium SaaS product pitch — deep navy sections, luminous blue accents, screenshot-driven storytelling"
+  },
+  "global_css_path": "/home/z/my-project/download/slides/global.css",
+  "slides_dir": "/home/z/my-project/download/slides",
+  "language": "en",
+  "speaker_notes": "none",
+  "slides": [
+    {
+      "title": "Cover — KIP College Digital Transformation Proposal",
+      "layout": "cover",
+      "output_path": "/home/z/my-project/download/slides/slide_01.html",
+      "task_brief": "COVER SLIDE, dark and premium. Full-bleed background image https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/6771373e3f41.jpg (African students in a computer training room) with a deep navy gradient overlay (rgba(11,31,63,0.88) to rgba(18,58,138,0.72)) so text passes contrast. Top-left kicker in luminous blue #4da8da, letter-spaced uppercase: 'WEBSITE & COLLEGE MANAGEMENT SYSTEM — PROJECT PROPOSAL'. Huge Playfair Display 900 white headline: 'KIP COLLEGE' with subtitle line 'Digital Transformation Proposal' in #4da8da. Below, a 2-3 line summary in light blue-gray (#c9d8ea, 16px): 'One platform for three campuses: a modern public website, a self-service student portal, lecturer tools and a full administrative console — already built, live and demonstrated.' Bottom bar row with three small chips (white text on translucent blue): 'Main Campus · Wikililye' | 'Town Campus · Muli Mall' | 'Mwingi Campus · Sunrise Building'. Bottom-right meta: 'October 2026 · Ref KIP/WEB/2026/01'. Include a thin luminous blue frame line inset 24px around the slide (1.5px, #4da8da, 40% opacity)."
+    },
+    {
+      "title": "The College Today",
+      "layout": "stats bento",
+      "output_path": "/home/z/my-project/download/slides/slide_02.html",
+      "task_brief": "Light background slide. Kicker 'WHO WE ARE'. H1 'A college with real scale — and real ambition.' Row of 4 big stat cards (Playfair Display 900 numerals in accent blue #1a4fd0): '3' Campuses across Kitui County, '28' Academic programmes catalogued, '3' Course streams — Technical, Business & KASNEB, '4' National examination bodies (KNEC · CDACC · NITA · KASNEB). Below, a wide card-tint strip listing the three campuses with locations: 'Main Campus — Wikililye, Mulango Road', 'Town Campus — Muli Mall Building, Kitui Town', 'Mwingi Campus — Sunrise Building, Mwingi'. Closing sentence (muted): 'Every campus, course, fee structure and intake on one platform — the college's complete academic identity, online.'"
+    },
+    {
+      "title": "The Challenge",
+      "layout": "split problem list",
+      "output_path": "/home/z/my-project/download/slides/slide_03.html",
+      "task_brief": "Light background slide. Kicker 'THE PROBLEM'. H1 'A great college deserves a greater digital presence.' Left column: short paragraph 'The current website is a static brochure. It lists courses, but it cannot serve students, process applications, or support staff. Meanwhile operations run on paper and spreadsheets.' Right/below: 5 pain-point rows in cards, each with a Material Icon and bold title + one-line detail: 1. 'No online admissions — applicants must travel to campus for paper forms' 2. 'Manual fee tracking — balances live in spreadsheets, invisible to students' 3. 'Hand-made documents — fee statements, transcripts and ID cards produced on request' 4. 'No central records — student data fragmented across campuses' 5. 'Fragmented communication — announcements rely on noticeboards'. End with accent callout strip: 'Every one of these gaps is closed by the proposed platform — on day one.'"
+    },
+    {
+      "title": "One Platform, Four Experiences",
+      "layout": "bento grid overview",
+      "output_path": "/home/z/my-project/download/slides/slide_04.html",
+      "task_brief": "Light background slide. Kicker 'THE SOLUTION'. H1 'One platform. Four experiences. Every stakeholder served.' Bento grid of 4 module cards, each with a Material Icon, module name, 'who it serves' tag line, and 3 compact bullet points: (1) 'Public Website' — prospective students & parents — course catalogue with full fees · online admissions · news, events, downloads, FAQ · 24/7 AI assistant. (2) 'Student Portal' — current students — dashboard & timetable · M-PESA fee payments · printable statements, transcripts, ID card · AI Study Buddy. (3) 'Lecturer Workspace' — teaching staff — class rosters · guided marks entry · class analytics with grade distributions. (4) 'Admin Console' — registrar, finance & management — live analytics · admissions workflow · payments ledger · announcements & CSV exports. Make the first card slightly emphasized (navy gradient card) with tag 'The front door of the college'."
+    },
+    {
+      "title": "A Public Website That Sells the College",
+      "layout": "split text + screenshot",
+      "output_path": "/home/z/my-project/download/slides/slide_05.html",
+      "task_brief": "Light background slide. Kicker 'MODULE 01 — PUBLIC WEBSITE'. H1 'A front door that converts visitors into applicants.' Left column bullets (6): 'Hero invitation — Choose a path that matches your ambition', 'All 28 programmes with tuition, registration & exam fees per term', 'Filtering by Technical, Business & KASNEB streams', 'Online admissions form feeding straight into the admin console', 'Accreditation strip: KNEC, CDACC, NITA, KASNEB', 'News & events, downloadable resources, FAQ and contact pages'. Right side: large screenshot in .screenshot-frame, image src '../../screenshots/proposal-hero.png' (homepage of the live system). Caption under screenshot (fs-small, muted): 'Live system — not a mock-up.'"
+    },
+    {
+      "title": "The Student Portal",
+      "layout": "split screenshot + text",
+      "output_path": "/home/z/my-project/download/slides/slide_06.html",
+      "task_brief": "Light background slide. Kicker 'MODULE 02 — STUDENT PORTAL'. H1 'Everything a student needs, on one sign-in.' Left side: large screenshot in .screenshot-frame, image src '../../screenshots/proposal-student-portal.png'. Right column bullets (6): 'Personal dashboard: course, year, today's classes, fee balance', 'Fee payments by M-PESA or bank, with instant balance updates', 'Official fee statements on college letterhead, printable', 'Academic transcripts grouped by term with grades & GPA', 'Weekly timetable and lecturer-uploaded learning materials', 'Digital student ID card with crest and admission number'. Caption under screenshot: 'Student dashboard — live system.'"
+    },
+    {
+      "title": "Official Documents, Print-Ready",
+      "layout": "split text + screenshot",
+      "output_path": "/home/z/my-project/download/slides/slide_07.html",
+      "task_brief": "Light background slide. Kicker 'MODULE 02 — OFFICIAL DOCUMENTS'. H1 'Documents the college can be proud of.' Left column: 3 document cards with Material Icons: 'Fee statement — full ledger of charges and payments, M-PESA paybill in the footer', 'Academic transcript — every unit, mark, grade and remark, grouped by term, with examination body of record', 'Student ID card — crest, admission number, course, campus, validity period, barcode'. Below a short paragraph: 'All print-ready on ordinary office printers — generated straight from live data, no word-processing, no delays.' Right side: large screenshot in .screenshot-frame, image src '../../screenshots/proposal-student-results.png'. Caption: 'Printable transcript view — live system.'"
+    },
+    {
+      "title": "The Lecturer Workspace",
+      "layout": "split screenshot + text",
+      "output_path": "/home/z/my-project/download/slides/slide_08.html",
+      "task_brief": "Light background slide. Kicker 'MODULE 03 — LECTURERS'. H1 'Teaching insight, not paperwork.' Left side: large screenshot in .screenshot-frame, image src '../../screenshots/task8b-class-analytics.png'. Right column bullets (5): 'Today's teaching schedule at a glance', 'Class rosters with student counts per unit', 'Guided marks entry with automatic grading', 'Class analytics: average, highest, lowest marks', 'Pass rate and grade distribution charts per unit'. Below bullets, accent callout: 'Lecturers see how their classes perform the moment marks are entered.' Caption under screenshot: 'Class analytics with grade distribution — live system.'"
+    },
+    {
+      "title": "The Administrative Console",
+      "layout": "split text + screenshot",
+      "output_path": "/home/z/my-project/download/slides/slide_09.html",
+      "task_brief": "Light background slide. Kicker 'MODULE 04 — MANAGEMENT'. H1 'The whole college, from one console.' Left column bullets (6): 'Live KPIs: enrolment, fee collection rate, applications funnel', 'Interactive charts: payment trends and campus distribution', 'Complete student records with search and detail views', 'Admissions review: accept or decline with one click', 'Announcements to students, staff or everyone', 'Five one-click CSV exports: students, payments, applications, results, outstanding balances'. Right side: large screenshot in .screenshot-frame, image src '../../screenshots/proposal-admin-dashboard.png'. Caption: 'Admin overview — live system.'"
+    },
+    {
+      "title": "AI-Powered Assistance",
+      "layout": "split screenshot + text",
+      "output_path": "/home/z/my-project/download/slides/slide_10.html",
+      "task_brief": "DARK slide (slide-dark, navy #0b1f3f background, light text). Kicker in #4da8da 'INTELLIGENCE'. H1 in white 'A 24/7 admissions officer. A personal tutor for every student.' Left side: screenshot in a light-bordered .screenshot-frame, image src '../../screenshots/task8b-study-buddy.png'. Right column: two feature blocks: (1) 'Website AI Assistant' — answers course, fee, intake and campus questions around the clock, drawing answers from the live course database so it never quotes stale fees. (2) 'AI Study Buddy' — inside the student portal: knows the student's actual units and materials; explains concepts, generates practice questions and quiz drills for the exact syllabus being studied. Bottom accent line: 'A regional first for a college platform.' Caption under screenshot: 'AI Study Buddy in conversation — live system.'"
+    },
+    {
+      "title": "Technology & Security",
+      "layout": "two-column tech grid",
+      "output_path": "/home/z/my-project/download/slides/slide_11.html",
+      "task_brief": "Light background slide. Kicker 'UNDER THE HOOD'. H1 'Modern engineering. Full ownership.' Grid of 6 tech cards, each with Material Icon + layer name + detail: (1) 'Frontend — Next.js 16, TypeScript, Tailwind CSS, shadcn/ui', (2) 'Backend — server-side API routes, nothing sensitive in the browser', (3) 'Database — Prisma ORM over SQL (PostgreSQL in production)', (4) 'Security — bcrypt password hashing, session cookies, role-based access', (5) 'AI services — server-side large language model SDK', (6) 'Hosting — Vercel or Netlify, automatic HTTPS, continuous deployment'. Bottom strip callout: 'Delivered as a complete codebase in a GitHub repository — the college owns the platform outright.'"
+    },
+    {
+      "title": "Timeline & Investment",
+      "layout": "timeline + pricing",
+      "output_path": "/home/z/my-project/download/slides/slide_12.html",
+      "task_brief": "Light background slide. Kicker 'THE ENGAGEMENT'. H1 'Weeks, not months. Phased, transparent pricing.' Top: horizontal 4-step timeline (connected dots on accent line): 'Week 1 Foundation — brand, content, domain & hosting', 'Week 2 Deployment — website & portals live', 'Week 3 Data & training — records migrated, staff trained', 'Week 4 Go-live — public launch + 30-day hypercare'. Below: pricing table with 5 rows (phase, scope, KES): '1 · Public website — 15,000', '2 · Student & lecturer portals — 22,000', '3 · Admin console, analytics & reports — 18,000', '4 · AI assistants — 9,000', highlighted total row 'Complete platform — KES 64,000 one-time'. Footnote row (fs-small, muted): 'Recurring: hosting, domain & SSL KES 10,000/yr · support & maintenance KES 36,000/yr · payments 50% / 25% / 25%'."
+    },
+    {
+      "title": "Demo Access & Next Steps",
+      "layout": "closing",
+      "output_path": "/home/z/my-project/download/slides/slide_13.html",
+      "task_brief": "DARK closing slide (slide-dark, navy #0b1f3f). Full-bleed background image https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/75ed45ef17fa.jpg (graduation ceremony) with heavy navy overlay (rgba(11,31,63,0.9)) for contrast. Kicker in #4da8da 'SEE IT LIVE TODAY'. H1 white 'Every feature is live right now.' Center: three demo-account cards (translucent white cards on navy, monospace-feel email in white, password in #4da8da): 'Administrator — admin@kipskitui.com / Admin@123 — analytics, students, admissions, payments, exports', 'Lecturer — lecturer@kipskitui.com / Lecturer@123 — classes, marks, analytics', 'Student — student@kipskitui.com / Student@123 — fees, results, ID card, AI Study Buddy'. Bottom: next-steps strip: 'Review · Explore the demo · Sign — go live in four weeks.' plus closing line in italic gold #d9a441: 'Training for Excellence.' Bottom-right: 'October 2026 · Ref KIP/WEB/2026/01'."
+    }
+  ]
+}

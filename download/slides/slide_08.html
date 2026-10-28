@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KIP College — Module 03 · The Lecturer Workspace</title>
+<link rel="stylesheet" href="global.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;overflow:hidden;background:#f5f8fc}
+  .slide{padding:52px 64px 44px;display:flex;flex-direction:column}
+  .kicker{color:var(--accent);font-weight:700}
+  .h1{font-family:var(--font-heading);font-weight:900;font-size:var(--fs-h1);line-height:1.12;letter-spacing:-.4px;color:var(--primary);margin:10px 0 0}
+  .accent-bar{margin-top:16px}
+  .body{flex:1;display:flex;gap:44px;align-items:center;margin-top:24px;min-height:0}
+  /* screenshot assembly */
+  .shot{flex:0 0 auto}
+  .shot-chrome{display:flex;align-items:center;justify-content:space-between;height:32px;padding:0 14px;background:var(--stripe);border-bottom:1px solid var(--border)}
+  .dots{display:flex;gap:6px}
+  .dots span{width:9px;height:9px;border-radius:50%;background:var(--border);display:block}
+  .live{display:flex;align-items:center;gap:7px;font-size:var(--fs-micro);font-weight:700;letter-spacing:2.5px;color:var(--accent)}
+  .live span{width:7px;height:7px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 0 3px rgba(77,168,218,.28);display:block}
+  .shot img{width:100%;object-fit:cover;object-position:top;display:block}
+  .shot-cap{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#fff;border-top:1px solid var(--border)}
+  .shot-cap .material-icons{font-size:16px;color:var(--accent)}
+  .shot-cap p{margin:0;font-size:var(--fs-small);font-weight:500;color:var(--muted);letter-spacing:.2px}
+  /* feature bullets + callout */
+  .feats{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;min-width:0}
+  .feat{display:flex;align-items:flex-start;gap:14px}
+  .tile{flex:0 0 40px;width:40px;height:40px;border-radius:10px;background:rgba(26,79,208,.09);display:flex;align-items:center;justify-content:center}
+  .tile .material-icons{font-size:21px;color:var(--accent)}
+  .feat p{margin:0;font-size:var(--fs-body);line-height:1.42;color:var(--text);font-weight:500;padding-top:9px}
+  .feat b{font-weight:700;color:var(--primary)}
+  .callout{display:flex;align-items:center;gap:12px;padding:14px 18px;margin-top:10px}
+  .callout .material-icons{font-size:22px;color:var(--accent-bright)}
+  .callout p{margin:0;font-size:var(--fs-body);font-weight:600;color:#e8f0f8;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="slide">
+  <header>
+    <div class="kicker">MODULE 03 — LECTURERS</div>
+    <h1 class="h1">Teaching insight, not paperwork.</h1>
+    <span class="accent-bar"></span>
+  </header>
+
+  <div class="body">
+    <!-- Screenshot: class analytics -->
+    <div class="shot screenshot-frame" style="width:560px">
+      <div class="shot-chrome">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="live"><span></span>LIVE</div>
+      </div>
+      <img src="../../screenshots/task8b-class-analytics.png" alt="Class analytics with grade distribution in the live KIP College system" style="height:394px">
+      <div class="shot-cap"><i class="material-icons">check_circle</i><p>Class analytics with grade distribution — live system.</p></div>
+    </div>
+
+    <!-- Five workspace capabilities + callout -->
+    <div class="feats">
+      <div class="feat"><div class="tile"><i class="material-icons">event_available</i></div><p><b>Today&rsquo;s teaching schedule</b> at a glance</p></div>
+      <div class="feat"><div class="tile"><i class="material-icons">groups</i></div><p><b>Class rosters</b> with student counts per unit</p></div>
+      <div class="feat"><div class="tile"><i class="material-icons">fact_check</i></div><p><b>Guided marks entry</b> with automatic grading</p></div>
+      <div class="feat"><div class="tile"><i class="material-icons">insights</i></div><p><b>Class analytics:</b> average, highest, lowest marks</p></div>
+      <div class="feat"><div class="tile"><i class="material-icons">bar_chart</i></div><p><b>Pass rate</b> and grade distribution charts per unit</p></div>
+      <div class="card-navy callout">
+        <i class="material-icons">bolt</i>
+        <p>Lecturers see how their classes perform the moment marks are entered.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

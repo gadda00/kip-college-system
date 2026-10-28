@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KIP College — Module 04 · The Administrative Console</title>
+<link rel="stylesheet" href="global.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;overflow:hidden;background:#f5f8fc}
+  .slide{padding:52px 64px 44px;display:flex;flex-direction:column}
+  .kicker{color:var(--accent);font-weight:700}
+  .h1{font-family:var(--font-heading);font-weight:900;font-size:var(--fs-h1);line-height:1.12;letter-spacing:-.4px;color:var(--primary);margin:10px 0 0}
+  .accent-bar{margin-top:16px}
+  .body{flex:1;display:flex;gap:40px;align-items:center;margin-top:24px;min-height:0}
+  /* feature bullets */
+  .feats{flex:0 0 502px;display:flex;flex-direction:column;justify-content:center;gap:13px}
+  .feat{display:flex;align-items:flex-start;gap:14px}
+  .tile{flex:0 0 40px;width:40px;height:40px;border-radius:10px;background:rgba(26,79,208,.09);display:flex;align-items:center;justify-content:center}
+  .tile .material-icons{font-size:21px;color:var(--accent)}
+  .feat p{margin:0;font-size:var(--fs-body);line-height:1.42;color:var(--text);font-weight:500;padding-top:9px}
+  .feat b{font-weight:700;color:var(--primary)}
+  /* screenshot assembly */
+  .shot{flex:0 0 auto}
+  .shot-chrome{display:flex;align-items:center;justify-content:space-between;height:32px;padding:0 14px;background:var(--stripe);border-bottom:1px solid var(--border)}
+  .dots{display:flex;gap:6px}
+  .dots span{width:9px;height:9px;border-radius:50%;background:var(--border);display:block}
+  .live{display:flex;align-items:center;gap:7px;font-size:var(--fs-micro);font-weight:700;letter-spacing:2.5px;color:var(--accent)}
+  .live span{width:7px;height:7px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 0 3px rgba(77,168,218,.28);display:block}
+  .shot img{width:100%;object-fit:cover;object-position:top;display:block}
+  .shot-cap{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#fff;border-top:1px solid var(--border)}
+  .shot-cap .material-icons{font-size:16px;color:var(--accent)}
+  .shot-cap p{margin:0;font-size:var(--fs-small);font-weight:500;color:var(--muted);letter-spacing:.2px}
+</style>
+</head>
+<body>
+<div class="slide">
+  <header>
+    <div class="kicker">MODULE 04 — MANAGEMENT</div>
+    <h1 class="h1">The whole college, from one console.</h1>
+    <span class="accent-bar"></span>
+  </header>
+
+  <div class="body">
+    <!-- Six console capabilities -->
+    <div class="feats">
+      <div class="feat"><div class="tile"><i class="material-icons">analytics</i></div><p><b>Live KPIs:</b> enrolment, fee collection rate, applications funnel</p></div>
+      <div class="feat"><div class="tile"><i class="material-icons">insert_chart</i></div><p><b>Interactive charts:</b> payment trends and campus distribution</p></div>
+      <div class="feat"><div class="tile"><i class="material-icons">folder_shared</i></div><p><b>Complete student records</b> with search and detail views</p></div>
+      <div class="feat"><div class="tile"><i class="material-icons">how_to_reg</i></div><p><b>Admissions review:</b> accept or decline with one click</p></div>
+      <div class="feat"><div class="tile"><i class="material-icons">campaign</i></div><p><b>Announcements</b> to students, staff or everyone</p></div>
+      <div class="feat"><div class="tile"><i class="material-icons">download</i></div><p><b>Five one-click CSV exports:</b> students, payments, applications, results, outstanding balances</p></div>
+    </div>
+
+    <!-- Screenshot: admin overview -->
+    <div class="shot screenshot-frame" style="width:610px">
+      <div class="shot-chrome">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="live"><span></span>LIVE</div>
+      </div>
+      <img src="../../screenshots/proposal-admin-dashboard.png" alt="Administrative console overview of the live KIP College system" style="height:381px">
+      <div class="shot-cap"><i class="material-icons">check_circle</i><p>Admin overview — live system.</p></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>KIP College — One Platform, Four Experiences</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="global.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f5f8fc; }
+  .slide { font-family: var(--font-body); }
+  .module-card { position: relative; padding: 24px 26px 22px; box-sizing: border-box; }
+  .mod-num {
+    position: absolute; top: 24px; right: 26px;
+    font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+    text-transform: uppercase; color: #4a6885;
+  }
+  .mod-icon {
+    width: 46px; height: 46px; border-radius: 12px; flex: none;
+    background: rgba(26, 79, 208, 0.09);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mod-icon .material-icons { font-size: 24px; color: #1a4fd0; }
+  .mod-name { font-family: var(--font-heading); font-weight: 700; font-size: 22px; color: #0b1f3f; line-height: 1.1; }
+  .mod-tag { font-size: 13px; font-style: italic; color: #4a6885; margin-top: 5px; }
+  .mod-divider { height: 1px; background: #dbe6f2; margin: 16px 0 14px; }
+  .mod-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .mod-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.45; color: #142840; }
+  .mod-list .material-icons { font-size: 17px; color: #1a4fd0; position: relative; top: 1px; flex: none; }
+  /* Featured navy card */
+  .module-card.feature {
+    background: linear-gradient(135deg, #0b1f3f 0%, #123a8a 100%);
+    border: 1px solid rgba(77, 168, 218, 0.35);
+    box-shadow: 0 14px 34px rgba(11, 31, 63, 0.28);
+  }
+  .feature .mod-name { color: #ffffff; }
+  .feature .mod-tag { color: #c9d8ea; }
+  .feature .mod-num { color: #7cc4e8; }
+  .feature .mod-divider { background: rgba(77, 168, 218, 0.3); }
+  .feature .mod-icon { background: rgba(77, 168, 218, 0.18); }
+  .feature .mod-icon .material-icons { color: #4da8da; }
+  .feature .mod-list li { color: #dce8f5; }
+  .feature .mod-list .material-icons { color: #4da8da; }
+  .door-chip {
+    position: absolute; top: 22px; right: 24px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px;
+    border: 1px solid rgba(77, 168, 218, 0.5);
+    background: rgba(77, 168, 218, 0.15);
+    color: #cfe6f6; font-size: 11.5px; font-weight: 600; letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .door-chip .material-icons { font-size: 14px; color: #4da8da; }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Decorative corner glow -->
+  <div data-decor aria-hidden="true"
+       style="position:absolute; right:-170px; top:-190px; width:540px; height:540px; border-radius:50%; background:radial-gradient(circle, rgba(26,79,208,0.08) 0%, rgba(26,79,208,0) 68%);"></div>
+
+  <div style="position:relative; height:100%; display:flex; flex-direction:column; padding:52px 64px 48px; box-sizing:border-box;">
+
+    <!-- Header -->
+    <header>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span class="accent-bar" data-decor aria-hidden="true" style="width:42px; height:4px;"></span>
+        <span class="kicker" style="color:#1a4fd0;">The Solution</span>
+      </div>
+      <h1 style="font-family:var(--font-heading); font-weight:900; font-size:36px; line-height:1.15; color:#0b1f3f; margin:14px 0 0 0;">One platform. Four experiences. Every stakeholder served.</h1>
+    </header>
+
+    <!-- Bento grid -->
+    <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:20px; margin-top:25px; min-height:0;">
+
+      <!-- 1. Public Website (featured) -->
+      <div class="module-card feature">
+        <span class="door-chip"><i class="material-icons">door_front</i>The front door of the college</span>
+        <div style="display:flex; gap:16px;">
+          <div class="mod-icon"><i class="material-icons">language</i></div>
+          <div>
+            <div class="mod-name">Public Website</div>
+            <div class="mod-tag">Prospective students &amp; parents</div>
+          </div>
+        </div>
+        <div class="mod-divider"></div>
+        <ul class="mod-list">
+          <li><i class="material-icons">check_circle</i><span>Course catalogue with full fees</span></li>
+          <li><i class="material-icons">check_circle</i><span>Online admissions</span></li>
+          <li><i class="material-icons">check_circle</i><span>News, events, downloads, FAQ</span></li>
+          <li><i class="material-icons">check_circle</i><span>24/7 AI assistant</span></li>
+        </ul>
+      </div>
+
+      <!-- 2. Student Portal -->
+      <div class="card module-card">
+        <span class="mod-num">Module 02</span>
+        <div style="display:flex; gap:16px;">
+          <div class="mod-icon"><i class="material-icons">school</i></div>
+          <div>
+            <div class="mod-name">Student Portal</div>
+            <div class="mod-tag">Current students</div>
+          </div>
+        </div>
+        <div class="mod-divider"></div>
+        <ul class="mod-list">
+          <li><i class="material-icons">check_circle</i><span>Dashboard &amp; timetable</span></li>
+          <li><i class="material-icons">check_circle</i><span>M-PESA fee payments</span></li>
+          <li><i class="material-icons">check_circle</i><span>Printable statements, transcripts, ID card</span></li>
+          <li><i class="material-icons">check_circle</i><span>AI Study Buddy</span></li>
+        </ul>
+      </div>
+
+      <!-- 3. Lecturer Workspace -->
+      <div class="card module-card">
+        <span class="mod-num">Module 03</span>
+        <div style="display:flex; gap:16px;">
+          <div class="mod-icon"><i class="material-icons">co_present</i></div>
+          <div>
+            <div class="mod-name">Lecturer Workspace</div>
+            <div class="mod-tag">Teaching staff</div>
+          </div>
+        </div>
+        <div class="mod-divider"></div>
+        <ul class="mod-list">
+          <li><i class="material-icons">check_circle</i><span>Class rosters</span></li>
+          <li><i class="material-icons">check_circle</i><span>Guided marks entry</span></li>
+          <li><i class="material-icons">check_circle</i><span>Class analytics with grade distributions</span></li>
+        </ul>
+      </div>
+
+      <!-- 4. Admin Console -->
+      <div class="card module-card">
+        <span class="mod-num">Module 04</span>
+        <div style="display:flex; gap:16px;">
+          <div class="mod-icon"><i class="material-icons">admin_panel_settings</i></div>
+          <div>
+            <div class="mod-name">Admin Console</div>
+            <div class="mod-tag">Registrar, finance &amp; management</div>
+          </div>
+        </div>
+        <div class="mod-divider"></div>
+        <ul class="mod-list">
+          <li><i class="material-icons">check_circle</i><span>Live analytics</span></li>
+          <li><i class="material-icons">check_circle</i><span>Admissions workflow</span></li>
+          <li><i class="material-icons">check_circle</i><span>Payments ledger</span></li>
+          <li><i class="material-icons">check_circle</i><span>Announcements &amp; CSV exports</span></li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
