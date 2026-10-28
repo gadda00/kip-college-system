@@ -22,12 +22,13 @@ import { api } from '@/components/kip/lib/api'
 import { gradeColor } from '@/components/kip/lib/format'
 import { usePrintDoc } from '@/components/kip/portal/print-doc'
 import { TranscriptDoc } from '@/components/kip/portal/student/views/print-docs'
-import { KpiGridSkeleton, RowsSkeleton, ViewHeading, GradeBadge } from '@/components/kip/portal/shared'
+import { KpiGridSkeleton, RowsSkeleton, ViewHeading, GradeBadge, gradeForClient } from '@/components/kip/portal/shared'
 import type {
   ResultEntryDTO,
   StudentProfileFull,
   StudentResults,
 } from '@/components/kip/portal/types'
+import { cn } from '@/lib/utils'
 
 const GRADE_ORDER = ['A', 'B', 'C', 'D', 'E']
 
@@ -108,7 +109,7 @@ function ResultsBody({
           title="Results"
           description="Published examination results per term, with GPA and averages."
           actions={
-            <Button variant="outline" className="min-h-11" onClick={onPrint}>
+            <Button variant="outline" className="focus-glow min-h-11" onClick={onPrint}>
               <Printer className="mr-2 h-4 w-4" aria-hidden="true" />
               Print academic transcript
             </Button>
@@ -124,10 +125,28 @@ function ResultsBody({
         aria-label="Overall performance"
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
       >
-        <Card className="border-primary/15 bg-gradient-to-br from-primary/5 via-card to-card">
+        {/* Mean grade hero + overall cards */}
+        <Card className="bg-brand-band kip-pattern overflow-hidden border-brand-800/60 text-[#f2efe6]">
           <CardContent className="p-4 sm:p-5">
-            <p className="text-xs font-medium text-muted-foreground">Cumulative GPA</p>
-            <p className="mt-2 text-3xl font-black tracking-tight text-primary">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-gold-300">Mean grade</p>
+            <p className="font-display text-gold-gradient mt-1.5 text-4xl font-bold leading-none">
+              {gradeForClient(overall.average).grade}
+            </p>
+            <p className="mt-2 text-xs font-medium text-[#f2efe6]/70">
+              {gradeForClient(overall.average).remark} · GPA {overall.gpa.toFixed(2)} / 4.00 · avg{' '}
+              {overall.average.toFixed(1)}%
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 sm:p-5">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs font-medium text-muted-foreground">Cumulative GPA</p>
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-300">
+                <TrendingUp className="h-4 w-4" aria-hidden="true" />
+              </span>
+            </div>
+            <p className="font-display mt-2 text-2xl font-bold tracking-tight tabular-nums sm:text-3xl">
               {overall.gpa.toFixed(2)}
               <span className="ml-1 text-sm font-semibold text-muted-foreground">/ 4.00</span>
             </p>
@@ -138,11 +157,11 @@ function ResultsBody({
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-medium text-muted-foreground">Average mark</p>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold-400/15 text-gold-700 dark:text-gold-400">
                 <TrendingUp className="h-4 w-4" aria-hidden="true" />
               </span>
             </div>
-            <p className="mt-2 text-xl font-bold tracking-tight sm:text-2xl">
+            <p className="font-display mt-2 text-2xl font-bold tracking-tight tabular-nums sm:text-3xl">
               {overall.average.toFixed(1)}%
             </p>
             <p className="mt-1 text-xs font-medium text-muted-foreground">Mean of unit marks</p>
@@ -152,11 +171,11 @@ function ResultsBody({
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-medium text-muted-foreground">Units completed</p>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-300">
                 <BookOpenCheck className="h-4 w-4" aria-hidden="true" />
               </span>
             </div>
-            <p className="mt-2 text-xl font-bold tracking-tight sm:text-2xl">{overall.unitsDone}</p>
+            <p className="font-display mt-2 text-2xl font-bold tracking-tight tabular-nums sm:text-3xl">{overall.unitsDone}</p>
             <p className="mt-1 text-xs font-medium text-muted-foreground">With published results</p>
           </CardContent>
         </Card>
@@ -164,7 +183,7 @@ function ResultsBody({
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-medium text-muted-foreground">Best grade</p>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold-400/15 text-gold-700 dark:text-gold-400">
                 <Award className="h-4 w-4" aria-hidden="true" />
               </span>
             </div>
@@ -176,7 +195,7 @@ function ResultsBody({
                 </span>
               </div>
             ) : (
-              <p className="mt-2 text-xl font-bold">—</p>
+              <p className="font-display mt-2 text-2xl font-bold">—</p>
             )}
             <p className="mt-1 text-xs font-medium text-muted-foreground">Highest achieved</p>
           </CardContent>
@@ -193,7 +212,11 @@ function ResultsBody({
         <Tabs defaultValue={byStage[0]?.stageLabel}>
           <TabsList className="max-w-full overflow-x-auto custom-scrollbar">
             {byStage.map((s) => (
-              <TabsTrigger key={s.stageLabel} value={s.stageLabel} className="min-h-9 text-xs">
+              <TabsTrigger
+                key={s.stageLabel}
+                value={s.stageLabel}
+                className="min-h-9 text-xs data-[state=active]:bg-brand-700! data-[state=active]:text-[#f2efe6]! dark:data-[state=active]:bg-brand-700! dark:data-[state=active]:text-[#f2efe6]!"
+              >
                 {s.stageLabel}
               </TabsTrigger>
             ))}
@@ -203,7 +226,7 @@ function ResultsBody({
               <Card>
                 <CardContent className="p-4 sm:p-6">
                   <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                    <h2 className="text-base font-semibold">{s.stageLabel} results</h2>
+                    <h2 className="font-display text-base font-semibold">{s.stageLabel} results</h2>
                     <p className="text-xs text-muted-foreground">
                       {s.entries.length} unit{ s.entries.length === 1 ? '' : 's'} ·{' '}
                       {s.entries[0]?.examBody ?? 'KNEC'}
@@ -214,29 +237,39 @@ function ResultsBody({
                   <div className="hidden overflow-x-auto sm:block">
                     <Table>
                       <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-32">Code</TableHead>
-                          <TableHead>Unit</TableHead>
-                          <TableHead className="w-20 text-right">Marks</TableHead>
-                          <TableHead className="w-20 text-center">Grade</TableHead>
-                          <TableHead className="w-32">Remark</TableHead>
+                        <TableRow className="hover:bg-transparent">
+                          <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                            Code
+                          </TableHead>
+                          <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                            Unit
+                          </TableHead>
+                          <TableHead className="bg-brand-50 text-right text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                            Marks
+                          </TableHead>
+                          <TableHead className="bg-brand-50 text-center text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                            Grade
+                          </TableHead>
+                          <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                            Remark
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {s.entries.map((e) => (
-                          <TableRow key={e.id}>
-                            <TableCell className="font-mono text-xs font-semibold text-primary">
+                          <TableRow key={e.id} className="odd:bg-muted/40 transition-colors hover:bg-brand-50/60 dark:hover:bg-brand-100/15">
+                            <TableCell className="font-mono text-xs font-semibold text-brand-700 dark:text-gold-400">
                               {e.unitCode}
                             </TableCell>
                             <TableCell className="text-sm font-medium">{e.unitName}</TableCell>
-                            <TableCell className="text-right text-sm font-semibold">
+                            <TableCell className="text-right text-sm font-semibold tabular-nums">
                               {e.marks.toFixed(0)}
                               <span className="text-muted-foreground">/100</span>
                             </TableCell>
                             <TableCell className="text-center">
                               <GradeBadge grade={e.grade} />
                             </TableCell>
-                            <TableCell className={gradeColor(e.grade)}>
+                            <TableCell className={cn('font-display italic', gradeColor(e.grade))}>
                               {e.remark ?? '—'}
                             </TableCell>
                           </TableRow>
@@ -251,7 +284,7 @@ function ResultsBody({
                       <li key={e.id} className="rounded-xl border p-4">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="font-mono text-[11px] font-semibold text-primary">{e.unitCode}</p>
+                            <p className="font-mono text-[11px] font-semibold text-brand-700 dark:text-gold-400">{e.unitCode}</p>
                             <p className="mt-0.5 text-sm font-semibold leading-snug">{e.unitName}</p>
                           </div>
                           <GradeBadge grade={e.grade} className="shrink-0 text-base" />
@@ -262,7 +295,7 @@ function ResultsBody({
                           </Badge>
                           <p className="text-sm">
                             <span className={gradeColor(e.grade)}>{e.marks.toFixed(0)}/100</span>
-                            <span className="ml-2 text-xs font-medium text-muted-foreground">
+                            <span className={cn('ml-2 font-display text-xs font-medium italic', gradeColor(e.grade))}>
                               {e.remark ?? '—'}
                             </span>
                           </p>
@@ -271,7 +304,7 @@ function ResultsBody({
                     ))}
                   </ul>
 
-                  <p className="mt-4 text-xs text-muted-foreground">
+                  <p className="font-display mt-4 text-xs italic text-muted-foreground">
                     Results are official once published by the examination office. For remarks or
                     corrections, contact the registrar within 14 days.
                   </p>

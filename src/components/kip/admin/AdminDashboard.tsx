@@ -95,9 +95,9 @@ const SUB_VIEWS = new Set([
   'reports',
 ])
 
-/** Deep navy sidebar surface (dark variant). */
-const SIDEBAR_BG = 'bg-[#0b1f3f]'
-const SIDEBAR_TEXT = 'text-white'
+/** Deep emerald sidebar surface with a soft gold glow (dark variant). */
+const SIDEBAR_BG = 'bg-brand-band kip-pattern'
+const SIDEBAR_TEXT = 'text-[#f2efe6]'
 
 function AdminIdentity({ user }: { user: SafeUser }) {
   return (
@@ -105,24 +105,24 @@ function AdminIdentity({ user }: { user: SafeUser }) {
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-400 text-sm font-bold text-amber-950"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-brand-950 bg-gold-400 text-sm font-bold text-brand-950 ring-2 ring-gold-400/60"
         >
           {initialsOf(user.name)}
         </span>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-white">{user.name}</p>
-          <p className="truncate text-[11px] text-white/60">Registrar &amp; System Administrator</p>
+          <p className="truncate text-sm font-semibold text-[#f2efe6]">{user.name}</p>
+          <p className="truncate text-[11px] text-[#f2efe6]/60">Registrar &amp; System Administrator</p>
         </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
-        <Badge className="border-transparent bg-amber-400 text-[10px] font-bold text-amber-950 hover:bg-amber-400">
+        <Badge className="border border-gold-400/30 bg-gold-400/15 text-[10px] font-bold text-gold-300 hover:bg-gold-400/15">
           ADMIN
         </Badge>
         <Badge
           variant="outline"
-          className="border-white/15 bg-transparent text-[10px] font-medium text-white/70"
+          className="max-w-full border-white/15 bg-transparent text-[10px] font-medium text-[#f2efe6]/70"
         >
-          {user.email}
+          <span className="truncate">{user.email}</span>
         </Badge>
       </div>
     </div>
@@ -135,7 +135,7 @@ function AdminSidebarFooter({ onLogout }: { onLogout: () => void }) {
       <button
         type="button"
         onClick={() => navigate('/')}
-        className="flex min-h-11 w-full items-center gap-3 border-l-2 border-transparent px-3 py-2.5 text-left text-sm font-medium text-white/60 transition-colors hover:bg-white/5 hover:text-white"
+        className="flex min-h-11 w-full items-center gap-3 rounded-lg border-l-2 border-transparent px-3 py-2.5 text-left text-sm font-medium text-[#f2efe6]/70 transition-colors hover:bg-white/8 hover:text-white"
       >
         <Globe className="h-4 w-4 shrink-0" aria-hidden="true" />
         View website
@@ -143,7 +143,7 @@ function AdminSidebarFooter({ onLogout }: { onLogout: () => void }) {
       <button
         type="button"
         onClick={onLogout}
-        className="flex min-h-11 w-full items-center gap-3 border-l-2 border-transparent px-3 py-2.5 text-left text-sm font-medium text-red-300 transition-colors hover:bg-red-400/10 hover:text-red-200"
+        className="flex min-h-11 w-full items-center gap-3 rounded-lg border-l-2 border-transparent px-3 py-2.5 text-left text-sm font-medium text-red-300/90 transition-colors hover:bg-red-400/10 hover:text-red-200"
       >
         <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
         Logout
@@ -185,13 +185,19 @@ function AdminNavList({ sub }: { sub: string }) {
             onClick={() => navigate(item.to)}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'flex min-h-11 w-full items-center gap-3 border-l-2 px-3 py-2.5 text-left text-sm font-medium transition-colors',
+              'flex min-h-11 w-full items-center gap-3 rounded-lg border-l-2 px-3 py-2.5 text-left text-sm font-medium transition-colors',
               active
-                ? 'border-amber-400 bg-white/10 text-white'
-                : 'border-transparent text-white/60 hover:bg-white/5 hover:text-white',
+                ? 'border-gold-400 bg-gold-400/15 text-gold-300'
+                : 'border-transparent text-[#f2efe6]/70 hover:bg-white/8 hover:text-white',
             )}
           >
-            <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <Icon
+              className={cn(
+                'h-4 w-4 shrink-0',
+                active ? 'text-gold-400' : undefined,
+              )}
+              aria-hidden="true"
+            />
             <span className="min-w-0 flex-1 truncate">{item.label}</span>
             {count !== null && count > 0 && (
               <span
@@ -199,7 +205,7 @@ function AdminNavList({ sub }: { sub: string }) {
                   'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold',
                   item.badge === 'new-messages'
                     ? 'bg-red-400/90 text-red-950'
-                    : 'bg-amber-400 text-amber-950',
+                    : 'bg-gold-400 text-brand-950',
                 )}
                 aria-label={`${count} ${item.badge === 'new-messages' ? 'new' : 'pending'}`}
               >
@@ -225,10 +231,10 @@ function AdminSidebarContent({
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-2.5 px-1">
-        <KipLogo className="text-white" />
+        <KipLogo className="text-[#f2efe6]" />
         <span className="sr-only">KIP College admin console</span>
       </div>
-      <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-400/90">
+      <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-gold-300/90">
         Admin Console
       </p>
       <AdminIdentity user={user} />
@@ -239,8 +245,8 @@ function AdminSidebarContent({
 }
 
 /**
- * Admin dashboard shell — role guard, dark navy sidebar (Sheet drawer on
- * mobile) and sub-view resolution for all #/admin/* routes.
+ * Admin dashboard shell — role guard, deep emerald sidebar with gold accents
+ * (Sheet drawer on mobile) and sub-view resolution for all #/admin/* routes.
  */
 export function AdminDashboard({ sub, id }: { sub: string; id?: string }) {
   const guard = usePortalGuard('ADMIN')
@@ -310,11 +316,11 @@ export function AdminDashboard({ sub, id }: { sub: string; id?: string }) {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8 lg:pt-8">
       <div className="gap-6 lg:flex lg:gap-8">
-        {/* Desktop sidebar — dark deep-navy variant */}
+        {/* Desktop sidebar — deep emerald band with gold accents */}
         <aside className="hidden w-64 shrink-0 lg:block print:hidden">
           <div
             className={cn(
-              'sticky top-28 rounded-xl border border-primary/40 p-4',
+              'sticky top-28 space-y-5 rounded-xl border border-brand-800/60 p-4',
               SIDEBAR_BG,
               SIDEBAR_TEXT,
             )}
@@ -332,7 +338,7 @@ export function AdminDashboard({ sub, id }: { sub: string; id?: string }) {
                   <span className="sr-only">Open admin menu</span>
                   <svg
                     viewBox="0 0 24 24"
-                    className="h-5 w-5"
+                    className="h-5 w-5 text-gold-600 dark:text-gold-400"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
@@ -346,7 +352,11 @@ export function AdminDashboard({ sub, id }: { sub: string; id?: string }) {
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className={cn('w-72 overflow-y-auto border-white/10 p-0', SIDEBAR_BG, SIDEBAR_TEXT)}
+                className={cn(
+                  'w-72 overflow-y-auto border-white/10 p-0',
+                  SIDEBAR_BG,
+                  SIDEBAR_TEXT,
+                )}
               >
                 <div className="p-4">
                   <SheetTitle className="sr-only">Admin console navigation</SheetTitle>

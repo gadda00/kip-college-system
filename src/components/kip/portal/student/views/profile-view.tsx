@@ -131,18 +131,18 @@ function ProfileBody({ profile }: { profile: StudentProfileFull }) {
         transition={{ duration: 0.25, delay: 0.05 }}
         aria-labelledby="profile-card"
       >
-        <Card className="border-primary/15 bg-gradient-to-br from-primary/5 via-card to-card">
+        <Card className="relative rule-top-gold bg-gradient-to-br from-brand-50/70 via-card to-card dark:from-brand-100/15 dark:via-card dark:to-card">
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="flex min-w-0 items-center gap-4">
                 <span
                   aria-hidden="true"
-                  className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary text-xl font-bold text-primary-foreground"
+                  className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-700 text-xl font-bold text-[#f2efe6] ring-2 ring-gold-400/60 ring-offset-2 ring-offset-background"
                 >
                   {initialsOf(profile.name)}
                 </span>
                 <div className="min-w-0">
-                  <h2 id="profile-card" className="text-lg font-bold sm:text-xl">
+                  <h2 id="profile-card" className="font-display text-lg font-bold sm:text-xl">
                     {profile.name}
                   </h2>
                   <p className="mt-0.5 font-mono text-xs text-muted-foreground">
@@ -169,7 +169,7 @@ function ProfileBody({ profile }: { profile: StudentProfileFull }) {
               </div>
               <Dialog open={editOpen} onOpenChange={handleEditOpenChange}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="min-h-11">
+                  <Button variant="outline" className="focus-glow min-h-11">
                     <Edit3 className="mr-2 h-4 w-4" aria-hidden="true" />
                     Edit contacts
                   </Button>
@@ -249,7 +249,7 @@ function ProfileBody({ profile }: { profile: StudentProfileFull }) {
         <Card>
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-base">
-              <UserSquare2 className="h-4 w-4 text-primary" aria-hidden="true" />
+              <UserSquare2 className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
               Detailed information
             </CardTitle>
           </CardHeader>
@@ -298,11 +298,11 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gold-400/15 text-gold-700 dark:text-gold-400">
         <Icon className="h-4 w-4" aria-hidden="true" />
       </span>
       <div className="min-w-0">
-        <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</dt>
+        <dt className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{label}</dt>
         <dd className={`mt-1 text-sm font-semibold ${mono ? 'font-mono' : ''}`}>{value}</dd>
       </div>
     </div>
@@ -366,7 +366,7 @@ function ChangePasswordCard() {
       <Card>
         <CardHeader className="pb-4">
           <CardTitle id="change-password" className="flex items-center gap-2 text-base">
-            <KeyRound className="h-4 w-4 text-primary" aria-hidden="true" />
+            <KeyRound className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
             Change password
           </CardTitle>
         </CardHeader>
@@ -374,7 +374,12 @@ function ChangePasswordCard() {
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="space-y-2">
-                <Label htmlFor="pw-current">Current password</Label>
+                <Label htmlFor="pw-current">
+                  Current password
+                  <span className="ml-0.5 font-bold text-gold-600 dark:text-gold-400" aria-hidden="true">
+                    *
+                  </span>
+                </Label>
                 <Input
                   id="pw-current"
                   type="password"
@@ -389,7 +394,12 @@ function ChangePasswordCard() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="pw-new">New password</Label>
+                <Label htmlFor="pw-new">
+                  New password
+                  <span className="ml-0.5 font-bold text-gold-600 dark:text-gold-400" aria-hidden="true">
+                    *
+                  </span>
+                </Label>
                 <Input
                   id="pw-new"
                   type="password"
@@ -405,7 +415,12 @@ function ChangePasswordCard() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="pw-confirm">Confirm new password</Label>
+                <Label htmlFor="pw-confirm">
+                  Confirm new password
+                  <span className="ml-0.5 font-bold text-gold-600 dark:text-gold-400" aria-hidden="true">
+                    *
+                  </span>
+                </Label>
                 <Input
                   id="pw-confirm"
                   type="password"
@@ -427,10 +442,14 @@ function ChangePasswordCard() {
             )}
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <ShieldCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                <ShieldCheck className="h-3.5 w-3.5 text-gold-600 dark:text-gold-400" aria-hidden="true" />
                 Changing your password signs you out of other devices.
               </p>
-              <Button type="submit" disabled={changePassword.isPending} className="min-h-11">
+              <Button
+                type="submit"
+                disabled={changePassword.isPending}
+                className="focus-glow min-h-11"
+              >
                 {changePassword.isPending ? 'Updating…' : 'Update password'}
               </Button>
             </div>

@@ -65,11 +65,11 @@ const CATEGORIES = ['TECHNICAL', 'BUSINESS', 'KASNEB'] as const
 function categoryTone(category: string): string {
   switch (category) {
     case 'TECHNICAL':
-      return 'border-transparent bg-primary/10 text-primary'
-    case 'KASNEB':
-      return 'border-transparent bg-amber-400/15 text-amber-700 dark:text-amber-400'
-    default:
       return 'border-transparent bg-emerald-600/10 text-emerald-700 dark:text-emerald-400'
+    case 'KASNEB':
+      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
+    default:
+      return 'border-transparent bg-teal-600/10 text-teal-700 dark:text-teal-400'
   }
 }
 
@@ -122,20 +122,20 @@ export function CoursesView() {
               <div className="hidden overflow-x-auto xl:block">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Course</TableHead>
-                      <TableHead>Level</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead className="text-right">Tuition / term</TableHead>
-                      <TableHead className="text-center">Units</TableHead>
-                      <TableHead className="text-center">Students</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                    <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Course</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Level</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Duration</TableHead>
+                      <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Tuition / term</TableHead>
+                      <TableHead className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Units</TableHead>
+                      <TableHead className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Students</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Status</TableHead>
+                      <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {(data ?? []).map((c) => (
-                      <TableRow key={c.id}>
+                      <TableRow key={c.id} className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30">
                         <TableCell className="min-w-64">
                           <p className="text-sm font-semibold">{c.title}</p>
                           <div className="mt-1 flex flex-wrap items-center gap-1.5">
@@ -151,7 +151,7 @@ export function CoursesView() {
                         <TableCell className="text-sm text-muted-foreground">
                           {fmtDuration(c.durationMonths)}
                         </TableCell>
-                        <TableCell className="text-right text-sm font-semibold">
+                        <TableCell className="text-right text-sm font-semibold tabular-nums">
                           {fmtKES(c.tuitionPerTerm)}
                         </TableCell>
                         <TableCell className="text-center text-sm">{c.unitsCount}</TableCell>
@@ -167,7 +167,7 @@ export function CoursesView() {
                               {c.isActive ? 'Active' : 'Inactive'}
                             </Badge>
                             {c.isFeatured && (
-                              <Badge className="border-transparent bg-amber-400/15 text-[10px] text-amber-700 dark:text-amber-400">
+                              <Badge className="border-transparent bg-gold-400/15 text-[10px] text-gold-700 dark:text-gold-300">
                                 <Star className="mr-1 h-3 w-3" aria-hidden="true" />
                                 Featured
                               </Badge>
@@ -223,40 +223,53 @@ export function CoursesView() {
                 </Table>
               </div>
 
-              {/* Mobile / tablet cards */}
+              {/* Mobile / tablet cards — whole card opens the curriculum */}
               <ul className="space-y-3 p-4 xl:hidden">
                 {(data ?? []).map((c) => (
-                  <li key={c.id} className="rounded-xl border p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold leading-snug">{c.title}</p>
-                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                          <Badge variant="outline" className="font-mono text-[10px]">
-                            {c.code}
-                          </Badge>
-                          <Badge className={`text-[10px] ${categoryTone(c.category)}`}>
-                            {c.category}
-                          </Badge>
-                          {c.isFeatured && (
-                            <Badge className="border-transparent bg-amber-400/15 text-[10px] text-amber-700 dark:text-amber-400">
-                              <Star className="mr-1 h-3 w-3" aria-hidden="true" />
-                              Featured
+                  <li
+                    key={c.id}
+                    className="card-lift rule-top-gold relative overflow-hidden rounded-xl border bg-card"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/admin/courses/${c.id}`)}
+                      aria-label={`Manage units for ${c.title}`}
+                      className="focus-glow block w-full p-4 text-left"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold leading-snug">{c.title}</p>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                            <Badge variant="outline" className="font-mono text-[10px]">
+                              {c.code}
                             </Badge>
-                          )}
+                            <Badge className={`text-[10px] ${categoryTone(c.category)}`}>
+                              {c.category}
+                            </Badge>
+                            <Badge variant="secondary" className="text-[10px]">
+                              {c.level}
+                            </Badge>
+                            {c.isFeatured && (
+                              <Badge className="border-transparent bg-gold-400/15 text-[10px] text-gold-700 dark:text-gold-300">
+                                <Star className="mr-1 h-3 w-3" aria-hidden="true" />
+                                Featured
+                              </Badge>
+                            )}
+                          </div>
                         </div>
+                        <Badge
+                          variant={c.isActive ? 'default' : 'secondary'}
+                          className="shrink-0 text-[10px]"
+                        >
+                          {c.isActive ? 'Active' : 'Inactive'}
+                        </Badge>
                       </div>
-                      <Badge
-                        variant={c.isActive ? 'default' : 'secondary'}
-                        className="shrink-0 text-[10px]"
-                      >
-                        {c.isActive ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </div>
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      {c.level} · {fmtDuration(c.durationMonths)} · {fmtKES(c.tuitionPerTerm)}/term ·{' '}
-                      {c.unitsCount} units · {c.studentsCount} students
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        {fmtDuration(c.durationMonths)} · {fmtKES(c.tuitionPerTerm)}/term ·{' '}
+                        {c.unitsCount} units · {c.studentsCount} students
+                      </p>
+                    </button>
+                    <div className="flex flex-wrap items-center gap-2 border-t border-border/60 px-4 py-3">
                       <Button
                         variant="outline"
                         size="sm"
@@ -430,6 +443,7 @@ function CourseDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>{course ? `Edit ${course.code}` : 'Add course'}</DialogTitle>
           <DialogDescription>
             {course

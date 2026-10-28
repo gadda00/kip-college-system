@@ -1,9 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { CalendarDays, GraduationCap, LayoutDashboard, Users } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+import { CalendarDays, LayoutDashboard, Users } from 'lucide-react'
 import {
   PortalFullSkeleton,
   PortalShell,
@@ -29,43 +27,41 @@ const LECTURER_NAV: PortalNavItem[] = [
 
 const SUB_VIEWS = new Set([...LECTURER_NAV.map((n) => n.key), 'class', 'results'])
 
-/** Sidebar identity card for the signed-in lecturer. */
+/**
+ * Sidebar identity card for the signed-in lecturer — light-on-dark emerald
+ * plate with a gold-ringed avatar, cream name and gold role chip (renders on
+ * the dark desktop sidebar band and inside the mobile drawer alike).
+ */
 function LecturerIdentity({ user }: { user: SafeUser }) {
   const lp = user.lecturerProfile
   return (
-    <Card className="border-primary/15 bg-primary/5">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
-          <span
-            aria-hidden="true"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground"
-          >
-            {initialsOf(user.name)}
-          </span>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold">{user.name}</p>
-            <p className="truncate font-mono text-[11px] text-muted-foreground">
-              {lp?.staffNo ?? '—'}
-            </p>
-          </div>
+    <div className="rounded-xl bg-brand-band kip-pattern p-4 ring-1 ring-inset ring-white/10">
+      <div className="flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gold-300 to-gold-600 text-sm font-bold text-brand-950 ring-2 ring-gold-400/60"
+        >
+          {initialsOf(user.name)}
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-[#f2efe6]">{user.name}</p>
+          <p className="truncate font-mono text-[11px] text-[#f2efe6]/50">{lp?.staffNo ?? '—'}</p>
         </div>
-        {lp && (
-          <div className="mt-3 space-y-2">
-            <p className="text-xs font-medium">{lp.title}</p>
-            <div className="flex flex-wrap gap-1.5">
-              <Badge variant="outline" className="text-[10px] font-medium">
-                {lp.department}
-              </Badge>
-            </div>
-            {lp.specialization && (
-              <p className="line-clamp-2 text-[11px] leading-snug text-muted-foreground">
-                {lp.specialization}
-              </p>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+      {lp && (
+        <div className="mt-3 space-y-2">
+          <span className="inline-flex max-w-full truncate rounded-full border border-gold-400/30 bg-gold-400/15 px-2.5 py-0.5 text-[10px] font-semibold tracking-wide text-gold-300">
+            {lp.title}
+          </span>
+          <p className="text-[11px] font-medium text-[#f2efe6]/60">{lp.department}</p>
+          {lp.specialization && (
+            <p className="line-clamp-2 text-[11px] leading-snug text-[#f2efe6]/50">
+              {lp.specialization}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
 

@@ -4,14 +4,21 @@
  * Task 8-b — printable official documents (fee statement + academic transcript).
  *
  * These render ONLY inside the body-level print portal (see portal/print-doc.tsx),
- * so they use fixed print-safe colours (navy #0b1f3f, royal #1565C0, sky accents)
- * and never appear in normal screen flow. `print-color-adjust: exact` (set on
- * .kip-print-portal in globals.css) keeps the brand colours on paper.
+ * so they use fixed print-safe colours (deep emerald #0f2e22 ink, KIP gold
+ * #f5b301 accents, light emerald tints) and never appear in normal screen flow.
+ * `print-color-adjust: exact` (set on .kip-print-portal in globals.css) keeps
+ * the brand colours on paper.
  */
 
 import { KipCrest } from '@/components/kip/components/kip-logo'
 import { fmtDate, fmtKES } from '@/components/kip/lib/format'
 import type { FeeStatement, StudentProfileFull, StudentResults } from '@/components/kip/portal/types'
+
+// print-safe brand palette (no CSS vars — these must survive paper exactly)
+const INK = '#0f2e22' // deep emerald ink
+const GOLD = '#f5b301' // KIP gold
+const GOLD_DARK = '#92600a' // darker gold for small text on white
+const TINT = '#e8f3ed' // light emerald tint
 
 // ---------------------------------------------------------------------------
 // Shared pieces
@@ -20,39 +27,50 @@ import type { FeeStatement, StudentProfileFull, StudentResults } from '@/compone
 /** A4-style white sheet wrapper. */
 export function PrintSheet({ children }: { children: React.ReactNode }) {
   return (
-    <article className="kip-sheet mx-auto w-full max-w-[820px] bg-white px-8 py-10 text-[#0b1f3f]">
+    <article className="kip-sheet mx-auto w-full max-w-[820px] bg-white px-8 py-10 text-[#0f2e22]">
       {children}
     </article>
   )
 }
 
-/** Official college letterhead: crest + identity + contacts + document title. */
+/** Official college letterhead: emerald band + gold rule + serif identity. */
 export function DocLetterhead({ docTitle, subtitle }: { docTitle: string; subtitle?: string }) {
   return (
-    <header className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-[#0b1f3f] pb-4">
-      <div className="flex items-center gap-4">
-        <KipCrest className="h-16 w-16 shrink-0 text-[#0b1f3f]" />
-        <div className="min-w-0">
-          <h1 className="text-lg font-black uppercase leading-tight tracking-tight text-[#0b1f3f]">
-            Kitui Institute of Professionals
-          </h1>
-          <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#1565C0]">
-            Training for Excellence
-          </p>
-          <p className="mt-1.5 text-[10px] leading-relaxed text-[#0b1f3f]/75">
-            Main Campus: 100m from Wikililye, Mulango Road, Kitui · Town Campus: Muli Mall, Kitui CBD ·
-            Mwingi Campus: Sunrise Building, Mwingi
-            <br />
-            Tel: 0703 710 879 · info@kipskitui.com · www.kipskitui.com
-          </p>
+    <header className="rounded-lg">
+      {/* emerald identity band */}
+      <div className="bg-[#0f2e22] px-4 pb-3 pt-4 text-white">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <KipCrest className="h-14 w-14 shrink-0 text-white" />
+            <div className="min-w-0">
+              <h1 className="font-display text-lg font-bold uppercase leading-tight tracking-tight text-white">
+                Kitui Institute of Professionals
+              </h1>
+              <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f5b301]">
+                Training for Excellence
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="inline-block rounded-md bg-[#f5b301] px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-[#0f2e22]">
+              {docTitle}
+            </p>
+            {subtitle && <p className="mt-1.5 text-[10px] font-medium text-white/75">{subtitle}</p>}
+          </div>
         </div>
-      </div>
-      <div className="text-right">
-        <p className="inline-block rounded-md bg-[#0b1f3f] px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-white">
-          {docTitle}
+        <p className="mt-3 text-[9px] leading-relaxed text-white/70">
+          Main Campus: 100m from Wikililye, Mulango Road, Kitui · Town Campus: Muli Mall, Kitui CBD ·
+          Mwingi Campus: Sunrise Building, Mwingi
+          <br />
+          Tel: 0703 710 879 · info@kipskitui.com · www.kipskitui.com
         </p>
-        {subtitle && <p className="mt-1.5 text-[10px] font-medium text-[#0b1f3f]/70">{subtitle}</p>}
       </div>
+      {/* gold rule */}
+      <div
+        aria-hidden="true"
+        className="h-[3px] w-full"
+        style={{ background: `linear-gradient(90deg, ${GOLD} 0%, ${GOLD_DARK} 70%, transparent 100%)` }}
+      />
     </header>
   )
 }
@@ -80,17 +98,17 @@ export function DocStudentBlock({
     ...(extra ?? []),
   ]
   return (
-    <section className="mt-5 rounded-lg border border-[#0b1f3f]/20 bg-[#E3F2FD]/50 px-4 py-3">
-      <h2 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1565C0]">
+    <section className="mt-5 rounded-lg border border-[#0f2e22]/20 bg-[#e8f3ed] px-4 py-3">
+      <h2 className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#92600a]">
         Student details
       </h2>
       <dl className="mt-2 grid grid-cols-2 gap-x-8 gap-y-2 md:grid-cols-4">
         {cells.map((c) => (
           <div key={c.label} className="min-w-0">
-            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0b1f3f]/55">
+            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0f2e22]/55">
               {c.label}
             </dt>
-            <dd className="mt-0.5 truncate text-[11px] font-bold text-[#0b1f3f]">{c.value}</dd>
+            <dd className="mt-0.5 truncate text-[11px] font-bold text-[#0f2e22]">{c.value}</dd>
           </div>
         ))}
       </dl>
@@ -109,7 +127,12 @@ export function DocFooter({
   showPaybill?: boolean
 }) {
   return (
-    <footer className="mt-8 border-t border-[#0b1f3f]/20 pt-3 text-[9px] leading-relaxed text-[#0b1f3f]/70">
+    <footer className="mt-8 text-[9px] leading-relaxed text-[#0f2e22]/70">
+      <div
+        aria-hidden="true"
+        className="mb-3 h-[3px] w-24"
+        style={{ background: `linear-gradient(90deg, ${GOLD}, ${GOLD_DARK})` }}
+      />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="font-semibold italic">{note}</p>
@@ -228,15 +251,15 @@ export function FeeStatementDoc({
       <DocStudentBlock profile={profile} />
 
       <section className="mt-6">
-        <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#1565C0]">
+        <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#92600a]">
           Statement of account — all charges &amp; payments
         </h2>
         {rows.length === 0 ? (
-          <p className="mt-3 text-[11px] text-[#0b1f3f]/70">No transactions on this account.</p>
+          <p className="mt-3 text-[11px] text-[#0f2e22]/70">No transactions on this account.</p>
         ) : (
           <table className="mt-2 w-full border-collapse text-[10px]">
             <thead>
-              <tr className="border-y border-[#0b1f3f]/25 bg-[#0b1f3f] text-left text-white">
+              <tr className="border-y border-[#0f2e22]/25 bg-[#0f2e22] text-left text-white">
                 <th className="px-2 py-1.5 font-semibold">Date</th>
                 <th className="px-2 py-1.5 font-semibold">Description</th>
                 <th className="px-2 py-1.5 font-semibold">Reference</th>
@@ -246,17 +269,17 @@ export function FeeStatementDoc({
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.key} className="border-b border-[#0b1f3f]/10 align-top">
+                <tr key={row.key} className="border-b border-[#0f2e22]/10 align-top odd:bg-[#e8f3ed]/50">
                   <td className="whitespace-nowrap px-2 py-1.5 font-mono text-[9px]">
                     {fmtDate(row.date)}
                   </td>
                   <td className="px-2 py-1.5">{row.description}</td>
-                  <td className="whitespace-nowrap px-2 py-1.5 font-mono text-[9px] text-[#0b1f3f]/70">
+                  <td className="whitespace-nowrap px-2 py-1.5 font-mono text-[9px] text-[#0f2e22]/70">
                     {row.reference ?? '—'}
                   </td>
                   <td
                     className={`whitespace-nowrap px-2 py-1.5 text-right font-mono font-semibold ${
-                      row.type === 'PAYMENT' ? 'text-[#15803d]' : ''
+                      row.type === 'PAYMENT' ? 'text-[#047857]' : ''
                     }`}
                   >
                     {row.type === 'PAYMENT'
@@ -270,21 +293,21 @@ export function FeeStatementDoc({
               ))}
             </tbody>
             <tfoot>
-              <tr className="border-y-2 border-double border-[#0b1f3f]/40 bg-[#E3F2FD]/60 font-bold">
+              <tr className="border-y-2 border-double border-[#0f2e22]/40 bg-[#e8f3ed] font-bold">
                 <td colSpan={3} className="px-2 py-2 text-[10px] uppercase tracking-wide">
                   Totals — {statement.feeItems.length} charges, {statement.payments.length} payments
                 </td>
                 <td className="whitespace-nowrap px-2 py-2 text-right font-mono">
-                  <span className="block text-[9px] font-semibold text-[#0b1f3f]/60">
+                  <span className="block text-[9px] font-semibold text-[#0f2e22]/60">
                     Charged {fmtKES(statement.totalCharged)}
                   </span>
-                  <span className="block text-[#15803d]">Paid {fmtKES(statement.totalPaid)}</span>
+                  <span className="block text-[#047857]">Paid {fmtKES(statement.totalPaid)}</span>
                 </td>
                 <td className="whitespace-nowrap px-2 py-2 text-right font-mono">
-                  <span className="block text-[9px] font-semibold uppercase text-[#0b1f3f]/60">
+                  <span className="block text-[9px] font-semibold uppercase text-[#0f2e22]/60">
                     Balance
                   </span>
-                  <span className={statement.balance > 0 ? 'text-[#b91c1c]' : 'text-[#15803d]'}>
+                  <span className={statement.balance > 0 ? 'text-[#b91c1c]' : 'text-[#047857]'}>
                     {fmtKES(statement.balance)}
                   </span>
                 </td>
@@ -350,22 +373,22 @@ export function TranscriptDoc({
       <DocStudentBlock profile={profile} />
 
       {byStage.length === 0 ? (
-        <p className="mt-6 text-[11px] text-[#0b1f3f]/70">
+        <p className="mt-6 text-[11px] text-[#0f2e22]/70">
           No published results on record for this student.
         </p>
       ) : (
         <section className="mt-6 space-y-5">
           {byStage.map((stage) => (
             <div key={stage.stageLabel}>
-              <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#1565C0]">
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#92600a]">
                 {stage.stageLabel}{' '}
-                <span className="font-medium normal-case tracking-normal text-[#0b1f3f]/60">
+                <span className="font-medium normal-case tracking-normal text-[#0f2e22]/60">
                   ({stage.entries.length} unit{stage.entries.length === 1 ? '' : 's'})
                 </span>
               </h2>
               <table className="mt-1.5 w-full border-collapse text-[10px]">
                 <thead>
-                  <tr className="border-y border-[#0b1f3f]/25 bg-[#0b1f3f] text-left text-white">
+                  <tr className="border-y border-[#0f2e22]/25 bg-[#0f2e22] text-left text-white">
                     <th className="px-2 py-1.5 font-semibold">Unit code</th>
                     <th className="px-2 py-1.5 font-semibold">Unit name</th>
                     <th className="px-2 py-1.5 font-semibold">Term</th>
@@ -376,7 +399,7 @@ export function TranscriptDoc({
                 </thead>
                 <tbody>
                   {stage.entries.map((e) => (
-                    <tr key={e.id} className="border-b border-[#0b1f3f]/10">
+                    <tr key={e.id} className="border-b border-[#0f2e22]/10 odd:bg-[#e8f3ed]/50">
                       <td className="whitespace-nowrap px-2 py-1.5 font-mono font-semibold">
                         {e.unitCode}
                       </td>
@@ -388,7 +411,9 @@ export function TranscriptDoc({
                         {e.marks.toFixed(0)}/100
                       </td>
                       <td className="px-2 py-1.5 text-center font-black">{e.grade}</td>
-                      <td className="px-2 py-1.5 text-[#0b1f3f]/70">{e.remark ?? '—'}</td>
+                      <td className="px-2 py-1.5 font-display italic text-[#0f2e22]/70">
+                        {e.remark ?? '—'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -397,31 +422,31 @@ export function TranscriptDoc({
           ))}
 
           {/* Summary */}
-          <section className="rounded-lg border border-[#0b1f3f]/20 bg-[#E3F2FD]/50 px-4 py-3">
-            <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#1565C0]">
+          <section className="rounded-lg border border-[#0f2e22]/20 bg-[#e8f3ed] px-4 py-3">
+            <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#92600a]">
               Transcript summary
             </h2>
             <dl className="mt-2 grid grid-cols-2 gap-x-8 gap-y-2 md:grid-cols-4">
               <div>
-                <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0b1f3f]/55">
+                <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0f2e22]/55">
                   Units completed
                 </dt>
                 <dd className="mt-0.5 text-[13px] font-black">{overall.unitsDone}</dd>
               </div>
               <div>
-                <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0b1f3f]/55">
+                <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0f2e22]/55">
                   Average mark
                 </dt>
                 <dd className="mt-0.5 text-[13px] font-black">{overall.average.toFixed(1)}%</dd>
               </div>
               <div>
-                <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0b1f3f]/55">
+                <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0f2e22]/55">
                   GPA (4.00 scale)
                 </dt>
                 <dd className="mt-0.5 text-[13px] font-black">{overall.gpa.toFixed(2)}</dd>
               </div>
               <div>
-                <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0b1f3f]/55">
+                <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#0f2e22]/55">
                   Overall grade
                 </dt>
                 <dd className="mt-0.5 text-[13px] font-black">{overallGradeFor(overall.average)}</dd>

@@ -69,7 +69,7 @@ export function GalleryView() {
                 type="button"
                 onClick={() => setLightboxIndex(i)}
                 aria-label={`Open photo: ${item.title}`}
-                className="group relative mb-4 block w-full overflow-hidden rounded-xl shadow-sm transition-shadow hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="group relative mb-4 block w-full overflow-hidden rounded-xl shadow-sm ring-1 ring-transparent transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-gold-400/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 <img
                   src={item.image}
@@ -77,10 +77,12 @@ export function GalleryView() {
                   className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
                 />
-                <span className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[#0b1f3f]/80 via-transparent to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
-                  <span className="text-sm font-semibold text-white">{item.title}</span>
+                <span className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-brand-950/80 via-brand-950/20 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <span className="text-sm font-semibold text-[#f2efe6]">{item.title}</span>
                   {item.caption && (
-                    <span className="mt-0.5 line-clamp-2 text-xs text-white/80">{item.caption}</span>
+                    <span className="mt-0.5 line-clamp-2 text-xs text-[#f2efe6]/75">
+                      {item.caption}
+                    </span>
                   )}
                 </span>
               </button>
@@ -92,7 +94,7 @@ export function GalleryView() {
       {/* lightbox */}
       <Dialog open={lightboxIndex != null} onOpenChange={(open) => !open && close()}>
         <DialogContent
-          className="max-w-4xl overflow-hidden border-none bg-[#0b1f3f]/95 p-0 sm:rounded-2xl [&>button]:z-10"
+          className="kip-pattern max-w-4xl overflow-hidden border-none bg-brand-950/95 p-0 sm:rounded-2xl [&>button]:z-10"
           aria-describedby={undefined}
         >
           {current && (
@@ -107,20 +109,20 @@ export function GalleryView() {
                 {items.length > 1 && (
                   <>
                     <Button
-                      variant="secondary"
+                      variant="ghost"
                       size="icon"
                       aria-label="Previous photo"
                       onClick={showPrev}
-                      className="absolute left-3 h-11 w-11 rounded-full"
+                      className="absolute left-3 h-11 w-11 rounded-full border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm hover:bg-gold-400 hover:text-[#0f2e22]"
                     >
                       <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                     </Button>
                     <Button
-                      variant="secondary"
+                      variant="ghost"
                       size="icon"
                       aria-label="Next photo"
                       onClick={showNext}
-                      className="absolute right-3 h-11 w-11 rounded-full"
+                      className="absolute right-3 h-11 w-11 rounded-full border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm hover:bg-gold-400 hover:text-[#0f2e22]"
                     >
                       <ChevronRight className="h-5 w-5" aria-hidden="true" />
                     </Button>
@@ -128,12 +130,12 @@ export function GalleryView() {
                 )}
               </div>
               <figcaption className="flex flex-col items-center gap-1 px-6 py-4 text-center">
-                <p className="text-sm font-semibold text-white">{current.title}</p>
+                <p className="text-sm font-semibold text-[#f2efe6]">{current.title}</p>
                 {current.caption && (
-                  <p className="text-xs text-white/70">{current.caption}</p>
+                  <p className="text-xs text-[#f2efe6]/70">{current.caption}</p>
                 )}
                 {items.length > 1 && (
-                  <p className="mt-1 text-[10px] uppercase tracking-wider text-white/50">
+                  <p className="mt-1 text-[10px] uppercase tracking-wider text-[#f2efe6]/50">
                     {(lightboxIndex ?? 0) + 1} / {items.length} &middot; use arrow keys to navigate
                   </p>
                 )}
@@ -141,11 +143,11 @@ export function GalleryView() {
             </figure>
           )}
           <Button
-            variant="secondary"
+            variant="ghost"
             size="icon"
             aria-label="Close gallery"
             onClick={close}
-            className="absolute right-3 top-3 h-11 w-11 rounded-full md:hidden"
+            className="absolute right-3 top-3 h-11 w-11 rounded-full border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm hover:bg-gold-400 hover:text-[#0f2e22] md:hidden"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </Button>

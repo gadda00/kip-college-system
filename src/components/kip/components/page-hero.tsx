@@ -4,7 +4,10 @@ import { ChevronRight, Home } from 'lucide-react'
 import { navigate } from '@/components/kip/lib/router'
 import { cn } from '@/lib/utils'
 
-/** Subpage hero banner: breadcrumb, title, subtitle, royal blue gradient + pattern. */
+/**
+ * Subpage hero banner: breadcrumb, display-serif title, subtitle on the deep
+ * emerald band with woven-reed texture and a gold baseline.
+ */
 export function PageHero({
   eyebrow,
   title,
@@ -23,7 +26,7 @@ export function PageHero({
   return (
     <section
       className={cn(
-        'relative overflow-hidden bg-primary text-primary-foreground',
+        'bg-brand-band kip-grain relative overflow-hidden text-[#f2efe6]',
         className,
       )}
       aria-labelledby="page-hero-title"
@@ -34,43 +37,39 @@ export function PageHero({
             src={image}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover opacity-30"
+            className="absolute inset-0 h-full w-full object-cover opacity-25"
           />
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-r from-[#0b1f3f]/95 via-[#0b1f3f]/80 to-primary/55"
+            className="absolute inset-0 bg-gradient-to-r from-brand-950/95 via-brand-950/80 to-brand-900/55"
           />
           {/* bottom vignette for depth (matches homepage hero) */}
           <div
             aria-hidden="true"
-            className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0b1f3f]/60 to-transparent"
+            className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-brand-950/70 to-transparent"
           />
         </>
       ) : (
         <>
-          {/* subtle radial pattern */}
+          {/* woven reed texture */}
+          <div aria-hidden="true" className="kip-pattern absolute inset-0" />
+          {/* corner gold glow */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 opacity-[0.14]"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)',
-              backgroundSize: '26px 26px',
-            }}
+            className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0b1f3f]/60 via-transparent to-sky-500/15" />
         </>
       )}
 
       <div className="relative mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8">
         {breadcrumb && breadcrumb.length > 0 && (
           <nav aria-label="Breadcrumb" className="mb-4">
-            <ol className="flex flex-wrap items-center gap-1.5 text-xs text-primary-foreground/80 sm:text-sm">
+            <ol className="flex flex-wrap items-center gap-1.5 text-xs text-[#f2efe6]/75 sm:text-sm">
               <li>
                 <button
                   type="button"
                   onClick={() => navigate('/')}
-                  className="inline-flex min-h-11 items-center gap-1 rounded px-1 transition-colors hover:text-sky-300 md:min-h-0"
+                  className="inline-flex min-h-11 items-center gap-1 rounded px-1 transition-colors hover:text-gold-300 md:min-h-0"
                 >
                   <Home className="h-3.5 w-3.5" aria-hidden="true" />
                   <span className="sr-only sm:not-sr-only">Home</span>
@@ -83,12 +82,12 @@ export function PageHero({
                     <button
                       type="button"
                       onClick={() => navigate(crumb.to as string)}
-                      className="rounded px-1 transition-colors hover:text-sky-300"
+                      className="rounded px-1 transition-colors hover:text-gold-300"
                     >
                       {crumb.label}
                     </button>
                   ) : (
-                    <span aria-current="page" className="font-medium text-sky-300">
+                    <span aria-current="page" className="font-medium text-gold-300">
                       {crumb.label}
                     </span>
                   )}
@@ -99,24 +98,30 @@ export function PageHero({
         )}
 
         {eyebrow && (
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-sky-300 sm:text-sm">
-            {eyebrow}
-          </p>
+          <div className="mb-3 flex items-center gap-3">
+            <span className="gold-rule w-6" aria-hidden="true" />
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-gold-300 sm:text-sm">
+              {eyebrow}
+            </p>
+          </div>
         )}
         <h1
           id="page-hero-title"
-          className="text-balance text-2xl font-black leading-tight tracking-tight sm:text-3xl lg:text-4xl"
+          className="text-balance text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-4xl"
         >
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-primary-foreground/85 sm:text-base">
+          <p className="mt-3 max-w-2xl text-pretty text-sm leading-relaxed text-[#f2efe6]/85 sm:text-base">
             {subtitle}
           </p>
         )}
       </div>
-      {/* sky baseline */}
-      <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-sky-400 via-sky-300 to-transparent" aria-hidden="true" />
+      {/* gold baseline */}
+      <div
+        className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-gold-500 via-gold-400 to-transparent"
+        aria-hidden="true"
+      />
     </section>
   )
 }

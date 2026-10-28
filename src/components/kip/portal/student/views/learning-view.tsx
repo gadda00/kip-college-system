@@ -95,6 +95,8 @@ export function LearningView() {
 function CourseOverview({ data, course }: { data: StudentDashboard; course: CourseDetail | null }) {
   const { profile, units } = data
   const studentCourse = profile.course
+  const stages = course?.unitsByStage.length ?? 0
+  const progress = stages > 0 ? Math.min(100, Math.round((profile.currentTerm / stages) * 100)) : null
 
   return (
     <div className="space-y-6">
@@ -109,26 +111,31 @@ function CourseOverview({ data, course }: { data: StudentDashboard; course: Cour
         />
       </motion.div>
 
-      <Card className="border-primary/15 bg-gradient-to-br from-primary/5 via-card to-card">
+      <Card className="relative rule-top-gold bg-gradient-to-br from-brand-50/70 via-card to-card dark:from-brand-100/15 dark:via-card dark:to-card">
         <CardContent className="p-4 sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex min-w-0 items-start gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold-400/15 text-gold-700 dark:text-gold-400">
                 <GraduationCap className="h-6 w-6" aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <h2 className="text-lg font-bold leading-snug sm:text-xl">{studentCourse.title}</h2>
+                <h2 className="font-display text-lg font-bold leading-snug sm:text-xl">
+                  {studentCourse.title}
+                </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Adm. <span className="font-mono text-xs">{profile.admissionNo}</span>
                 </p>
               </div>
             </div>
-            <Badge
-              variant={profile.status === 'ACTIVE' ? 'default' : 'secondary'}
-              className="shrink-0"
-            >
-              {profile.status === 'ACTIVE' ? 'Active student' : profile.status}
-            </Badge>
+            {profile.status === 'ACTIVE' ? (
+              <span className="inline-flex w-fit shrink-0 items-center rounded-md border border-emerald-600/25 bg-emerald-600/15 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                Active student
+              </span>
+            ) : (
+              <Badge variant="secondary" className="shrink-0">
+                {profile.status}
+              </Badge>
+            )}
           </div>
 
           <dl className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
@@ -142,6 +149,33 @@ function CourseOverview({ data, course }: { data: StudentDashboard; course: Cour
               value={`Year ${profile.yearOfStudy} · Term ${profile.currentTerm}`}
             />
           </dl>
+
+          {/* gold course-progress bar */}
+          {progress !== null && (
+            <div className="mt-5">
+              <div className="flex items-center justify-between text-xs font-medium">
+                <span className="text-muted-foreground">
+                  Course progress · Term {profile.currentTerm} of {stages}
+                </span>
+                <span className="font-display font-bold text-gold-700 dark:text-gold-400">
+                  {progress}%
+                </span>
+              </div>
+              <div
+                role="progressbar"
+                aria-valuenow={progress}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`Course progress: ${progress}%`}
+                className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted"
+              >
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -150,7 +184,7 @@ function CourseOverview({ data, course }: { data: StudentDashboard; course: Cour
         <Card>
           <CardHeader className="pb-4">
             <CardTitle id="current-units" className="flex items-center gap-2 text-base">
-              <Layers className="h-4 w-4 text-primary" aria-hidden="true" />
+              <Layers className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
               Current term units
               <Badge variant="secondary" className="ml-1 text-[10px]">
                 {units[0]?.stageLabel ?? `Term ${profile.currentTerm}`}
@@ -167,22 +201,38 @@ function CourseOverview({ data, course }: { data: StudentDashboard; course: Cour
               />
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {units.map((u) => (
+                {units.map((u, i) => (
                   <div
                     key={u.id}
-                    className="rounded-xl border p-4 transition-colors hover:border-primary/30"
+                    className="flex items-start gap-3 rounded-xl border p-4 transition-colors hover:border-brand-600/30 hover:bg-brand-50/40 dark:hover:bg-brand-100/10"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="font-mono text-[11px] font-semibold text-primary">{u.code}</p>
-                        <p className="mt-0.5 text-sm font-semibold leading-snug">{u.name}</p>
+                    {/* brand cover swatch */}
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        'flex h-16 w-12 shrink-0 items-end rounded-lg p-1.5 shadow-inner',
+                        `cover-${i % 8}`,
+                      )}
+                    >
+                      <span className="w-full rounded-sm bg-black/20 px-1 py-0.5 text-center text-[8px] font-black uppercase leading-tight tracking-wide text-white">
+                        {u.code}
+                      </span>
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="font-mono text-[11px] font-semibold text-brand-700 dark:text-gold-400">
+                            {u.code}
+                          </p>
+                          <p className="mt-0.5 text-sm font-semibold leading-snug">{u.name}</p>
+                        </div>
+                        <Badge variant="outline" className="shrink-0 gap-1 text-[10px] font-medium">
+                          <Clock3 className="h-3 w-3" aria-hidden="true" />
+                          {u.weekHours}h/week
+                        </Badge>
                       </div>
-                      <Badge variant="outline" className="shrink-0 gap-1 text-[10px] font-medium">
-                        <Clock3 className="h-3 w-3" aria-hidden="true" />
-                        {u.weekHours}h/week
-                      </Badge>
+                      <p className="mt-2 text-xs text-muted-foreground">{u.stageLabel}</p>
                     </div>
-                    <p className="mt-2 text-xs text-muted-foreground">{u.stageLabel}</p>
                   </div>
                 ))}
               </div>
@@ -208,7 +258,7 @@ function InfoItem({
   return (
     <div className="min-w-0">
       <dt className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-        <Icon className="h-3 w-3 text-primary" aria-hidden="true" />
+        <Icon className="h-3 w-3 text-gold-600 dark:text-gold-400" aria-hidden="true" />
         {label}
       </dt>
       <dd className="mt-1 truncate text-sm font-semibold">{value}</dd>
@@ -224,7 +274,7 @@ function CourseStructure({ course, currentStage }: { course: CourseDetail; curre
       <Card>
         <CardHeader className="pb-4">
           <CardTitle id="course-structure" className="flex items-center gap-2 text-base">
-            <BookOpen className="h-4 w-4 text-primary" aria-hidden="true" />
+            <BookOpen className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
             Course structure
           </CardTitle>
         </CardHeader>
@@ -236,16 +286,21 @@ function CourseStructure({ course, currentStage }: { course: CourseDetail; curre
                 <AccordionItem key={stage.stage} value={String(stage.stage)}>
                   <AccordionTrigger className="min-h-11 py-3 hover:no-underline">
                     <span className="flex items-center gap-2 text-left">
-                      <span className={cn('text-sm font-semibold', isCurrent && 'text-primary')}>
+                      <span
+                        className={cn(
+                          'text-sm font-semibold',
+                          isCurrent && 'text-brand-700 dark:text-gold-400',
+                        )}
+                      >
                         {stage.stageLabel}
                       </span>
                       <Badge variant="secondary" className="text-[10px]">
                         {stage.units.length} units
                       </Badge>
                       {isCurrent && (
-                        <Badge className="bg-amber-400/15 text-amber-700 hover:bg-amber-400/15 dark:text-amber-400">
+                        <span className="inline-flex items-center rounded-md border border-gold-500/30 bg-gold-400/15 px-2 py-0.5 text-[10px] font-medium text-gold-700 dark:text-gold-300">
                           Current
-                        </Badge>
+                        </span>
                       )}
                     </span>
                   </AccordionTrigger>
@@ -254,10 +309,12 @@ function CourseStructure({ course, currentStage }: { course: CourseDetail; curre
                       {stage.units.map((u) => (
                         <li
                           key={u.id}
-                          className="flex items-center justify-between gap-3 rounded-lg border/60 bg-muted/30 px-3 py-2.5"
+                          className="flex items-center justify-between gap-3 rounded-lg border/60 bg-brand-50/60 px-3 py-2.5 dark:bg-brand-100/15"
                         >
                           <div className="min-w-0">
-                            <p className="font-mono text-[11px] font-semibold text-primary">{u.code}</p>
+                            <p className="font-mono text-[11px] font-semibold text-brand-700 dark:text-gold-400">
+                              {u.code}
+                            </p>
                             <p className="truncate text-sm">{u.name}</p>
                           </div>
                           <span className="shrink-0 text-xs text-muted-foreground">
@@ -289,9 +346,9 @@ const MATERIAL_TABS = [
 function materialMeta(type: string) {
   switch (type) {
     case 'NOTES':
-      return { icon: NotebookPen, label: 'Notes', classes: 'bg-primary/10 text-primary' }
+      return { icon: NotebookPen, label: 'Notes', classes: 'bg-brand-600/10 text-brand-700 dark:text-brand-300' }
     case 'PAST_PAPER':
-      return { icon: ScrollText, label: 'Past paper', classes: 'bg-amber-400/15 text-amber-700 dark:text-amber-400' }
+      return { icon: ScrollText, label: 'Past paper', classes: 'bg-gold-400/15 text-gold-700 dark:text-gold-400' }
     default:
       return { icon: FileText, label: 'Assignment', classes: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' }
   }
@@ -306,7 +363,7 @@ function StudyMaterials({ materials }: { materials: StudyMaterialDTO[] }) {
       <Card>
         <CardHeader className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle id="study-materials" className="flex items-center gap-2 text-base">
-            <NotebookPen className="h-4 w-4 text-primary" aria-hidden="true" />
+            <NotebookPen className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
             Study materials
           </CardTitle>
           <Tabs value={tab} onValueChange={setTab}>
@@ -340,7 +397,10 @@ function StudyMaterials({ materials }: { materials: StudyMaterialDTO[] }) {
                 const meta = materialMeta(m.type)
                 const Icon = meta.icon
                 return (
-                  <li key={m.id} className="rounded-xl border p-4 transition-colors hover:border-primary/30">
+                  <li
+                    key={m.id}
+                    className="rounded-xl border p-4 transition-colors hover:border-brand-600/30 hover:bg-brand-50/40 dark:hover:bg-brand-100/10"
+                  >
                     <div className="flex items-start gap-3">
                       <span className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-lg', meta.classes)}>
                         <Icon className="h-5 w-5" aria-hidden="true" />
@@ -352,7 +412,7 @@ function StudyMaterials({ materials }: { materials: StudyMaterialDTO[] }) {
                             {meta.label}
                           </Badge>
                         </div>
-                        <p className="mt-1 text-xs font-medium text-primary">
+                        <p className="mt-1 text-xs font-medium text-brand-700 dark:text-gold-400">
                           {m.unitName ?? 'General'} {m.stageLabel ? `· ${m.stageLabel}` : ''}
                         </p>
                         <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
@@ -363,12 +423,14 @@ function StudyMaterials({ materials }: { materials: StudyMaterialDTO[] }) {
                             <FileText className="h-3 w-3" aria-hidden="true" />
                             {m.fileLabel}
                           </Badge>
-                          <span className="text-[11px] text-muted-foreground">{fmtDate(m.createdAt)}</span>
+                          <span className="inline-flex items-center rounded-md border border-gold-500/30 bg-gold-400/15 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gold-700 dark:text-gold-300">
+                            {fmtDate(m.createdAt)}
+                          </span>
                         </div>
                       </div>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button variant="outline" size="sm" disabled className="min-h-11 shrink-0 gap-1.5">
+                          <Button variant="outline" size="sm" disabled className="focus-glow min-h-11 shrink-0 gap-1.5">
                             <ChevronRight className="h-4 w-4" aria-hidden="true" />
                             <span className="hidden sm:inline">Get copy</span>
                             <span className="sr-only">

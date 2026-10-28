@@ -7,6 +7,7 @@ import {
   CircleHelp,
   Mail,
   MessageCircleQuestion,
+  Plus,
   Search,
   Sparkles,
 } from 'lucide-react'
@@ -33,10 +34,10 @@ import { cn } from '@/lib/utils'
 const FAQ_CATEGORIES = ['Admissions', 'Fees', 'Courses', 'Exams', 'General'] as const
 
 const CATEGORY_STYLES: Record<string, string> = {
-  Admissions: 'bg-primary/10 text-primary',
-  Fees: 'bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300',
-  Courses: 'bg-primary/10 text-primary',
-  Exams: 'bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300',
+  Admissions: 'bg-brand-50 text-brand-700 dark:bg-brand-100 dark:text-gold-300',
+  Fees: 'bg-gold-400/15 text-gold-700 dark:text-gold-300',
+  Courses: 'bg-brand-50 text-brand-700 dark:bg-brand-100 dark:text-gold-300',
+  Exams: 'bg-gold-400/15 text-gold-700 dark:text-gold-300',
   General: 'bg-muted text-muted-foreground',
 }
 
@@ -154,7 +155,7 @@ export function FaqView() {
               action={
                 <Button
                   variant="outline"
-                  className="min-h-11"
+                  className="min-h-11 hover:border-brand-700 hover:bg-brand-700 hover:text-[#f2efe6]"
                   onClick={() => {
                     setSearch('')
                     setCategory('')
@@ -165,7 +166,7 @@ export function FaqView() {
               }
             />
           ) : (
-            <Card className="overflow-hidden border-primary/15 shadow-sm">
+            <Card className="overflow-hidden border-brand-500/15 shadow-sm">
               <CardContent className="p-2 sm:p-4">
                 <Accordion
                   type="single"
@@ -175,10 +176,10 @@ export function FaqView() {
                 >
                   {filtered.map((faq) => (
                     <AccordionItem key={faq.id} value={faq.id} className="border-b last:border-b-0">
-                      <AccordionTrigger className="min-h-11 px-3 py-4 text-sm font-semibold hover:no-underline sm:text-base [&>svg]:hidden">
+                      <AccordionTrigger className="min-h-11 px-3 py-4 text-sm font-semibold hover:no-underline sm:text-base [&>svg]:hidden [&[data-state=open]_.faq-plus]:rotate-45">
                         <span className="flex items-start gap-3">
-                          <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                            Q
+                          <span className="faq-plus mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-gold-500/40 bg-gold-400/10 text-gold-600 transition-transform duration-200 dark:text-gold-400">
+                            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                           </span>
                           <span className="text-left">{faq.question}</span>
                         </span>
@@ -202,33 +203,47 @@ export function FaqView() {
           )}
         </div>
 
-        {/* "Still have questions?" CTA */}
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Card className="border-primary/15 bg-primary/5 transition-shadow hover:shadow-md">
-            <CardContent className="flex flex-col items-start gap-3 p-6">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Mail className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <div>
-                <h3 className="text-base font-semibold">Still have questions?</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Our admissions team replies within one working day — call{' '}
-                  <a href="tel:+254703710879" className="font-medium text-primary hover:underline">
-                    0703 710 879
-                  </a>{' '}
-                  or send us a message.
-                </p>
+        {/* "Still have questions?" CTA band */}
+        <div className="mt-10 space-y-4">
+          <div className="bg-brand-band kip-pattern kip-grain relative overflow-hidden rounded-2xl text-[#f2efe6]">
+            <div
+              aria-hidden="true"
+              className="absolute -right-20 -top-24 h-56 w-56 rounded-full bg-gold-400/10 blur-3xl"
+            />
+            <div className="relative flex flex-col items-start gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+              <div className="flex items-start gap-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold-400/15 text-gold-300 ring-1 ring-gold-400/30">
+                  <Mail className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-[#f2efe6]">
+                    Still have questions?
+                  </h3>
+                  <p className="mt-1 max-w-md text-sm leading-relaxed text-[#f2efe6]/70">
+                    Our admissions team replies within one working day — call{' '}
+                    <a
+                      href="tel:+254703710879"
+                      className="font-medium text-gold-300 underline-offset-2 hover:underline"
+                    >
+                      0703 710 879
+                    </a>{' '}
+                    or send us a message.
+                  </p>
+                </div>
               </div>
-              <Button onClick={() => navigate('/contact')} className="min-h-11">
+              <Button
+                onClick={() => navigate('/contact')}
+                className="btn-gold min-h-11 shrink-0 font-semibold"
+              >
                 Contact us
                 <MessageCircleQuestion className="ml-1.5 h-4 w-4" aria-hidden="true" />
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card className="border-sky-200 bg-sky-50 transition-shadow hover:shadow-md dark:border-sky-900 dark:bg-sky-950/40">
+          <Card className="border-gold-500/30 bg-gold-400/10 transition-shadow hover:shadow-md dark:bg-gold-400/5">
             <CardContent className="flex flex-col items-start gap-3 p-6">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-500/15 text-sky-600 dark:text-sky-400">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold-400/15 text-gold-700 dark:text-gold-300">
                 <Sparkles className="h-5 w-5" aria-hidden="true" />
               </span>
               <div>
@@ -241,7 +256,7 @@ export function FaqView() {
               <Button
                 variant="outline"
                 onClick={() => navigate('/academics')}
-                className="min-h-11"
+                className="min-h-11 hover:border-brand-700 hover:bg-brand-700 hover:text-[#f2efe6]"
               >
                 <BookOpenCheck className="mr-2 h-4 w-4" aria-hidden="true" />
                 Browse courses
@@ -273,8 +288,8 @@ function FilterPill({
       className={cn(
         'inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         active
-          ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-          : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground',
+          ? 'border-brand-700 bg-brand-700 text-[#f2efe6] shadow-sm'
+          : 'border-border bg-card text-muted-foreground hover:border-gold-500/50 hover:text-foreground',
       )}
     >
       {label}
@@ -282,7 +297,7 @@ function FilterPill({
         <span
           className={cn(
             'rounded-full px-1.5 text-xs font-semibold',
-            active ? 'bg-white/20 text-primary-foreground' : 'bg-muted text-muted-foreground',
+            active ? 'bg-white/20 text-[#f2efe6]' : 'bg-muted text-muted-foreground',
           )}
         >
           {count}

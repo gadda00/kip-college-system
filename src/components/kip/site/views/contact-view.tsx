@@ -57,6 +57,16 @@ function validate(form: ContactForm): FormErrors {
   return errors
 }
 
+/** Gold icon chip used across the contact info cards. */
+function InfoChip({ icon: Icon, label }: { icon: typeof Phone; label: string }) {
+  return (
+    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gold-400/15 text-gold-700 dark:text-gold-300">
+      <Icon className="h-4 w-4" aria-hidden="true" />
+      <span className="sr-only">{label}</span>
+    </span>
+  )
+}
+
 export function ContactView() {
   const [form, setForm] = useState<ContactForm>(EMPTY)
   const [errors, setErrors] = useState<FormErrors>({})
@@ -114,10 +124,12 @@ export function ContactView() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* form */}
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="rule-top-gold relative overflow-hidden">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <MessageSquareText className="h-5 w-5 text-primary" aria-hidden="true" />
+                <CardTitle className="flex items-center gap-2.5 text-lg">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold-400/15 text-gold-700 dark:text-gold-300">
+                    <MessageSquareText className="h-5 w-5" aria-hidden="true" />
+                  </span>
                   Send us a message
                 </CardTitle>
               </CardHeader>
@@ -141,7 +153,7 @@ export function ContactView() {
                     <div className="flex flex-wrap justify-center gap-3">
                       <Button
                         variant="outline"
-                        className="min-h-11"
+                        className="min-h-11 hover:border-brand-700 hover:bg-brand-700 hover:text-[#f2efe6]"
                         onClick={() => {
                           setForm(EMPTY)
                           setSent(false)
@@ -247,7 +259,7 @@ export function ContactView() {
                         type="submit"
                         size="lg"
                         disabled={submitting}
-                        className="h-12 w-full sm:w-auto sm:px-10"
+                        className="h-12 w-full shadow-md sm:w-auto sm:px-10"
                       >
                         {submitting ? (
                           <>
@@ -275,8 +287,8 @@ export function ContactView() {
           <aside className="space-y-5" aria-label="Contact information">
             <Card>
               <CardContent className="space-y-4 p-5 text-sm">
-                <h2 className="flex items-center gap-2 font-semibold">
-                  <Phone className="h-4 w-4 text-primary" aria-hidden="true" />
+                <h2 className="flex items-center gap-2.5 font-semibold">
+                  <InfoChip icon={Phone} label="Phone lines" />
                   Phone lines
                 </h2>
                 <ul className="space-y-1.5 text-muted-foreground">
@@ -291,12 +303,15 @@ export function ContactView() {
                     </li>
                   ))}
                   <li className="flex min-h-9 items-center gap-2 text-muted-foreground">
-                    <Smartphone className="h-4 w-4 text-primary" aria-hidden="true" />
+                    <Smartphone
+                      className="h-4 w-4 text-gold-600 dark:text-gold-400"
+                      aria-hidden="true"
+                    />
                     WhatsApp: 0703 710 879
                   </li>
                 </ul>
-                <h2 className="flex items-center gap-2 pt-2 font-semibold">
-                  <Mail className="h-4 w-4 text-primary" aria-hidden="true" />
+                <h2 className="flex items-center gap-2.5 pt-2 font-semibold">
+                  <InfoChip icon={Mail} label="Email" />
                   Email
                 </h2>
                 <a
@@ -310,8 +325,8 @@ export function ContactView() {
 
             <Card>
               <CardContent className="space-y-3 p-5 text-sm">
-                <h2 className="flex items-center gap-2 font-semibold">
-                  <Building2 className="h-4 w-4 text-primary" aria-hidden="true" />
+                <h2 className="flex items-center gap-2.5 font-semibold">
+                  <InfoChip icon={Building2} label="Campuses" />
                   Campuses
                 </h2>
                 <ul className="space-y-3 text-muted-foreground">
@@ -331,10 +346,10 @@ export function ContactView() {
               </CardContent>
             </Card>
 
-            <Card className="bg-primary/5">
+            <Card className="border-brand-500/15 bg-brand-50 dark:bg-brand-100/10">
               <CardContent className="space-y-3 p-5 text-sm">
-                <h2 className="flex items-center gap-2 font-semibold">
-                  <Clock3 className="h-4 w-4 text-primary" aria-hidden="true" />
+                <h2 className="flex items-center gap-2.5 font-semibold">
+                  <InfoChip icon={Clock3} label="Office hours" />
                   Office hours
                 </h2>
                 <ul className="space-y-1.5 text-muted-foreground">
@@ -354,10 +369,10 @@ export function ContactView() {
               </CardContent>
             </Card>
 
-            <Card className="border-sky-200 bg-sky-50/70 transition-shadow hover:shadow-md dark:border-sky-900 dark:bg-sky-950/40">
+            <Card className="border-gold-500/30 bg-gold-400/10 transition-shadow hover:shadow-md dark:bg-gold-400/5">
               <CardContent className="flex flex-col gap-3 p-5 text-sm">
-                <h2 className="flex items-center gap-2 font-semibold">
-                  <CircleHelp className="h-4 w-4 text-sky-600 dark:text-sky-400" aria-hidden="true" />
+                <h2 className="flex items-center gap-2.5 font-semibold">
+                  <InfoChip icon={CircleHelp} label="Quick answers" />
                   Quick answers
                 </h2>
                 <p className="text-muted-foreground">
@@ -367,7 +382,7 @@ export function ContactView() {
                 <Button
                   variant="outline"
                   onClick={() => navigate('/faq')}
-                  className="min-h-11 w-full font-medium"
+                  className="min-h-11 w-full font-medium hover:border-brand-700 hover:bg-brand-700 hover:text-[#f2efe6]"
                 >
                   Visit the FAQ page
                 </Button>

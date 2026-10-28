@@ -77,7 +77,7 @@ export function ChatWidget() {
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+          'fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-[#f2efe6] shadow-xl outline-2 outline-offset-2 outline-gold-400/40 transition-transform hover:scale-105 hover:bg-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
           !open && 'animate-pulse-ring',
         )}
       >
@@ -91,14 +91,16 @@ export function ChatWidget() {
           className="fixed bottom-24 right-5 z-50 flex h-[560px] max-h-[75vh] w-[380px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-2xl border bg-card shadow-2xl"
         >
           {/* header */}
-          <div className="flex items-center gap-3 border-b bg-primary px-4 py-3 text-primary-foreground">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15">
-              <KipCrest className="h-7 w-7 text-white" />
+          <div className="bg-brand-band kip-pattern relative flex items-center gap-3 border-b border-white/10 px-4 py-3 text-[#f2efe6]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-gold-400/30">
+              <KipCrest className="h-7 w-7 text-[#f2efe6]" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold leading-tight">KIP Assistant</p>
-              <p className="flex items-center gap-1.5 text-xs text-primary-foreground/80">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-300" aria-hidden="true" />
+              <p className="truncate font-display text-sm font-semibold leading-tight">
+                KIP Assistant
+              </p>
+              <p className="flex items-center gap-1.5 text-xs text-[#f2efe6]/70">
+                <span className="h-1.5 w-1.5 rounded-full bg-gold-400" aria-hidden="true" />
                 Typically replies instantly
               </p>
             </div>
@@ -106,10 +108,15 @@ export function ChatWidget() {
               type="button"
               aria-label="Close chat"
               onClick={() => setOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-white/15"
+              className="flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-white/10 hover:text-gold-300"
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
+            {/* gold baseline */}
+            <span
+              aria-hidden="true"
+              className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-gold-500 via-gold-400 to-transparent"
+            />
           </div>
 
           {/* messages */}
@@ -120,7 +127,7 @@ export function ChatWidget() {
                 className={cn('flex items-end gap-2', m.role === 'user' ? 'justify-end' : 'justify-start')}
               >
                 {m.role === 'assistant' && (
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-primary dark:bg-brand-100">
                     <KipCrest className="h-5 w-5" />
                   </span>
                 )}
@@ -128,8 +135,8 @@ export function ChatWidget() {
                   className={cn(
                     'max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
                     m.role === 'user'
-                      ? 'rounded-br-sm bg-primary text-primary-foreground'
-                      : 'rounded-bl-sm bg-muted text-foreground',
+                      ? 'rounded-br-sm bg-brand-700 text-[#f2efe6]'
+                      : 'rounded-bl-sm bg-muted text-primary',
                   )}
                 >
                   {m.role === 'assistant' ? (
@@ -145,14 +152,14 @@ export function ChatWidget() {
 
             {pending && (
               <div className="flex items-end gap-2" aria-live="polite">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-primary dark:bg-brand-100">
                   <KipCrest className="h-5 w-5" />
                 </span>
                 <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm bg-muted px-4 py-3.5">
                   {[0, 1, 2].map((dot) => (
                     <span
                       key={dot}
-                      className="h-2 w-2 animate-bounce rounded-full bg-primary/60"
+                      className="h-2 w-2 animate-bounce rounded-full bg-gold-500"
                       style={{ animationDelay: `${dot * 0.15}s` }}
                       aria-hidden="true"
                     />
@@ -176,7 +183,7 @@ export function ChatWidget() {
                     key={prompt}
                     type="button"
                     onClick={() => send(prompt)}
-                    className="min-h-9 rounded-full border border-primary/25 bg-card px-3.5 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/10"
+                    className="min-h-9 rounded-full border border-gold-500/30 bg-gold-400/10 px-3.5 py-1.5 text-xs font-medium text-gold-700 transition-colors hover:bg-gold-400/20 dark:text-gold-300"
                   >
                     {prompt}
                   </button>

@@ -1,16 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#123a8a"/>
-      <stop offset="1" stop-color="#0b1f3f"/>
+      <stop offset="0" stop-color="#14563f"/>
+      <stop offset="1" stop-color="#0c1f16"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5b301"/>
+      <stop offset="1" stop-color="#d99a06"/>
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="14" fill="url(#bg)"/>
   <!-- graduation cap -->
-  <path d="M32 12 L52 21 L32 30 L12 21 Z" fill="#38bdf8"/>
-  <path d="M22 25.5 V33 C22 36.5 26.5 39 32 39 C37.5 39 42 36.5 42 33 V25.5 L32 30 Z" fill="#7dd3fc" opacity="0.85"/>
-  <rect x="50" y="21" width="2.4" height="10" rx="1.2" fill="#38bdf8"/>
-  <circle cx="51.2" cy="32.5" r="2.1" fill="#38bdf8"/>
+  <path d="M32 12 L52 21 L32 30 L12 21 Z" fill="url(#cap)"/>
+  <path d="M22 25.5 V33 C22 36.5 26.5 39 32 39 C37.5 39 42 36.5 42 33 V25.5 L32 30 Z" fill="#f7c642" opacity="0.85"/>
+  <rect x="50" y="21" width="2.4" height="10" rx="1.2" fill="url(#cap)"/>
+  <circle cx="51.2" cy="32.5" r="2.1" fill="url(#cap)"/>
   <!-- KIP wordmark -->
-  <text x="32" y="53" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">KIP</text>
+  <text x="32" y="53" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-weight="700" fill="#f2efe6" text-anchor="middle" letter-spacing="1.5">KIP</text>
 </svg>

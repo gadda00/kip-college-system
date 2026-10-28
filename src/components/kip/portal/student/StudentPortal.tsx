@@ -11,8 +11,6 @@ import {
   Receipt,
   UserRound,
 } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   PortalFullSkeleton,
   PortalShell,
@@ -23,6 +21,7 @@ import {
 } from '@/components/kip/portal/shared'
 import { navigate } from '@/components/kip/lib/router'
 import type { SafeUser } from '@/components/kip/lib/types'
+import { cn } from '@/lib/utils'
 
 import { DashboardView } from '@/components/kip/portal/student/views/dashboard-view'
 import { LearningView } from '@/components/kip/portal/student/views/learning-view'
@@ -46,54 +45,58 @@ const STUDENT_NAV: PortalNavItem[] = [
 
 const SUB_VIEWS = new Set(STUDENT_NAV.map((n) => n.key))
 
-function statusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' {
-  if (status === 'ACTIVE') return 'default'
-  if (status === 'GRADUATED') return 'secondary'
-  return 'destructive'
+/** Light-on-dark chip tones for the emerald sidebar identity panel. */
+function statusTone(status: string): string {
+  if (status === 'ACTIVE') return 'border-emerald-400/30 bg-emerald-400/15 text-emerald-300'
+  if (status === 'GRADUATED') return 'border-gold-400/30 bg-gold-400/15 text-gold-300'
+  return 'border-red-400/30 bg-red-400/10 text-red-300'
 }
 
-/** Sidebar identity card for the signed-in student. */
+/** Sidebar identity card for the signed-in student — light-on-dark emerald panel. */
 function StudentIdentity({ user }: { user: SafeUser }) {
   const sp = user.studentProfile
   return (
-    <Card className="border-primary/15 bg-primary/5">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
-          <span
-            aria-hidden="true"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground"
-          >
-            {initialsOf(user.name)}
-          </span>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold">{user.name}</p>
-            <p className="truncate font-mono text-[11px] text-muted-foreground">
-              {sp?.admissionNo ?? '—'}
-            </p>
+    <div className="rounded-xl border border-white/10 bg-brand-950/50 p-3">
+      <div className="flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-bold text-[#f2efe6] ring-2 ring-gold-400/60"
+        >
+          {initialsOf(user.name)}
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-[#f2efe6]">{user.name}</p>
+          <p className="mt-1 inline-flex max-w-full items-center truncate rounded-md border border-gold-400/30 bg-gold-400/15 px-1.5 py-0.5 font-mono text-[10px] font-semibold tracking-wide text-gold-300">
+            {sp?.admissionNo ?? '—'}
+          </p>
+        </div>
+      </div>
+      {sp && (
+        <div className="mt-3 space-y-2">
+          <p className="line-clamp-2 text-xs leading-snug text-[#f2efe6]/60">
+            {sp.course?.title ?? 'No course enrolled'}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {sp.campus && (
+              <span className="rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 text-[10px] font-medium text-[#f2efe6]/80">
+                {sp.campus.name}
+              </span>
+            )}
+            <span className="rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 text-[10px] font-medium text-[#f2efe6]/80">
+              Year {sp.yearOfStudy} · Term {sp.currentTerm}
+            </span>
+            <span
+              className={cn(
+                'rounded-md border px-1.5 py-0.5 text-[10px] font-semibold',
+                statusTone(sp.status),
+              )}
+            >
+              {sp.status === 'ACTIVE' ? 'Active' : sp.status}
+            </span>
           </div>
         </div>
-        {sp && (
-          <div className="mt-3 space-y-2">
-            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
-              {sp.course?.title ?? 'No course enrolled'}
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {sp.campus && (
-                <Badge variant="outline" className="text-[10px] font-medium">
-                  {sp.campus.name}
-                </Badge>
-              )}
-              <Badge variant="outline" className="text-[10px] font-medium">
-                Year {sp.yearOfStudy} · Term {sp.currentTerm}
-              </Badge>
-              <Badge variant={statusBadgeVariant(sp.status)} className="text-[10px] font-medium">
-                {sp.status === 'ACTIVE' ? 'Active' : sp.status}
-              </Badge>
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      )}
+    </div>
   )
 }
 

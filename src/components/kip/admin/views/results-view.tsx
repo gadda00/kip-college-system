@@ -90,9 +90,12 @@ export function ResultsView() {
 
       {/* Cascading selectors */}
       <Card>
-        <CardContent className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-3 sm:p-6">
-          <div className="space-y-2">
-            <Label htmlFor="rm-course" className="text-sm font-medium">
+        <CardContent className="flex flex-wrap items-end gap-4 p-4 sm:p-6">
+          <div className="w-full space-y-2 sm:w-56">
+            <Label
+              htmlFor="rm-course"
+              className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+            >
               Course
             </Label>
             <Select value={courseId || ALL_COURSES} onValueChange={(v) => onCourseChange(v === ALL_COURSES ? '' : v)}>
@@ -109,8 +112,11 @@ export function ResultsView() {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="rm-unit" className="text-sm font-medium">
+          <div className="w-full space-y-2 sm:w-56">
+            <Label
+              htmlFor="rm-unit"
+              className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+            >
               Unit
             </Label>
             <Select
@@ -132,8 +138,11 @@ export function ResultsView() {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="rm-term" className="text-sm font-medium">
+          <div className="w-full space-y-2 sm:w-52">
+            <Label
+              htmlFor="rm-term"
+              className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+            >
               Term
             </Label>
             <Input
@@ -272,7 +281,7 @@ function Worksheet({
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <Card>
         <CardHeader className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle className="flex flex-wrap items-center gap-2 text-base">
+          <CardTitle className="flex flex-wrap items-center gap-2 font-display text-base">
             <ClipboardEdit className="h-4 w-4 text-primary" aria-hidden="true" />
             {worksheet.unit?.name}
             <Badge variant="outline" className="font-mono text-[10px]">
@@ -281,7 +290,7 @@ function Worksheet({
             <Badge variant="secondary" className="text-[10px]">
               {worksheet.unit?.stageLabel}
             </Badge>
-            <Badge variant="secondary" className="text-[10px]">
+            <Badge className="border-transparent bg-brand-100 text-[10px] text-brand-800 hover:bg-brand-100 dark:bg-brand-100/60 dark:text-brand-500">
               {worksheet.students.length} student{worksheet.students.length === 1 ? '' : 's'}
             </Badge>
           </CardTitle>
@@ -306,9 +315,9 @@ function Worksheet({
           {savedCount !== null && (
             <div
               role="status"
-              className="mb-4 flex items-center gap-3 rounded-xl border border-green-600/30 bg-green-500/5 p-4"
+              className="mb-4 flex items-center gap-3 rounded-xl border border-emerald-600/30 bg-emerald-500/5 p-4"
             >
-              <BadgeCheck className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400" aria-hidden="true" />
+              <BadgeCheck className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
               <p className="text-sm">
                 <span className="font-semibold">
                   Published — {savedCount} result{savedCount === 1 ? '' : 's'} for {term}.
@@ -324,18 +333,18 @@ function Worksheet({
           <div className="hidden overflow-x-auto md:block">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="min-w-52">Student</TableHead>
-                  <TableHead className="min-w-28">Admission No</TableHead>
-                  <TableHead className="min-w-24 text-center">Existing</TableHead>
-                  <TableHead className="min-w-36 text-center">Marks (0–100)</TableHead>
-                  <TableHead className="min-w-24 text-center">Grade</TableHead>
-                  <TableHead className="min-w-28">Remark</TableHead>
+                <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                  <TableHead className="min-w-52 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Student</TableHead>
+                  <TableHead className="min-w-28 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Admission No</TableHead>
+                  <TableHead className="min-w-24 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Existing</TableHead>
+                  <TableHead className="min-w-36 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Marks (0–100)</TableHead>
+                  <TableHead className="min-w-24 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Grade</TableHead>
+                  <TableHead className="min-w-28 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Remark</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {rows.map((r) => (
-                  <TableRow key={r.student.studentId}>
+                  <TableRow key={r.student.studentId} className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30">
                     <TableCell>
                       <p className="text-sm font-semibold">{r.student.name}</p>
                       <p className="text-[10px] text-muted-foreground">
@@ -347,7 +356,7 @@ function Worksheet({
                     </TableCell>
                     <TableCell className="text-center">
                       {r.student.result ? (
-                        <Badge variant="outline" className="gap-1.5 text-[10px]">
+                        <Badge variant="outline" className="gap-1.5 border-brand-200 bg-brand-50 text-[10px] text-brand-800 dark:border-white/10 dark:bg-brand-100/60 dark:text-brand-500">
                           <BadgeCheck className="h-3 w-3 text-primary" aria-hidden="true" />
                           {r.student.result.marks.toFixed(0)} · {r.student.result.grade}
                         </Badge>
@@ -369,7 +378,7 @@ function Worksheet({
                         aria-label={`Marks for ${r.student.name}`}
                         aria-invalid={r.invalid}
                         className={cn(
-                          'mx-auto h-10 w-24 text-center font-semibold',
+                          'mx-auto h-10 w-24 text-center font-semibold tabular-nums',
                           r.invalid && 'border-destructive',
                         )}
                       />
@@ -424,7 +433,7 @@ function Worksheet({
                     aria-label={`Marks for ${r.student.name}`}
                     aria-invalid={r.invalid}
                     className={cn(
-                      'h-10 w-24 text-center font-semibold',
+                      'h-10 w-24 text-center font-semibold tabular-nums',
                       r.invalid && 'border-destructive',
                     )}
                   />

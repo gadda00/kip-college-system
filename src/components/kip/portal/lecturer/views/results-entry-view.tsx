@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
@@ -85,7 +85,7 @@ function ResultsPicker() {
         {data && (
           <Card>
             <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-base">
+              <CardTitle className="flex items-center gap-2 font-display text-base">
                 <ClipboardEdit className="h-4 w-4 text-primary" aria-hidden="true" />
                 Your units
               </CardTitle>
@@ -105,17 +105,23 @@ function ResultsPicker() {
                       <button
                         type="button"
                         onClick={() => navigate(`/lecturer/results/${c.unitId}`)}
-                        className="flex w-full items-center justify-between gap-3 rounded-xl border p-4 text-left transition-colors hover:border-primary/30 hover:bg-primary/5"
+                        className="flex w-full items-center justify-between gap-3 rounded-xl border border-border/70 bg-card p-4 text-left transition-colors hover:border-gold-400/50 hover:bg-gold-400/10 focus-visible:border-ring"
                       >
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold">{c.unitName}</p>
-                          <p className="mt-0.5 font-mono text-[11px] text-primary">{c.unitCode}</p>
-                          <p className="mt-1 truncate text-xs text-muted-foreground">
+                          <div className="mt-1.5">
+                            <span className="inline-flex items-center rounded-md bg-brand-50 px-2 py-0.5 font-mono text-[11px] font-semibold text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                              {c.unitCode}
+                            </span>
+                          </div>
+                          <p className="mt-1.5 truncate text-xs text-muted-foreground">
                             {c.courseTitle} · {c.stageLabel} · {c.studentsCount} student
                             {c.studentsCount === 1 ? '' : 's'}
                           </p>
                         </div>
-                        <Badge variant="secondary" className="shrink-0 text-[10px]">
+                        <Badge
+                          className="shrink-0 border border-gold-400/40 bg-gold-400/15 text-[10px] font-semibold text-gold-700 hover:bg-gold-400/15 dark:text-gold-300"
+                        >
                           Enter →
                         </Badge>
                       </button>
@@ -233,6 +239,9 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
     })
   }, [data, marks])
 
+  // presentation-only: gold "unsaved changes" indicator (no behavioural effect)
+  const hasUnsavedChanges = rows.some((r) => (initialMarks[r.student.id] ?? '') !== r.raw.trim())
+
   const collectEntries = (): { studentId: string; marks: number }[] | null => {
     const entries: { studentId: string; marks: number }[] = []
     for (const r of rows) {
@@ -280,7 +289,13 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                 animate={{ opacity: 1, y: 0 }}
                 aria-live="polite"
               >
-                <Card className={saved.published ? 'border-green-600/30 bg-green-500/5' : 'border-sky-600/30 bg-sky-500/5'}>
+                <Card
+                  className={
+                    saved.published
+                      ? 'border-green-600/30 bg-green-500/5'
+                      : 'border-gold-500/40 bg-gold-400/10'
+                  }
+                >
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex items-start gap-3">
                       <span
@@ -288,13 +303,13 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                           'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
                           saved.published
                             ? 'bg-green-500/15 text-green-600 dark:text-green-400'
-                            : 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
+                            : 'bg-gold-400/15 text-gold-700 dark:text-gold-300',
                         )}
                       >
                         <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <h2 className="text-base font-semibold">
+                        <h2 className="font-display text-base font-semibold">
                           {saved.published ? 'Published' : 'Draft saved'} — {saved.saved.length} result
                           {saved.saved.length === 1 ? '' : 's'} for {term}
                         </h2>
@@ -305,7 +320,9 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                               className="flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs"
                             >
                               <span className="font-medium">{r.studentName}</span>
-                              <span className="text-muted-foreground">{r.marks.toFixed(0)}</span>
+                              <span className="tabular-nums text-muted-foreground">
+                                {r.marks.toFixed(0)}
+                              </span>
                               <GradeBadge grade={r.grade} className="text-[10px]" />
                             </li>
                           ))}
@@ -338,12 +355,24 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
               >
                 <Card>
                   <CardHeader className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between">
-                    <CardTitle id="entry-sheet" className="flex items-center gap-2 text-base">
+                    <CardTitle id="entry-sheet" className="flex flex-wrap items-center gap-2 font-display text-base">
                       <ClipboardEdit className="h-4 w-4 text-primary" aria-hidden="true" />
                       Marks entry
                       <Badge variant="secondary" className="text-[10px]">
                         {data.students.length} student{data.students.length === 1 ? '' : 's'}
                       </Badge>
+                      {hasUnsavedChanges && (
+                        <span
+                          role="status"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-gold-400/40 bg-gold-400/15 px-2.5 py-0.5 text-[10px] font-semibold text-gold-700 dark:text-gold-300"
+                        >
+                          <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-500 opacity-75" />
+                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-gold-500" />
+                          </span>
+                          Unsaved marks
+                        </span>
+                      )}
                     </CardTitle>
                     <div className="flex flex-wrap items-center gap-3">
                       <div className="flex items-center gap-2">
@@ -381,12 +410,12 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                           if (entries) save.mutate({ entries, publish: true })
                         }}
                         disabled={save.isPending}
-                        className="min-h-11"
+                        className="btn-gold min-h-11"
                       >
                         {save.isPending ? (
                           <>
                             <span
-                              className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground"
+                              className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-brand-950/40 border-t-brand-950"
                               aria-hidden="true"
                             />
                             Saving…
@@ -401,23 +430,40 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                     </div>
                   </CardHeader>
                   <CardContent>
-                    {/* Desktop table */}
-                    <div className="hidden overflow-x-auto md:block">
+                    {/* Desktop table — sticky header + sticky student column */}
+                    <div className="hidden max-h-[70vh] overflow-auto md:block">
                       <Table>
                         <TableHeader>
-                          <TableRow>
-                            <TableHead className="sticky left-0 z-10 bg-card min-w-52">Student</TableHead>
-                            <TableHead className="min-w-28">Admission No</TableHead>
-                            <TableHead className="min-w-24 text-center">Existing</TableHead>
-                            <TableHead className="min-w-36 text-center">Marks (0–100)</TableHead>
-                            <TableHead className="min-w-24 text-center">Grade</TableHead>
-                            <TableHead className="min-w-28">Remark</TableHead>
+                          <TableRow className="hover:bg-transparent">
+                            <TableHead className="sticky left-0 top-0 z-20 min-w-52 bg-brand-50 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                              Student
+                            </TableHead>
+                            <TableHead className="sticky top-0 z-20 min-w-28 bg-brand-50 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                              Admission No
+                            </TableHead>
+                            <TableHead className="sticky top-0 z-20 min-w-24 bg-brand-50 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                              Existing
+                            </TableHead>
+                            <TableHead className="sticky top-0 z-20 min-w-36 bg-brand-50 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                              Marks (0–100)
+                            </TableHead>
+                            <TableHead className="sticky top-0 z-20 min-w-24 bg-brand-50 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                              Grade
+                            </TableHead>
+                            <TableHead className="sticky top-0 z-20 min-w-28 bg-brand-50 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                              Remark
+                            </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {rows.map((r) => (
-                            <TableRow key={r.student.id}>
-                              <TableCell className="sticky left-0 z-10 bg-card">
+                          {rows.map((r, i) => (
+                            <TableRow key={r.student.id} className="odd:bg-muted">
+                              <TableCell
+                                className={cn(
+                                  'sticky left-0 z-10',
+                                  i % 2 === 1 ? 'bg-muted' : 'bg-card',
+                                )}
+                              >
                                 <p className="text-sm font-semibold">{r.student.name}</p>
                                 <p className="text-[10px] text-muted-foreground">
                                   Term {r.student.currentTerm}
@@ -428,8 +474,14 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                               </TableCell>
                               <TableCell className="text-center">
                                 {r.student.result ? (
-                                  <Badge variant="outline" className="gap-1.5 text-[10px]">
-                                    <BadgeCheck className="h-3 w-3 text-primary" aria-hidden="true" />
+                                  <Badge
+                                    variant="outline"
+                                    className="gap-1.5 border-brand-600/30 bg-brand-50 text-[10px] font-semibold text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]"
+                                  >
+                                    <BadgeCheck
+                                      className="h-3 w-3 text-primary"
+                                      aria-hidden="true"
+                                    />
                                     {r.student.result.marks.toFixed(0)} · {r.student.result.grade}
                                   </Badge>
                                 ) : (
@@ -450,8 +502,8 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                                   aria-label={`Marks for ${r.student.name}`}
                                   aria-invalid={r.invalid}
                                   className={cn(
-                                    'mx-auto h-10 w-24 text-center font-semibold',
-                                    r.invalid && 'border-destructive',
+                                    'mx-auto h-10 w-24 text-center font-semibold tabular-nums focus-visible:border-gold-500 focus-visible:ring-gold-400/40',
+                                    r.invalid && 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/30',
                                   )}
                                 />
                               </TableCell>
@@ -474,7 +526,10 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                     {/* Mobile stacked rows */}
                     <ul className="space-y-3 md:hidden">
                       {rows.map((r) => (
-                        <li key={r.student.id} className="rounded-xl border p-4">
+                        <li
+                          key={r.student.id}
+                          className="rounded-xl border border-border/70 bg-card p-4"
+                        >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
                               <p className="text-sm font-semibold">{r.student.name}</p>
@@ -504,11 +559,18 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                               }}
                               aria-label={`Marks for ${r.student.name}`}
                               aria-invalid={r.invalid}
-                              className={cn('h-10 w-24 text-center font-semibold', r.invalid && 'border-destructive')}
+                              className={cn(
+                                'h-10 w-24 text-center font-semibold tabular-nums focus-visible:border-gold-500 focus-visible:ring-gold-400/40',
+                                r.invalid && 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/30',
+                              )}
                             />
                             {r.student.result && (
-                              <Badge variant="outline" className="ml-auto text-[10px]">
-                                Was {r.student.result.marks.toFixed(0)} · {r.student.result.grade}
+                              <Badge
+                                variant="outline"
+                                className="ml-auto border-brand-600/30 bg-brand-50 text-[10px] font-semibold text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]"
+                              >
+                                Was {r.student.result.marks.toFixed(0)} ·{' '}
+                                {r.student.result.grade}
                               </Badge>
                             )}
                           </div>
@@ -532,8 +594,8 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                       E &lt; 40).
                     </p>
                     {draftCount > 0 && (
-                      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
-                        <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
+                      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gold-500/40 bg-gold-400/10 p-4">
+                        <p className="text-sm font-medium text-gold-700 dark:text-gold-300">
                           {draftCount} draft result{draftCount === 1 ? '' : 's'} for this unit are not
                           yet visible to students.
                         </p>
@@ -541,7 +603,7 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                           size="sm"
                           onClick={() => publishDrafts.mutate()}
                           disabled={publishDrafts.isPending}
-                          className="min-h-9"
+                          className="btn-gold min-h-9"
                         >
                           {publishDrafts.isPending ? 'Publishing…' : 'Publish drafts'}
                         </Button>

@@ -115,7 +115,16 @@ export type PortalNavItem = {
   to: string
 }
 
-function PortalNavList({ nav, sub }: { nav: PortalNavItem[]; sub: string }) {
+function PortalNavList({
+  nav,
+  sub,
+  tone = 'light',
+}: {
+  nav: PortalNavItem[]
+  sub: string
+  tone?: 'light' | 'dark'
+}) {
+  const dark = tone === 'dark'
   return (
     <nav aria-label="Portal sections" className="space-y-1">
       {nav.map((item) => {
@@ -128,13 +137,23 @@ function PortalNavList({ nav, sub }: { nav: PortalNavItem[]; sub: string }) {
             onClick={() => navigate(item.to)}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'flex min-h-11 w-full items-center gap-3 border-l-2 px-3 py-2.5 text-left text-sm font-medium transition-colors',
+              'flex min-h-11 w-full items-center gap-3 rounded-lg border-l-2 px-3 py-2.5 text-left text-sm font-medium transition-colors',
               active
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
+                ? dark
+                  ? 'border-gold-400 bg-gold-400/15 text-gold-300'
+                  : 'border-gold-500 bg-gold-400/15 text-gold-700 dark:text-gold-300'
+                : dark
+                  ? 'border-transparent text-[#f2efe6]/70 hover:bg-white/8 hover:text-white'
+                  : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
             )}
           >
-            <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <Icon
+              className={cn(
+                'h-4 w-4 shrink-0',
+                active ? (dark ? 'text-gold-400' : 'text-gold-600 dark:text-gold-400') : undefined,
+              )}
+              aria-hidden="true"
+            />
             {item.label}
           </button>
         )
@@ -143,13 +162,19 @@ function PortalNavList({ nav, sub }: { nav: PortalNavItem[]; sub: string }) {
   )
 }
 
-function PortalSidebarFooter({ onLogout }: { onLogout: () => void }) {
+function PortalSidebarFooter({ onLogout, tone = 'light' }: { onLogout: () => void; tone?: 'light' | 'dark' }) {
+  const dark = tone === 'dark'
   return (
-    <div className="space-y-1 border-t pt-3">
+    <div className={cn('space-y-1 border-t pt-3', dark ? 'border-white/10' : undefined)}>
       <button
         type="button"
         onClick={() => navigate('/')}
-        className="flex min-h-11 w-full items-center gap-3 border-l-2 border-transparent px-3 py-2.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        className={cn(
+          'flex min-h-11 w-full items-center gap-3 border-l-2 border-transparent px-3 py-2.5 text-left text-sm font-medium transition-colors',
+          dark
+            ? 'text-[#f2efe6]/70 hover:bg-white/8 hover:text-white'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+        )}
       >
         <Globe className="h-4 w-4 shrink-0" aria-hidden="true" />
         Back to website
@@ -157,7 +182,12 @@ function PortalSidebarFooter({ onLogout }: { onLogout: () => void }) {
       <button
         type="button"
         onClick={onLogout}
-        className="flex min-h-11 w-full items-center gap-3 border-l-2 border-transparent px-3 py-2.5 text-left text-sm font-medium text-destructive/90 transition-colors hover:bg-destructive/10 hover:text-destructive"
+        className={cn(
+          'flex min-h-11 w-full items-center gap-3 border-l-2 border-transparent px-3 py-2.5 text-left text-sm font-medium transition-colors',
+          dark
+            ? 'text-red-300/90 hover:bg-red-400/10 hover:text-red-200'
+            : 'text-destructive/90 hover:bg-destructive/10 hover:text-destructive',
+        )}
       >
         <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
         Logout
@@ -202,13 +232,13 @@ export function PortalShell({
   return (
     <div className="mx-auto w-full max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8 lg:pt-8">
       <div className="gap-6 lg:flex lg:gap-8">
-        {/* Desktop sidebar */}
+        {/* Desktop sidebar — deep emerald panel with gold accents */}
         <aside className="hidden w-64 shrink-0 lg:block print:hidden">
-          <div className="sticky top-28 space-y-5 rounded-xl border bg-card p-4">
-            <KipLogo className="text-foreground" />
+          <div className="bg-brand-band kip-pattern sticky top-28 space-y-5 rounded-xl border border-brand-800/60 p-4 text-[#f2efe6]">
+            <KipLogo className="text-[#f2efe6]" />
             {identity}
-            <PortalNavList nav={nav} sub={sub} />
-            <PortalSidebarFooter onLogout={handleLogout} />
+            <PortalNavList nav={nav} sub={sub} tone="dark" />
+            <PortalSidebarFooter onLogout={handleLogout} tone="dark" />
           </div>
         </aside>
 
@@ -260,7 +290,7 @@ export function PortalShell({
 // Small view pieces
 // ---------------------------------------------------------------------------
 
-/** Sub-view heading with optional actions (keeps portal pages consistent). */
+/** Sub-view heading with optional actions (serif title keeps portals elegant). */
 export function ViewHeading({
   title,
   description,
@@ -273,6 +303,7 @@ export function ViewHeading({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
+        <div className="gold-rule mb-2 w-8" aria-hidden="true" />
         <h1 className="truncate text-xl font-bold tracking-tight sm:text-2xl">{title}</h1>
         {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
       </div>

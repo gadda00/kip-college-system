@@ -34,7 +34,7 @@ function TimetableBody({ entries }: { entries: TimetableEntryDTO[] }) {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
         <ViewHeading
           title="Timetable"
-          description="Your weekly class schedule, Monday to Friday."
+          description="Your weekly class schedule, Monday to Friday — today is highlighted."
         />
       </motion.div>
 

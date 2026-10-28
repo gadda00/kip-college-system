@@ -56,9 +56,9 @@ function statusVariant(status: string): 'default' | 'secondary' | 'destructive' 
 function statusToneBadge(status: string): string {
   switch (status) {
     case 'PENDING':
-      return 'border-amber-400/50 bg-amber-400/15 text-amber-700 dark:text-amber-400'
+      return 'border-gold-400/50 bg-gold-400/15 text-gold-700 dark:text-gold-300'
     case 'ACCEPTED':
-      return 'border-transparent bg-green-600/15 text-green-700 dark:text-green-400'
+      return 'border-transparent bg-emerald-600/15 text-emerald-700 dark:text-emerald-400'
     case 'REJECTED':
       return 'border-transparent bg-red-600/15 text-red-700 dark:text-red-400'
     default:
@@ -111,7 +111,7 @@ export function ApplicationsView() {
                   <TabsTrigger
                     key={t}
                     value={t}
-                    className="min-h-9 flex-1 gap-1.5 sm:flex-none"
+                    className="min-h-9 flex-1 gap-1.5 data-[state=active]:bg-brand-700 dark:data-[state=active]:bg-brand-700 data-[state=active]:text-[#f2efe6] data-[state=active]:shadow-none sm:flex-none"
                   >
                     {t === 'ALL' ? 'All' : t.charAt(0) + t.slice(1).toLowerCase()}
                     <Badge variant="secondary" className="text-[10px]">
@@ -171,7 +171,7 @@ function ApplicationCard({ app, onReview }: { app: AdminApplication; onReview: (
   const isLong = message.length > 140
 
   return (
-    <Card className="h-full">
+    <Card className={cn('h-full', app.status === 'PENDING' && 'border-l-2 border-l-gold-400/80')}>
       <CardContent className="flex h-full flex-col gap-4 p-4 sm:p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -306,8 +306,9 @@ function ReviewDialog({
       <Dialog open onOpenChange={onOpenChange}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
+            <div className="gold-rule mb-2 w-8" aria-hidden="true" />
             <DialogTitle className="flex items-center gap-2">
-              <BadgeCheck className="h-5 w-5 text-green-600 dark:text-green-400" aria-hidden="true" />
+              <BadgeCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
               Student enrolled
             </DialogTitle>
             <DialogDescription>
@@ -322,8 +323,8 @@ function ReviewDialog({
               className="space-y-4"
               aria-live="polite"
             >
-              <div className="rounded-xl border border-green-600/30 bg-green-500/5 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-green-700 dark:text-green-400">
+              <div className="rounded-xl border border-emerald-600/30 bg-emerald-500/5 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
                   Temporary credentials
                 </p>
                 <dl className="mt-3 space-y-3 text-sm">
@@ -348,20 +349,20 @@ function ReviewDialog({
                     <dd className="font-medium">{s.campus}</dd>
                   </div>
                 </dl>
-                <div className="mt-4 rounded-lg bg-[#0d2818] p-3">
+                <div className="mt-4 rounded-lg bg-brand-950 p-3">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-400">
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-gold-400">
                         Temp password
                       </p>
-                      <p className="mt-0.5 break-all font-mono text-lg font-bold text-white">
+                      <p className="mt-0.5 break-all font-mono text-lg font-bold text-[#f2efe6]">
                         {s.tempPassword}
                       </p>
                     </div>
                     <Button
                       type="button"
                       size="sm"
-                      className="h-11 shrink-0 bg-amber-400 text-amber-950 hover:bg-amber-400/90"
+                      className="btn-gold h-11 shrink-0"
                       onClick={() => void handleCopy(s.tempPassword, 'Password')}
                     >
                       <Copy className="mr-2 h-4 w-4" aria-hidden="true" />
@@ -372,7 +373,7 @@ function ReviewDialog({
               </div>
 
               <div className="flex items-center gap-3 rounded-xl border p-4">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-primary dark:bg-brand-100">
                   <ScrollText className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <p className="text-sm">
@@ -417,6 +418,7 @@ function ReviewDialog({
     <Dialog open onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>Review application</DialogTitle>
           <DialogDescription>
             {app.applicantName} · applied {fmtDate(app.createdAt)}

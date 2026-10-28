@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 
-/** Section heading with a sky-blue eyebrow rule. */
+/** Section heading: gold eyebrow with rules + display-serif title. */
 export function SectionHeading({
   eyebrow,
   title,
@@ -31,11 +31,9 @@ export function SectionHeading({
             align === 'center' && 'justify-center',
           )}
         >
-          <span className="h-px w-8 bg-sky-500" aria-hidden="true" />
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700 dark:text-sky-400">
-            {eyebrow}
-          </span>
-          <span className="h-px w-8 bg-sky-500" aria-hidden="true" />
+          <span className="h-px w-8 bg-gold-500/70" aria-hidden="true" />
+          <span className="eyebrow">{eyebrow}</span>
+          <span className="h-px w-8 bg-gold-500/70" aria-hidden="true" />
         </div>
       )}
       <h2 className="text-balance text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>

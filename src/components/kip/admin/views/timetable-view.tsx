@@ -101,12 +101,12 @@ export function TimetableView() {
 
       {/* Filters */}
       <Card>
-        <CardContent className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2">
+        <CardContent className="flex flex-wrap items-center gap-2 p-4">
           <Select
             value={courseFilter}
             onValueChange={(v) => setCourseFilter(v === NO_SELECTION ? NO_SELECTION : v)}
           >
-            <SelectTrigger className="h-11 w-full" aria-label="Filter by course">
+            <SelectTrigger className="h-11 w-full sm:w-52" aria-label="Filter by course">
               <SelectValue placeholder="All courses" />
             </SelectTrigger>
             <SelectContent className="max-h-72">
@@ -119,7 +119,7 @@ export function TimetableView() {
             </SelectContent>
           </Select>
           <Select value={campusFilter} onValueChange={setCampusFilter}>
-            <SelectTrigger className="h-11 w-full" aria-label="Filter by campus">
+            <SelectTrigger className="h-11 w-full sm:w-52" aria-label="Filter by campus">
               <SelectValue placeholder="All campuses" />
             </SelectTrigger>
             <SelectContent>
@@ -163,7 +163,7 @@ export function TimetableView() {
                 {/* Manageable list */}
                 <Card>
                   <CardHeader className="pb-4">
-                    <CardTitle className="text-base">
+                    <CardTitle className="font-display text-base">
                       All entries ({entries.data.length})
                     </CardTitle>
                     <p className="text-xs text-muted-foreground">
@@ -176,22 +176,24 @@ export function TimetableView() {
                       <div className="hidden overflow-x-auto md:block">
                         <Table>
                           <TableHeader>
-                            <TableRow>
-                              <TableHead>Day</TableHead>
-                              <TableHead>Time</TableHead>
-                              <TableHead>Unit</TableHead>
-                              <TableHead>Course</TableHead>
-                              <TableHead>Room</TableHead>
-                              <TableHead>Lecturer</TableHead>
-                              <TableHead>Campus</TableHead>
-                              <TableHead className="text-right">Actions</TableHead>
+                            <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                              <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Day</TableHead>
+                              <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Time</TableHead>
+                              <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Unit</TableHead>
+                              <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Course</TableHead>
+                              <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Room</TableHead>
+                              <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Lecturer</TableHead>
+                              <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Campus</TableHead>
+                              <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Actions</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {entries.data.map((e) => (
-                              <TableRow key={e.id}>
+                              <TableRow key={e.id} className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30">
                                 <TableCell className="text-sm font-medium">
-                                  {WEEKDAYS[e.dayOfWeek - 1] ?? '—'}
+                                  <span className="inline-flex rounded-md bg-brand-900 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#f2efe6]">
+                                    {WEEKDAYS[e.dayOfWeek - 1] ?? '—'}
+                                  </span>
                                 </TableCell>
                                 <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                                   {fmtTimeSlot(e.startTime)}–{fmtTimeSlot(e.endTime)}
@@ -231,16 +233,19 @@ export function TimetableView() {
                           </TableBody>
                         </Table>
                       </div>
-                      {/* Mobile stacked */}
+                      {/* Mobile stacked — emerald class blocks */}
                       <ul className="space-y-3 md:hidden">
                         {entries.data.map((e) => (
-                          <li key={e.id} className="rounded-xl border p-4">
+                          <li
+                            key={e.id}
+                            className="rounded-xl border border-l-4 border-l-brand-600 bg-brand-50/50 p-4 dark:bg-brand-100/30"
+                          >
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
-                                <p className="text-sm font-semibold">
+                                <span className="inline-flex rounded-md bg-brand-900 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#f2efe6]">
                                   {WEEKDAYS[e.dayOfWeek - 1] ?? '—'}
-                                </p>
-                                <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                                </span>
+                                <p className="mt-1.5 flex items-center gap-1 text-xs text-muted-foreground">
                                   <Clock className="h-3 w-3" aria-hidden="true" />
                                   {fmtTimeSlot(e.startTime)}–{fmtTimeSlot(e.endTime)}
                                 </p>
@@ -394,6 +399,7 @@ function AddEntryDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>Add timetable entry</DialogTitle>
           <DialogDescription>
             Schedule a class — it appears instantly on student and lecturer timetables.

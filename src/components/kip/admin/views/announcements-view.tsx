@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Megaphone, Pin, PinOff, Plus, Send, Trash2 } from 'lucide-react'
+import { CalendarDays, Megaphone, Pin, PinOff, Plus, Send, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -45,6 +45,7 @@ import { fmtDateTime } from '@/components/kip/lib/format'
 import { RowsSkeleton, ViewHeading } from '@/components/kip/portal/shared'
 import { DialogBody, Field, FieldGrid, SubmitButton } from '@/components/kip/admin/form-bits'
 import type { AdminAnnouncement, ExportStats } from '@/components/kip/admin/types'
+import { cn } from '@/lib/utils'
 
 const AUDIENCES = ['ALL', 'STUDENTS', 'STAFF'] as const
 
@@ -55,11 +56,11 @@ function audienceLabel(audience: string): string {
 function audienceTone(audience: string): string {
   switch (audience) {
     case 'STUDENTS':
-      return 'border-transparent bg-primary/10 text-primary'
-    case 'STAFF':
-      return 'border-transparent bg-amber-400/15 text-amber-700 dark:text-amber-400'
-    default:
       return 'border-transparent bg-emerald-600/10 text-emerald-700 dark:text-emerald-400'
+    case 'STAFF':
+      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
+    default:
+      return 'border-transparent bg-teal-600/10 text-teal-700 dark:text-teal-400'
   }
 }
 
@@ -155,21 +156,28 @@ function AnnouncementCard({
   })
 
   return (
-    <Card>
+    <Card className={cn(announcement.pinned && 'border-l-2 border-l-gold-400/80')}>
       <CardContent className="space-y-3 p-4 sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-sm font-semibold">{announcement.title}</p>
               {announcement.pinned && (
-                <Badge className="border-transparent bg-amber-400/15 text-[10px] text-amber-700 dark:text-amber-400">
+                <Badge className="border-transparent bg-gold-400/15 text-[10px] text-gold-700 dark:text-gold-300">
                   <Pin className="mr-1 h-3 w-3" aria-hidden="true" />
                   Pinned
                 </Badge>
               )}
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {announcement.authorName} · {fmtDateTime(announcement.createdAt)}
+            <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+              {announcement.authorName}
+              <span
+                aria-hidden="true"
+                className="inline-flex items-center gap-1.5 rounded-full bg-gold-400/15 px-2 py-0.5 text-[10px] font-semibold text-gold-700 dark:text-gold-300"
+              >
+                <CalendarDays className="h-3 w-3" aria-hidden="true" />
+                {fmtDateTime(announcement.createdAt)}
+              </span>
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -286,6 +294,7 @@ function AnnouncementDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>New announcement</DialogTitle>
           <DialogDescription>
             Active announcements appear instantly in the relevant portals.
@@ -333,7 +342,7 @@ function AnnouncementDialog({
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       {pinned ? (
-                        <Pin className="h-4 w-4 text-amber-500" aria-hidden="true" />
+                        <Pin className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
                       ) : (
                         <PinOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                       )}

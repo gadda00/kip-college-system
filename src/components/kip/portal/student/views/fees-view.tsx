@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
-  ArrowDownCircle,
   BadgeCheck,
   Banknote,
   CheckCircle2,
@@ -113,9 +112,9 @@ function FeesBody({
           title="Fees"
           description="Your fee statement, payments and self-service M-Pesa / bank top-ups."
           actions={
-            <Button variant="outline" className="min-h-11" onClick={onPrint}>
+            <Button variant="outline" className="focus-glow min-h-11" onClick={onPrint}>
               <Printer className="mr-2 h-4 w-4" aria-hidden="true" />
-              Print / download statement
+              Download statement
             </Button>
           }
         />
@@ -141,15 +140,20 @@ function FeesBody({
           value={fmtKES(data.totalPaid)}
           hint={`${data.payments.length} payment${data.payments.length === 1 ? '' : 's'} received`}
         />
-        <Card className={cn(data.balance > 0 && 'border-red-200 dark:border-red-900/50')}>
+        <Card className={cn('relative rule-top-gold', data.balance > 0 && 'border-red-200 dark:border-red-900/50')}>
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-medium text-muted-foreground">Outstanding balance</p>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold-400/15 text-gold-700 dark:text-gold-400">
                 <Wallet className="h-4 w-4" aria-hidden="true" />
               </span>
             </div>
-            <p className={cn('mt-2 text-xl font-bold tracking-tight sm:text-2xl', balanceColor)}>
+            <p
+              className={cn(
+                'font-display mt-2 text-2xl font-bold tracking-tight tabular-nums sm:text-3xl',
+                balanceColor,
+              )}
+            >
               {fmtKES(data.balance)}
             </p>
             <p
@@ -191,11 +195,11 @@ function SummaryCard({
       <CardContent className="p-4 sm:p-5">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-medium text-muted-foreground">{label}</p>
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-300">
             <Icon className="h-4 w-4" aria-hidden="true" />
           </span>
         </div>
-        <p className="mt-2 text-xl font-bold tracking-tight sm:text-2xl">{value}</p>
+        <p className="font-display mt-2 text-2xl font-bold tracking-tight tabular-nums">{value}</p>
         <p className="mt-1 text-xs font-medium text-muted-foreground">{hint}</p>
       </CardContent>
     </Card>
@@ -282,25 +286,32 @@ function PayFeesCard({ balance }: { balance: number }) {
       aria-labelledby="make-payment"
       className="print:hidden"
     >
-      <Card className="border-primary/15 bg-gradient-to-br from-primary/5 via-card to-card">
+      <Card className="relative rule-top-gold bg-gradient-to-br from-brand-50/70 via-card to-card dark:from-brand-100/15 dark:via-card dark:to-card">
         <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="flex items-start gap-4">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold-400/15 text-gold-700 dark:text-gold-400">
               <Smartphone className="h-5 w-5" aria-hidden="true" />
             </span>
             <div>
-              <h2 id="make-payment" className="text-base font-semibold">
+              <h2 id="make-payment" className="font-display text-base font-semibold">
                 Make a payment
               </h2>
               <p className="mt-1 max-w-md text-sm text-muted-foreground">
                 Pay via M-Pesa or bank transfer directly from the portal. Payments are confirmed
                 instantly and reflect on your statement.
               </p>
+              <p className="mt-2.5">
+                <span className="inline-flex flex-wrap items-center gap-1.5 rounded-lg border border-gold-400/40 bg-gold-400/10 px-2.5 py-1.5 text-[11px] font-medium text-gold-700 dark:text-gold-300">
+                  <Smartphone className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  M-Pesa Paybill <strong className="font-mono font-bold">522 890</strong> · Account:
+                  your admission number
+                </span>
+              </p>
             </div>
           </div>
           <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-              <Button size="lg" className="min-h-11 shrink-0">
+              <Button size="lg" className="focus-glow min-h-11 shrink-0">
                 <Wallet className="mr-2 h-4 w-4" aria-hidden="true" />
                 Pay now
               </Button>
@@ -322,7 +333,7 @@ function PayFeesCard({ balance }: { balance: number }) {
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Transaction reference
                     </p>
-                    <p className="mt-1 font-mono text-base font-bold text-primary">
+                    <p className="mt-1 font-mono text-base font-bold text-brand-700 dark:text-gold-400">
                       {receipt.payment.reference}
                     </p>
                   </div>
@@ -378,7 +389,7 @@ function PayFeesCard({ balance }: { balance: number }) {
                                 key={v}
                                 type="button"
                                 onClick={() => setAmount(String(v))}
-                                className="rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                                className="focus-glow rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-gold-400/50 hover:text-gold-700 dark:hover:text-gold-400"
                               >
                                 {fmtKES(v)}
                               </button>
@@ -400,18 +411,18 @@ function PayFeesCard({ balance }: { balance: number }) {
                       >
                         <Label
                           htmlFor="pay-mpesa"
-                          className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors has-[button[data-state=checked]]:border-primary has-[button[data-state=checked]]:bg-primary/5"
+                          className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors has-[button[data-state=checked]]:border-gold-500 has-[button[data-state=checked]]:bg-gold-400/10"
                         >
                           <RadioGroupItem id="pay-mpesa" value="MPESA" />
-                          <Smartphone className="h-4 w-4 text-primary" aria-hidden="true" />
+                          <Smartphone className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
                           <span className="text-sm font-medium">M-Pesa</span>
                         </Label>
                         <Label
                           htmlFor="pay-bank"
-                          className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors has-[button[data-state=checked]]:border-primary has-[button[data-state=checked]]:bg-primary/5"
+                          className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors has-[button[data-state=checked]]:border-gold-500 has-[button[data-state=checked]]:bg-gold-400/10"
                         >
                           <RadioGroupItem id="pay-bank" value="BANK" />
-                          <Landmark className="h-4 w-4 text-primary" aria-hidden="true" />
+                          <Landmark className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
                           <span className="text-sm font-medium">Bank</span>
                         </Label>
                       </RadioGroup>
@@ -496,22 +507,38 @@ function PayFeesCard({ balance }: { balance: number }) {
 // ---------------------------------------------------------------------------
 
 function feeTypeBadge(type: string) {
+  const base =
+    'inline-flex w-fit items-center justify-center whitespace-nowrap shrink-0 rounded-md border px-2 py-0.5 text-xs font-medium'
   switch (type) {
     case 'TUITION':
-      return <Badge className="bg-primary/10 text-primary hover:bg-primary/10">Tuition</Badge>
+      return (
+        <span className={cn(base, 'border-transparent bg-brand-600/10 text-brand-700 dark:text-brand-300')}>
+          Tuition
+        </span>
+      )
     case 'REGISTRATION':
       return <Badge variant="secondary">Registration</Badge>
     case 'EXAM':
       return (
-        <Badge className="bg-amber-400/15 text-amber-700 hover:bg-amber-400/15 dark:text-amber-400">
+        <span
+          className={cn(
+            base,
+            'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300',
+          )}
+        >
           Exam
-        </Badge>
+        </span>
       )
     case 'PAYMENT':
       return (
-        <Badge className="bg-green-500/10 text-green-700 hover:bg-green-500/10 dark:text-green-400">
+        <span
+          className={cn(
+            base,
+            'border-transparent bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
+          )}
+        >
           Payment
-        </Badge>
+        </span>
       )
     default:
       return <Badge variant="outline">Other</Badge>
@@ -540,7 +567,7 @@ function StatementTable({ data }: { data: FeeStatement }) {
       <Card>
         <CardHeader className="pb-4">
           <CardTitle id="fee-statement" className="flex items-center gap-2 text-base">
-            <Receipt className="h-4 w-4 text-primary" aria-hidden="true" />
+            <Receipt className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
             Fee statement
           </CardTitle>
         </CardHeader>
@@ -558,20 +585,35 @@ function StatementTable({ data }: { data: FeeStatement }) {
               <div className="hidden overflow-x-auto md:block">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-28">Date</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead className="w-32">Type</TableHead>
-                      <TableHead className="w-28">Due</TableHead>
-                      <TableHead className="w-36 text-right">Amount</TableHead>
-                      <TableHead className="w-36 text-right">Balance</TableHead>
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Date
+                      </TableHead>
+                      <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Description
+                      </TableHead>
+                      <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Type
+                      </TableHead>
+                      <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Due
+                      </TableHead>
+                      <TableHead className="bg-brand-50 text-right text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Amount
+                      </TableHead>
+                      <TableHead className="bg-brand-50 text-right text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Balance
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {rows.map((row) => (
                       <TableRow
                         key={row.key}
-                        className={cn(row.type === 'PAYMENT' && 'bg-green-500/5')}
+                        className={cn(
+                          'transition-colors hover:bg-brand-50/60 dark:hover:bg-brand-100/15',
+                          row.type === 'PAYMENT' ? 'bg-emerald-500/5' : 'odd:bg-muted/40',
+                        )}
                       >
                         <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                           {fmtDate(row.date)}
@@ -614,20 +656,20 @@ function StatementTable({ data }: { data: FeeStatement }) {
                     ))}
                   </TableBody>
                   <TableFooter>
-                    <TableRow>
+                    <TableRow className="bg-brand-50/70 hover:bg-brand-50/70 dark:bg-brand-100/25 dark:hover:bg-brand-100/25">
                       <TableCell colSpan={4} className="text-sm font-semibold">
                         Totals · {data.feeItems.length} charges, {data.payments.length} payments
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-right text-sm">
                         <span className="text-foreground/70">Charged {fmtKES(data.totalCharged)}</span>
                         <br />
-                        <span className="text-green-600 dark:text-green-400">
+                        <span className="text-emerald-700 dark:text-emerald-400">
                           Paid {fmtKES(data.totalPaid)}
                         </span>
                       </TableCell>
                       <TableCell
                         className={cn(
-                          'whitespace-nowrap text-right text-sm font-bold',
+                          'font-display whitespace-nowrap text-right text-sm font-bold',
                           data.balance > 0
                             ? 'text-red-600 dark:text-red-400'
                             : 'text-green-600 dark:text-green-400',
@@ -649,7 +691,7 @@ function StatementTable({ data }: { data: FeeStatement }) {
                     key={row.key}
                     className={cn(
                       'rounded-xl border p-4',
-                      row.type === 'PAYMENT' && 'border-green-600/25 bg-green-500/5',
+                      row.type === 'PAYMENT' && 'border-emerald-600/25 bg-emerald-500/5',
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -698,11 +740,11 @@ function StatementTable({ data }: { data: FeeStatement }) {
                 <li className="rounded-xl border border-dashed p-4">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Charged</span>
-                    <span className="font-semibold">{fmtKES(data.totalCharged)}</span>
+                    <span className="font-display font-semibold tabular-nums">{fmtKES(data.totalCharged)}</span>
                   </div>
                   <div className="mt-1 flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Paid</span>
-                    <span className="font-semibold text-green-600 dark:text-green-400">
+                    <span className="font-display font-semibold tabular-nums text-emerald-700 dark:text-emerald-400">
                       {fmtKES(data.totalPaid)}
                     </span>
                   </div>
@@ -710,7 +752,7 @@ function StatementTable({ data }: { data: FeeStatement }) {
                     <span className="text-sm font-semibold">Balance</span>
                     <span
                       className={cn(
-                        'text-base font-bold',
+                        'font-display text-base font-bold tabular-nums',
                         data.balance > 0
                           ? 'text-red-600 dark:text-red-400'
                           : 'text-green-600 dark:text-green-400',

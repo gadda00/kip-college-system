@@ -24,10 +24,13 @@ export function Field({
 }) {
   return (
     <div className={cn('space-y-2', className)}>
-      <Label htmlFor={id} className="text-sm font-medium">
+      <Label
+        htmlFor={id}
+        className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+      >
         {label}
         {required && (
-          <span className="ml-1 text-destructive" aria-hidden="true">
+          <span className="ml-1 text-gold-600 dark:text-gold-400" aria-hidden="true">
             *
           </span>
         )}

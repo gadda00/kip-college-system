@@ -130,7 +130,11 @@ export function DownloadsView() {
               title="No documents here yet"
               hint="Check the other categories, or request the document you need via the contact page."
               action={
-                <Button variant="outline" className="min-h-11" onClick={() => navigate('/contact')}>
+                <Button
+                  variant="outline"
+                  className="min-h-11 hover:border-brand-700 hover:bg-brand-700 hover:text-[#f2efe6]"
+                  onClick={() => navigate('/contact')}
+                >
                   Request a document
                 </Button>
               }
@@ -146,9 +150,9 @@ export function DownloadsView() {
 
         {/* request-a-document CTA */}
         <div className="mt-10">
-          <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-card to-sky-100/60 dark:to-sky-950/30">
+          <Card className="overflow-hidden border-brand-500/20 bg-gradient-to-br from-brand-50 via-card to-gold-400/10 dark:from-brand-100/10 dark:via-card dark:to-gold-400/5">
             <CardContent className="flex flex-col items-center gap-4 p-8 text-center sm:p-10">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold-400/15 text-gold-700 dark:text-gold-300">
                 <FileQuestion className="h-6 w-6" aria-hidden="true" />
               </span>
               <div>
@@ -183,10 +187,10 @@ function DownloadCard({
   const Icon = meta.icon
 
   return (
-    <Card className="group flex h-full flex-col border-border/80 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
+    <Card className="card-lift group flex h-full flex-col border-border/80">
       <CardContent className="flex flex-1 flex-col p-5">
         <div className="flex items-start justify-between gap-3">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold-400/15 text-gold-700 transition-colors group-hover:bg-gold-400/25 dark:text-gold-300">
             <Icon className="h-6 w-6" aria-hidden="true" />
           </span>
           <Badge variant="secondary" className="shrink-0">
@@ -194,20 +198,24 @@ function DownloadCard({
           </Badge>
         </div>
 
-        <h3 className="mt-4 text-base font-semibold leading-snug">{item.title}</h3>
+        <h3 className="font-display mt-4 text-base font-semibold leading-snug">{item.title}</h3>
         <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground">
           {item.description}
         </p>
 
         <div className="mt-5 flex items-center justify-between gap-3 border-t pt-4">
-          <span className="text-xs font-medium text-muted-foreground" aria-label="File details">
+          <span
+            className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+            aria-label="File details"
+          >
             {item.fileLabel}
           </span>
           <Button
             size="sm"
+            variant="outline"
             onClick={() => onDownload(item)}
             aria-label={`Download ${item.title} (${item.fileLabel})`}
-            className="h-11 font-semibold"
+            className="h-11 font-semibold hover:border-brand-700 hover:bg-brand-700 hover:text-[#f2efe6]"
           >
             <Download className="mr-1.5 h-4 w-4" aria-hidden="true" />
             Download

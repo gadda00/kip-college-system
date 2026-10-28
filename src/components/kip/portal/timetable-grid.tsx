@@ -11,11 +11,11 @@ import { WEEKDAYS, fmtTimeSlot, todayDowClient } from '@/components/kip/portal/s
 import type { TimetableEntryDTO } from '@/components/kip/portal/types'
 import { cn } from '@/lib/utils'
 
-/** Campus colour dots used across timetable grids. */
+/** Campus colour dots used across timetable grids (emerald · gold · teal). */
 const CAMPUS_DOT: Record<string, string> = {
-  'Main Campus': 'bg-primary',
-  'Town Campus': 'bg-amber-500',
-  'Mwingi Campus': 'bg-emerald-500',
+  'Main Campus': 'bg-brand-600',
+  'Town Campus': 'bg-gold-500',
+  'Mwingi Campus': 'bg-teal-500',
 }
 
 function campusDot(campusName: string | null): string {
@@ -34,8 +34,9 @@ function sortKey(e: TimetableEntryDTO): number {
 
 /**
  * Weekly Mon–Fri timetable card shared by the student and lecturer portals.
- * Desktop: 5-column slot grid; mobile: day tabs with lists. Today is
- * highlighted and a print button is included.
+ * Desktop: 5-column slot grid with an emerald day header band and a gold
+ * TODAY column; mobile: day tabs with lists. Today is highlighted and a print
+ * button is included.
  */
 export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] }) {
   const today = todayDowClient()
@@ -55,11 +56,11 @@ export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] 
   return (
     <Card>
       <CardHeader className="pb-4">
-        <CardTitle className="flex flex-wrap items-center gap-2 text-base">
+        <CardTitle className="flex flex-wrap items-center gap-2 font-display text-base">
           <CalendarDays className="h-4 w-4 text-primary" aria-hidden="true" />
           Weekly schedule
           {today >= 1 && today <= 5 && (
-            <Badge className="bg-amber-400/15 text-amber-700 hover:bg-amber-400/15 dark:text-amber-400">
+            <Badge className="border border-gold-400/40 bg-gold-400/15 text-[10px] font-semibold text-gold-700 hover:bg-gold-400/15 dark:text-gold-300">
               Today is {WEEKDAYS[today - 1]}
             </Badge>
           )}
@@ -75,18 +76,26 @@ export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] 
               ))}
             </div>
           )}
-          <Button variant="outline" size="sm" className="min-h-9 print:hidden" onClick={() => window.print()}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-9 print:hidden"
+            onClick={() => window.print()}
+          >
             <Printer className="mr-2 h-4 w-4" aria-hidden="true" />
             Printable
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {/* Desktop grid */}
+        {/* Desktop grid — emerald day header band + gold TODAY column */}
         <div className="hidden overflow-x-auto lg:block">
           <div role="table" aria-label="Weekly class grid" className="min-w-[880px]">
             <div role="row" className="grid grid-cols-[110px_repeat(5,minmax(0,1fr))] gap-2">
-              <div role="columnheader" className="pb-2 text-xs font-semibold text-muted-foreground">
+              <div
+                role="columnheader"
+                className="flex items-end justify-center pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+              >
                 Time
               </div>
               {WEEKDAYS.map((day, i) => {
@@ -96,13 +105,21 @@ export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] 
                     key={day}
                     role="columnheader"
                     className={cn(
-                      'rounded-lg px-2 pb-2 text-center text-xs font-semibold',
+                      'rounded-lg px-2 pb-1 pt-2 text-center text-[11px] font-bold uppercase tracking-[0.14em]',
                       isToday
-                        ? 'bg-primary/10 text-primary ring-1 ring-primary/30'
-                        : 'text-muted-foreground',
+                        ? 'bg-gradient-to-b from-gold-500 to-gold-600 text-brand-950 shadow-sm'
+                        : 'bg-brand-900 text-[#f2efe6] ring-1 ring-inset ring-white/10',
                     )}
                   >
                     {day}
+                    {isToday && (
+                      <span
+                        className="mt-0.5 block text-[9px] font-extrabold uppercase tracking-[0.18em] text-brand-950/80"
+                        aria-hidden="true"
+                      >
+                        Today
+                      </span>
+                    )}
                   </div>
                 )
               })}
@@ -117,26 +134,36 @@ export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] 
                 >
                   <div
                     role="cell"
-                    className="flex flex-col items-center justify-center rounded-lg bg-muted/60 px-1 py-2 text-center"
+                    className="flex flex-col items-center justify-center rounded-lg bg-muted/40 px-1 py-2 text-center"
                   >
-                    <span className="text-xs font-bold">{fmtTimeSlot(slot.start)}</span>
-                    <span className="text-[10px] text-muted-foreground">to {fmtTimeSlot(slot.end)}</span>
+                    <span className="text-xs font-bold tabular-nums text-foreground/80">
+                      {fmtTimeSlot(slot.start)}
+                    </span>
+                    <span className="text-[10px] tabular-nums text-muted-foreground">
+                      to {fmtTimeSlot(slot.end)}
+                    </span>
                   </div>
                   {WEEKDAYS.map((day, i) => {
                     const dayEntries = slotEntries.filter((e) => e.dayOfWeek === i + 1)
                     const isToday = today === i + 1
                     return (
-                      <div key={day} role="cell" className="min-h-16">
+                      <div
+                        key={day}
+                        role="cell"
+                        className={cn('min-h-16 rounded-lg', isToday && 'bg-gold-400/8')}
+                      >
                         {dayEntries.length === 0 ? (
-                          <div className="h-full min-h-16 rounded-lg border border-dashed/60" />
+                          <div className="h-full min-h-16 rounded-lg border border-dashed border-border/80 bg-muted/20" />
                         ) : (
                           <ul className="space-y-2">
                             {dayEntries.map((e) => (
                               <li
                                 key={e.id}
                                 className={cn(
-                                  'h-full rounded-lg border border-primary/20 bg-primary/5 p-2.5',
-                                  isToday && 'ring-2 ring-primary/40',
+                                  'h-full rounded-r-lg border border-l-4 bg-brand-50 p-2.5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:bg-brand-100',
+                                  isToday
+                                    ? 'border-l-gold-500 ring-1 ring-gold-400/40'
+                                    : 'border-l-brand-600',
                                 )}
                               >
                                 <p className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground">
@@ -149,7 +176,9 @@ export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] 
                                 <p className="mt-1 line-clamp-2 text-xs font-semibold leading-snug">
                                   {e.unitName ?? 'General session'}
                                 </p>
-                                <p className="mt-1 font-mono text-[10px] text-primary">{e.unitCode}</p>
+                                <p className="mt-1 font-mono text-[10px] font-semibold text-brand-800 dark:text-[#f2efe6]">
+                                  {e.unitCode}
+                                </p>
                                 <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-muted-foreground">
                                   <span className="inline-flex items-center gap-1">
                                     <MapPin className="h-3 w-3" aria-hidden="true" />
@@ -192,7 +221,7 @@ export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] 
                 >
                   {day.slice(0, 3)}
                   {isToday && (
-                    <span className="ml-1 h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+                    <span className="ml-1 h-1.5 w-1.5 rounded-full bg-gold-500" aria-hidden="true" />
                   )}
                 </TabsTrigger>
               )
@@ -217,8 +246,10 @@ export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] 
                       <li
                         key={e.id}
                         className={cn(
-                          'rounded-xl border p-4',
-                          today === i + 1 && 'border-primary/40 ring-1 ring-primary/20',
+                          'rounded-r-xl border border-l-4 bg-brand-50/60 p-4 transition-shadow hover:shadow-md dark:bg-brand-100/50',
+                          today === i + 1
+                            ? 'border-l-gold-500 ring-1 ring-gold-400/30'
+                            : 'border-l-brand-600',
                         )}
                       >
                         <div className="flex items-start justify-between gap-3">
@@ -226,9 +257,14 @@ export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] 
                             <p className="text-sm font-semibold leading-snug">
                               {e.unitName ?? 'General session'}
                             </p>
-                            <p className="mt-0.5 font-mono text-[11px] text-primary">{e.unitCode}</p>
+                            <p className="mt-0.5 font-mono text-[11px] font-semibold text-brand-800 dark:text-[#f2efe6]">
+                              {e.unitCode}
+                            </p>
                           </div>
-                          <Badge variant="secondary" className="shrink-0 gap-1 text-[10px]">
+                          <Badge
+                            variant="secondary"
+                            className="shrink-0 gap-1 text-[10px] tabular-nums"
+                          >
                             <Clock className="h-3 w-3" aria-hidden="true" />
                             {fmtTimeSlot(e.startTime)}–{fmtTimeSlot(e.endTime)}
                           </Badge>

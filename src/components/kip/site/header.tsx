@@ -30,7 +30,7 @@ import {
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { useHashRoute, navigate } from '@/components/kip/lib/router'
 import { useAuthStore, portalHomeFor } from '@/components/kip/stores/auth-store'
-import { KipLogo, KipCrest } from '@/components/kip/components/kip-logo'
+import { KipLogo, KipLogoLight, KipCrest } from '@/components/kip/components/kip-logo'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS: { label: string; to: string }[] = [
@@ -60,7 +60,7 @@ function ThemeToggle() {
       type="button"
       aria-label="Toggle light or dark theme"
       onClick={toggle}
-      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-primary-foreground/85 transition-colors hover:bg-white/15 hover:text-white"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-[#f2efe6]/85 transition-colors hover:bg-white/10 hover:text-gold-300"
     >
       {/* icons swap via the `dark` class next-themes sets on <html> — no JS state needed */}
       <Sun className="hidden h-4 w-4 dark:block" aria-hidden="true" />
@@ -72,6 +72,36 @@ function ThemeToggle() {
 function isActive(current: string, to: string): boolean {
   if (to === '/') return current === ''
   return current === to.replace(/^\//, '')
+}
+
+/** Desktop nav link: emerald text + short gold underline bar when active. */
+function DesktopNavLink({
+  label,
+  active,
+  onClick,
+}: {
+  label: string
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'relative whitespace-nowrap rounded-md px-3.5 py-2 text-[15px] font-medium tracking-wide transition-colors duration-200 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        active ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+      )}
+    >
+      {label}
+      {active && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-3.5 -bottom-0.5 h-[3px] rounded-full bg-gold-500"
+        />
+      )}
+    </button>
+  )
 }
 
 export function Header() {
@@ -110,40 +140,40 @@ export function Header() {
         Skip to main content
       </a>
 
-      {/* top utility bar */}
-      <div className="hidden bg-primary text-primary-foreground md:block">
-        <div className="mx-auto flex h-11 max-w-7xl items-center justify-between gap-4 px-6 text-xs lg:px-8">
+      {/* top utility bar — deep emerald with fine gold accents */}
+      <div className="hidden border-b border-gold-500/25 bg-brand-950 md:block">
+        <div className="mx-auto flex h-11 max-w-7xl items-center justify-between gap-4 px-6 text-xs text-[#f2efe6]/80 lg:px-8">
           <div className="flex min-w-0 items-center gap-4">
             <span className="inline-flex items-center gap-1.5 truncate">
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-sky-300" aria-hidden="true" />
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-gold-400" aria-hidden="true" />
               Wikililye&ndash;Mulango Road, Kitui Town
             </span>
             <a
               href="tel:+254703710879"
-              className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-300"
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-gold-300"
             >
-              <Phone className="h-3.5 w-3.5 text-sky-300" aria-hidden="true" />
+              <Phone className="h-3.5 w-3.5 text-gold-400" aria-hidden="true" />
               0703 710 879
             </a>
             <a
               href="mailto:info@kipskitui.com"
-              className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-300"
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-gold-300"
             >
-              <Mail className="h-3.5 w-3.5 text-sky-300" aria-hidden="true" />
+              <Mail className="h-3.5 w-3.5 text-gold-400" aria-hidden="true" />
               info@kipskitui.com
             </a>
           </div>
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 text-primary-foreground/90">
-              <CalendarDays className="h-3.5 w-3.5 text-sky-300" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 text-[#f2efe6]/90">
+              <CalendarDays className="h-3.5 w-3.5 text-gold-400" aria-hidden="true" />
               January &middot; May &middot; September intakes
             </span>
-            <span aria-hidden="true" className="text-primary-foreground/30">
+            <span aria-hidden="true" className="text-[#f2efe6]/30">
               |
             </span>
             <button
               type="button"
-              className="text-primary-foreground/80 underline-offset-2 transition-colors hover:text-sky-300 hover:underline"
+              className="text-[#f2efe6]/80 underline-offset-2 transition-colors hover:text-gold-300 hover:underline"
             >
               Alumni
             </button>
@@ -152,7 +182,7 @@ export function Header() {
         </div>
       </div>
 
-      {/* main bar */}
+      {/* main bar — warm paper with backdrop blur */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
           <button
@@ -169,31 +199,18 @@ export function Header() {
             <ul className="flex items-center gap-1">
               {NAV_ITEMS.map((item) => (
                 <li key={item.to}>
-                  <button
-                    type="button"
+                  <DesktopNavLink
+                    label={item.label}
+                    active={isActive(current, item.to)}
                     onClick={() => navigate(item.to)}
-                    className={cn(
-                      'relative whitespace-nowrap rounded-full px-3.5 py-2 text-[15px] font-medium tracking-wide transition-colors duration-200 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                      isActive(current, item.to)
-                        ? 'text-primary'
-                        : 'text-muted-foreground hover:text-foreground',
-                    )}
-                  >
-                    {item.label}
-                    {isActive(current, item.to) && (
-                      <span
-                        aria-hidden="true"
-                        className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-primary"
-                      />
-                    )}
-                  </button>
+                  />
                 </li>
               ))}
               <li>
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     className={cn(
-                      'inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-2 text-[15px] font-medium tracking-wide outline-none transition-colors duration-200 hover:bg-muted',
+                      'relative inline-flex items-center gap-1 whitespace-nowrap rounded-md px-3.5 py-2 text-[15px] font-medium tracking-wide outline-none transition-colors duration-200 hover:bg-muted',
                       newsActive
                         ? 'text-primary'
                         : 'text-muted-foreground hover:text-foreground',
@@ -201,6 +218,12 @@ export function Header() {
                   >
                     News &amp; Events
                     <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                    {newsActive && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-3.5 -bottom-0.5 h-[3px] rounded-full bg-gold-500"
+                      />
+                    )}
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-44">
                     <DropdownMenuItem onClick={() => navigate('/news')} className="min-h-11 cursor-pointer">
@@ -216,44 +239,14 @@ export function Header() {
                 </DropdownMenu>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={() => navigate('/faq')}
-                  className={cn(
-                    'relative whitespace-nowrap rounded-full px-3.5 py-2 text-[15px] font-medium tracking-wide transition-colors duration-200 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                    faqActive
-                      ? 'text-primary'
-                      : 'text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  FAQ
-                  {faqActive && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-primary"
-                    />
-                  )}
-                </button>
+                <DesktopNavLink label="FAQ" active={faqActive} onClick={() => navigate('/faq')} />
               </li>
               <li>
-                <button
-                  type="button"
+                <DesktopNavLink
+                  label="Contact"
+                  active={current === 'contact'}
                   onClick={() => navigate('/contact')}
-                  className={cn(
-                    'relative whitespace-nowrap rounded-full px-3.5 py-2 text-[15px] font-medium tracking-wide transition-colors duration-200 hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                    current === 'contact'
-                      ? 'text-primary'
-                      : 'text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  Contact
-                  {current === 'contact' && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-primary"
-                    />
-                  )}
-                </button>
+                />
               </li>
             </ul>
           </nav>
@@ -262,14 +255,14 @@ export function Header() {
           <div className="hidden items-center gap-2.5 xl:flex">
             <Button
               onClick={() => navigate('/apply')}
-              className="min-h-11 bg-gradient-to-b from-sky-600 to-primary font-semibold shadow-sm hover:from-sky-500 hover:to-sky-700"
+              className="btn-gold min-h-11 px-6 font-semibold"
             >
               Apply Now
             </Button>
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger className="inline-flex min-h-11 items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-sm font-medium outline-none transition-colors hover:bg-muted">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold uppercase text-primary-foreground">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-700 text-xs font-bold uppercase text-[#f2efe6]">
                     {user.name.slice(0, 2)}
                   </span>
                   <span className="hidden max-w-28 truncate xl:inline">
@@ -279,7 +272,7 @@ export function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel className="flex items-center gap-2">
-                    <KipCrest className="h-5 w-5 text-primary" />
+                    <KipCrest className="h-5 w-5 text-gold-500" />
                     <span className="truncate">{user.name}</span>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -303,7 +296,7 @@ export function Header() {
               <Button
                 variant="outline"
                 onClick={() => navigate('/login')}
-                className="min-h-11 font-medium"
+                className="min-h-11 border-brand-700/30 font-medium hover:border-gold-500/60 hover:text-gold-700 dark:hover:text-gold-400"
               >
                 Student Login
               </Button>
@@ -328,12 +321,15 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="flex w-[85vw] max-w-xs flex-col p-0">
                 <SheetTitle className="sr-only">Navigation menu</SheetTitle>
-                <div className="flex items-center justify-between border-b px-4 py-3">
-                  <KipLogo variant="mark" className="text-foreground" />
-                  <span className="text-sm font-semibold">KIP College</span>
+                {/* emerald header band with the cream crest + wordmark */}
+                <div className="flex items-center justify-between border-b border-gold-500/25 bg-brand-950 px-4 py-3.5">
+                  <KipLogoLight />
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-400">
+                    Menu
+                  </span>
                 </div>
                 <nav aria-label="Mobile navigation" className="flex-1 overflow-y-auto px-3 py-4">
-                  <p className="px-3 pb-2 pt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="px-3 pb-2 pt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-600 dark:text-gold-400">
                     Menu
                   </p>
                   <ul className="space-y-1">
@@ -345,7 +341,7 @@ export function Header() {
                           className={cn(
                             'flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm font-medium transition-colors',
                             isActive(current, item.to)
-                              ? 'bg-primary/10 text-primary'
+                              ? 'bg-gold-400/15 font-semibold text-gold-700 dark:text-gold-300'
                               : 'text-foreground hover:bg-muted',
                           )}
                         >
@@ -354,7 +350,7 @@ export function Header() {
                       </li>
                     ))}
                   </ul>
-                  <p className="px-3 pb-2 pt-5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="px-3 pb-2 pt-5 text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-600 dark:text-gold-400">
                     More
                   </p>
                   <ul className="space-y-1">
@@ -368,14 +364,14 @@ export function Header() {
                             className={cn(
                               'flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-medium transition-colors',
                               active
-                                ? 'bg-primary/10 text-primary'
+                                ? 'bg-gold-400/15 font-semibold text-gold-700 dark:text-gold-300'
                                 : 'text-foreground hover:bg-muted',
                             )}
                           >
                             <item.icon
                               className={cn(
                                 'h-4.5 w-4.5 shrink-0',
-                                active ? 'text-primary' : 'text-muted-foreground',
+                                active ? 'text-gold-600 dark:text-gold-400' : 'text-muted-foreground',
                               )}
                               aria-hidden="true"
                             />
@@ -389,7 +385,7 @@ export function Header() {
                 <div className="space-y-2.5 border-t p-4">
                   <Button
                     onClick={() => navigate('/apply')}
-                    className="h-11 w-full bg-gradient-to-b from-sky-600 to-primary font-semibold hover:from-sky-500 hover:to-sky-700"
+                    className="btn-gold h-11 w-full font-semibold"
                   >
                     Apply Now
                   </Button>
@@ -397,7 +393,7 @@ export function Header() {
                     <>
                       <Button
                         variant="outline"
-                        className="h-11 w-full"
+                        className="h-11 w-full border-brand-700/30 hover:border-gold-500/60 hover:text-gold-700 dark:hover:text-gold-400"
                         onClick={() => navigate(portalHomeFor(user.role))}
                       >
                         My Portal ({user.role.toLowerCase()})
@@ -407,10 +403,24 @@ export function Header() {
                       </Button>
                     </>
                   ) : (
-                    <Button variant="outline" className="h-11 w-full" onClick={() => navigate('/login')}>
+                    <Button
+                      variant="outline"
+                      className="h-11 w-full border-brand-700/30 hover:border-gold-500/60 hover:text-gold-700 dark:hover:text-gold-400"
+                      onClick={() => navigate('/login')}
+                    >
                       Student Login
                     </Button>
                   )}
+                  <p className="pt-1 text-center text-[11px] leading-relaxed text-muted-foreground">
+                    January &middot; May &middot; September intakes
+                    <br />
+                    <a
+                      href="tel:+254703710879"
+                      className="font-medium text-primary transition-colors hover:text-gold-700 dark:hover:text-gold-400"
+                    >
+                      0703 710 879
+                    </a>
+                  </p>
                 </div>
               </SheetContent>
             </Sheet>

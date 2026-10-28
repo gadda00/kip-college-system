@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { BookOpen, Search, SearchX } from 'lucide-react'
+import { BookOpen, CheckCircle2, Search, SearchX } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -12,7 +12,6 @@ import { CourseCard } from '@/components/kip/components/course-card'
 import { EmptyState } from '@/components/kip/components/empty-state'
 import { CourseCardsSkeleton, ErrorPanel } from '@/components/kip/components/loading'
 import { PageHero } from '@/components/kip/components/page-hero'
-import { SectionHeading } from '@/components/kip/components/section-heading'
 import { api } from '@/components/kip/lib/api'
 import { categoryMeta } from '@/components/kip/lib/format'
 import type { PublicCourse } from '@/components/kip/lib/types'
@@ -83,36 +82,42 @@ export function AcademicsView({ initialCategory = '' }: { initialCategory?: stri
                 aria-pressed={category === cat}
                 className={`group flex min-h-11 items-center gap-4 rounded-xl border p-3 text-left transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
                   category === cat
-                    ? 'border-primary bg-primary/5 shadow-sm'
-                    : 'border-border bg-card hover:border-primary/40 hover:shadow-sm'
+                    ? 'card-lift border-brand-600 bg-brand-50 shadow-sm dark:border-gold-400/60 dark:bg-brand-100/50'
+                    : 'card-lift border-border bg-card hover:border-gold-500/50 hover:shadow-sm'
                 }`}
               >
-                <span className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
+                <span className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted ring-1 ring-border">
                   <img src={meta.image} alt="" aria-hidden="true" className="h-full w-full object-cover" loading="lazy" />
                 </span>
-                <span className="min-w-0">
+                <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold">{meta.label}</span>
                   <span className="mt-0.5 block text-xs text-muted-foreground">
                     {courses.isPending ? '…' : `${categoryCounts[cat] ?? 0} courses`}
                   </span>
                 </span>
+                {category === cat && (
+                  <CheckCircle2
+                    className="h-5 w-5 shrink-0 text-gold-600 dark:text-gold-400"
+                    aria-hidden="true"
+                  />
+                )}
               </button>
             )
           })}
         </div>
 
         {/* filter bar */}
-        <div className="sticky top-16 z-20 mt-8 flex flex-col gap-3 rounded-xl border bg-background/95 p-3 backdrop-blur supports-[backdrop-filter]:bg-background/85 sm:flex-row sm:items-center sm:justify-between">
+        <div className="sticky top-16 z-20 mt-8 flex flex-col gap-3 rounded-xl border border-brand-900/10 bg-background/95 p-3 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/85 sm:flex-row sm:items-center sm:justify-between">
           <Tabs
             value={category || 'all'}
             onValueChange={(v) => setCategory(v === 'all' ? '' : v)}
           >
-            <TabsList aria-label="Filter courses by category">
+            <TabsList aria-label="Filter courses by category" className="h-auto w-auto gap-2 bg-transparent p-0">
               {CATEGORY_TABS.map((tab) => (
                 <TabsTrigger
                   key={tab || 'all'}
                   value={tab || 'all'}
-                  className="min-h-9 px-3 text-xs sm:text-sm"
+                  className="h-11 min-h-11 flex-none rounded-full border border-stone-300 bg-card px-4 text-xs font-medium text-muted-foreground transition-colors hover:border-gold-500/60 hover:text-foreground data-[state=active]:border-brand-700 data-[state=active]:bg-brand-700 data-[state=active]:text-[#f2efe6] data-[state=active]:shadow-sm dark:border-stone-700 dark:text-stone-300 dark:data-[state=active]:border-brand-600 dark:data-[state=active]:bg-brand-600 dark:data-[state=active]:text-[#f2efe6] sm:text-sm"
                 >
                   {TAB_LABELS[tab]}
                 </TabsTrigger>
@@ -156,7 +161,7 @@ export function AcademicsView({ initialCategory = '' }: { initialCategory?: stri
               action={
                 <Button
                   variant="outline"
-                  className="min-h-11"
+                  className="min-h-11 hover:border-gold-500/60"
                   onClick={() => {
                     setSearch('')
                     setCategory('')
@@ -169,7 +174,7 @@ export function AcademicsView({ initialCategory = '' }: { initialCategory?: stri
           ) : (
             <>
               <p className="mb-5 text-sm text-muted-foreground" role="status">
-                Showing <strong className="text-foreground">{filtered.length}</strong>{' '}
+                Showing <strong className="font-semibold text-foreground">{filtered.length}</strong>{' '}
                 {filtered.length === 1 ? 'programme' : 'programmes'}
                 {category && <> in {categoryMeta(category).label}</>}
                 {search && <> matching &ldquo;{search}&rdquo;</>}
@@ -193,27 +198,52 @@ export function AcademicsView({ initialCategory = '' }: { initialCategory?: stri
 
       {/* helper strip */}
       {courses.isSuccess && (
-        <section className="border-t bg-muted/40" aria-label="More information">
-          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-12 text-center sm:px-6 lg:px-8">
-            <SectionHeading
-              eyebrow="Not sure where to start?"
-              title="We&rsquo;ll Help You Choose"
-              description="Talk to our admissions team or ask the KIP Assistant — we'll match your KCSE results, budget and career goals to the right programme."
-              className="mb-0"
-            />
+        <section
+          className="bg-brand-band kip-grain relative overflow-hidden text-[#f2efe6]"
+          aria-label="More information"
+        >
+          <div aria-hidden="true" className="kip-pattern absolute inset-0" />
+          <div
+            aria-hidden="true"
+            className="absolute -left-24 -bottom-24 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl"
+          />
+          <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-5 px-4 py-16 text-center sm:px-6 lg:px-8">
+            <div className="mb-1 flex items-center justify-center gap-3">
+              <span className="gold-rule w-6" aria-hidden="true" />
+              <p className="eyebrow text-gold-400">Not sure where to start?</p>
+              <span className="gold-rule w-6" aria-hidden="true" />
+            </div>
+            <h2 className="text-balance text-2xl font-bold tracking-tight sm:text-3xl">
+              We&rsquo;ll Help You Choose
+            </h2>
+            <p className="max-w-xl text-pretty text-sm leading-relaxed text-[#f2efe6]/75 sm:text-base">
+              Talk to our admissions team or ask the KIP Assistant — we&rsquo;ll match your KCSE results,
+              budget and career goals to the right programme.
+            </p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Button onClick={() => navigate('/admissions')} className="min-h-11">
+              <Button
+                onClick={() => navigate('/admissions')}
+                className="btn-gold min-h-11 border-0 text-brand-950 hover:bg-gold-400 hover:text-brand-950"
+              >
                 <BookOpen className="mr-2 h-4 w-4" aria-hidden="true" />
                 View entry requirements
               </Button>
-              <Button variant="outline" onClick={() => navigate('/contact')} className="min-h-11">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/contact')}
+                className="min-h-11 border-white/25 bg-white/5 text-[#f2efe6] hover:border-gold-400/60 hover:bg-white/10 hover:text-gold-300 dark:border-white/25 dark:bg-white/5 dark:text-[#f2efe6] dark:hover:border-gold-400/60 dark:hover:bg-white/10 dark:hover:text-gold-300"
+              >
                 Contact admissions
               </Button>
             </div>
           </div>
         </section>
       )}
-      {courses.isPending && <div className="border-t bg-muted/40"><Skeleton className="h-16 rounded-none" /></div>}
+      {courses.isPending && (
+        <div className="border-t bg-muted/40">
+          <Skeleton className="h-16 rounded-none" />
+        </div>
+      )}
     </div>
   )
 }

@@ -5,7 +5,6 @@ import Markdown from 'react-markdown'
 import { motion } from 'framer-motion'
 import { Bot, ChevronDown, Send, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
@@ -87,7 +86,7 @@ export function StudyBuddy({ unitNames }: { unitNames: string[] }) {
       transition={{ duration: 0.25, delay: 0.15 }}
       aria-labelledby="study-buddy"
     >
-      <Card className="border-primary/15 bg-gradient-to-br from-primary/5 via-card to-card">
+      <Card className="relative rule-top-gold bg-gradient-to-br from-brand-50/60 via-card to-card dark:from-brand-100/15 dark:via-card dark:to-card">
         <Collapsible open={open} onOpenChange={setOpen}>
           <CardHeader className="p-4 pb-0 sm:p-5 sm:pb-0">
             <CollapsibleTrigger asChild>
@@ -95,18 +94,18 @@ export function StudyBuddy({ unitNames }: { unitNames: string[] }) {
                 type="button"
                 aria-expanded={open}
                 aria-controls="study-buddy-panel"
-                className="flex w-full items-center gap-3 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="focus-glow flex w-full items-center gap-3 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold-400/15 text-gold-700 dark:text-gold-400">
                   <Bot className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <CardTitle id="study-buddy" className="flex flex-wrap items-center gap-2 text-base">
                     Ask KIP Study Buddy
-                    <Badge variant="secondary" className="gap-1 text-[10px] font-medium">
-                      <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
+                    <span className="inline-flex items-center gap-1 rounded-md border border-gold-500/30 bg-gold-400/15 px-2 py-0.5 text-[10px] font-medium text-gold-700 dark:text-gold-300">
+                      <Sparkles className="h-3 w-3" aria-hidden="true" />
                       AI tutor · knows your units
-                    </Badge>
+                    </span>
                   </CardTitle>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Explanations, revision plans and past-paper guidance for your course.
@@ -127,7 +126,7 @@ export function StudyBuddy({ unitNames }: { unitNames: string[] }) {
               {/* messages */}
               <div
                 ref={scrollRef}
-                className="custom-scrollbar max-h-80 space-y-3 overflow-y-auto rounded-xl border bg-muted/30 p-3"
+                className="custom-scrollbar max-h-80 space-y-3 overflow-y-auto rounded-xl border border-brand-600/15 bg-muted/30 p-3"
                 aria-live="polite"
               >
                 {visible.map((m, i) => (
@@ -136,7 +135,7 @@ export function StudyBuddy({ unitNames }: { unitNames: string[] }) {
                     className={cn('flex items-end gap-2', m.role === 'user' && 'justify-end')}
                   >
                     {m.role === 'assistant' && (
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold-400/15 text-gold-600 dark:text-gold-400">
                         <KipCrest className="h-5 w-5" />
                       </span>
                     )}
@@ -144,8 +143,8 @@ export function StudyBuddy({ unitNames }: { unitNames: string[] }) {
                       className={cn(
                         'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
                         m.role === 'user'
-                          ? 'rounded-br-sm bg-primary text-primary-foreground'
-                          : 'rounded-bl-sm bg-muted text-foreground',
+                          ? 'rounded-br-sm bg-brand-700 text-[#f2efe6]'
+                          : 'rounded-bl-sm bg-muted text-brand-900 dark:text-brand-100',
                       )}
                     >
                       {m.role === 'assistant' ? (
@@ -161,14 +160,14 @@ export function StudyBuddy({ unitNames }: { unitNames: string[] }) {
 
                 {pending && (
                   <div className="flex items-end gap-2" aria-live="polite">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold-400/15 text-gold-600 dark:text-gold-400">
                       <KipCrest className="h-5 w-5" />
                     </span>
                     <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm bg-muted px-4 py-3.5">
                       {[0, 1, 2].map((dot) => (
                         <span
                           key={dot}
-                          className="h-2 w-2 animate-bounce rounded-full bg-primary/60"
+                          className="h-2 w-2 animate-bounce rounded-full bg-gold-500/70"
                           style={{ animationDelay: `${dot * 0.15}s` }}
                           aria-hidden="true"
                         />
@@ -195,7 +194,7 @@ export function StudyBuddy({ unitNames }: { unitNames: string[] }) {
                         key={prompt}
                         type="button"
                         onClick={() => send(prompt)}
-                        className="min-h-9 rounded-full border border-primary/25 bg-card px-3.5 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/10"
+                        className="focus-glow min-h-9 rounded-full border border-gold-500/30 bg-gold-400/15 px-3.5 py-1.5 text-xs font-medium text-gold-700 transition-colors hover:bg-gold-400/25 dark:text-gold-300"
                       >
                         {prompt}
                       </button>
@@ -221,14 +220,14 @@ export function StudyBuddy({ unitNames }: { unitNames: string[] }) {
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask about any unit, concept or exam prep…"
                   autoComplete="off"
-                  className="h-11 min-w-0 flex-1 rounded-lg border border-input bg-background px-3.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+                  className="focus-glow h-11 min-w-0 flex-1 rounded-lg border border-input bg-background px-3.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-gold-400 focus-visible:ring-2 focus-visible:ring-gold-400/30"
                 />
                 <Button
                   type="submit"
                   size="icon"
                   aria-label="Send message to KIP Study Buddy"
                   disabled={pending || !input.trim()}
-                  className="h-11 w-11 shrink-0"
+                  className="btn-gold focus-glow h-11 w-11 shrink-0"
                 >
                   <Send className="h-4 w-4" aria-hidden="true" />
                 </Button>

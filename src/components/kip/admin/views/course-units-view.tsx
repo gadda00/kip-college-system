@@ -7,7 +7,7 @@ import { ArrowLeft, BookOpen, Clock, ListTree, Plus, Trash2 } from 'lucide-react
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -27,6 +27,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import {
   Table,
   TableBody,
@@ -48,11 +54,11 @@ import type { CourseUnit } from '@/components/kip/lib/types'
 function categoryTone(category: string): string {
   switch (category) {
     case 'TECHNICAL':
-      return 'border-transparent bg-primary/10 text-primary'
-    case 'KASNEB':
-      return 'border-transparent bg-amber-400/15 text-amber-700 dark:text-amber-400'
-    default:
       return 'border-transparent bg-emerald-600/10 text-emerald-700 dark:text-emerald-400'
+    case 'KASNEB':
+      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
+    default:
+      return 'border-transparent bg-teal-600/10 text-teal-700 dark:text-teal-400'
   }
 }
 
@@ -88,10 +94,10 @@ export function CourseUnitsView({ courseId }: { courseId: string }) {
         {data && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
             {/* Course header */}
-            <Card>
+            <Card className="rule-top-gold relative overflow-hidden">
               <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6">
                 <div className="flex items-start gap-4">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-primary dark:bg-brand-100">
                     <BookOpen className="h-6 w-6" aria-hidden="true" />
                   </span>
                   <div className="min-w-0">
@@ -102,6 +108,9 @@ export function CourseUnitsView({ courseId }: { courseId: string }) {
                       </Badge>
                       <Badge className={`text-[10px] ${categoryTone(data.category)}`}>
                         {data.category}
+                      </Badge>
+                      <Badge variant="secondary" className="text-[10px]">
+                        {data.level}
                       </Badge>
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -118,7 +127,7 @@ export function CourseUnitsView({ courseId }: { courseId: string }) {
               </CardContent>
             </Card>
 
-            {/* Units by stage */}
+            {/* Units by stage — collapsible accordions (open by default) */}
             {data.unitsByStage.length === 0 ? (
               <EmptyState
                 icon={ListTree}
@@ -127,61 +136,82 @@ export function CourseUnitsView({ courseId }: { courseId: string }) {
                 className="py-16"
               />
             ) : (
-              data.unitsByStage.map((group) => (
-                <Card key={group.stage}>
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <ListTree className="h-4 w-4 text-primary" aria-hidden="true" />
-                      {group.stageLabel}
-                      <Badge variant="secondary" className="text-[10px]">
-                        {group.units.length} unit{group.units.length === 1 ? '' : 's'}
-                      </Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Code</TableHead>
-                            <TableHead>Unit name</TableHead>
-                            <TableHead className="text-center">Week hours</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {group.units.map((u) => (
-                            <TableRow key={u.id}>
-                              <TableCell className="font-mono text-xs text-primary">
-                                {u.code}
-                              </TableCell>
-                              <TableCell className="text-sm font-medium">{u.name}</TableCell>
-                              <TableCell className="text-center">
-                                <Badge variant="outline" className="gap-1 text-[10px]">
-                                  <Clock className="h-3 w-3" aria-hidden="true" />
-                                  {u.weekHours}h
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="min-h-11 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                                  onClick={() => setDeleting(u)}
-                                  aria-label={`Delete ${u.name}`}
+              <Accordion
+                type="multiple"
+                defaultValue={data.unitsByStage.map((g) => `stage-${g.stage}`)}
+                className="space-y-4"
+              >
+                {data.unitsByStage.map((group) => (
+                  <Card key={group.stage} className="overflow-hidden py-0">
+                    <AccordionItem value={`stage-${group.stage}`} className="border-b-0">
+                      <AccordionTrigger
+                        className="hover:no-underline [&>svg:last-child]:hidden [&[data-state=open]>.stage-toggle]:rotate-45 px-4 py-4 sm:px-6"
+                      >
+                        <span className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                          <ListTree className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                          <span className="font-display text-base font-semibold">
+                            {group.stageLabel}
+                          </span>
+                          <Badge variant="secondary" className="text-[10px]">
+                            {group.units.length} unit{group.units.length === 1 ? '' : 's'}
+                          </Badge>
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          className="stage-toggle flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold-400/15 text-gold-700 transition-transform duration-200 dark:text-gold-300"
+                        >
+                          <Plus className="h-4 w-4" aria-hidden="true" />
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-0">
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableHeader>
+                              <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                                <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Code</TableHead>
+                                <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Unit name</TableHead>
+                                <TableHead className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Week hours</TableHead>
+                                <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Actions</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {group.units.map((u) => (
+                                <TableRow
+                                  key={u.id}
+                                  className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30"
                                 >
-                                  <Trash2 className="h-4 w-4" aria-hidden="true" />
-                                  <span className="sr-only">Delete unit</span>
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                                  <TableCell className="font-mono text-xs text-primary">
+                                    {u.code}
+                                  </TableCell>
+                                  <TableCell className="text-sm font-medium">{u.name}</TableCell>
+                                  <TableCell className="text-center">
+                                    <Badge variant="outline" className="gap-1 text-[10px]">
+                                      <Clock className="h-3 w-3" aria-hidden="true" />
+                                      {u.weekHours}h
+                                    </Badge>
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="min-h-11 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                      onClick={() => setDeleting(u)}
+                                      aria-label={`Delete ${u.name}`}
+                                    >
+                                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                                      <span className="sr-only">Delete unit</span>
+                                    </Button>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Card>
+                ))}
+              </Accordion>
             )}
 
             <AddUnitDialog
@@ -257,6 +287,7 @@ function AddUnitDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>Add unit</DialogTitle>
           <DialogDescription>
             New unit joins the course curriculum immediately (results + timetable pick it up).

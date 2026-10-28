@@ -3,10 +3,10 @@
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
+  BadgeCheck,
   Banknote,
   Building,
   CalendarDays,
-  CheckCircle2,
   ClipboardCheck,
   FileText,
   Landmark,
@@ -26,6 +26,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { PageHero } from '@/components/kip/components/page-hero'
+import { SectionHeading } from '@/components/kip/components/section-heading'
 import { navigate } from '@/components/kip/lib/router'
 
 const fadeUp = {
@@ -94,19 +95,28 @@ const PAYMENT_METHODS = [
     title: 'M-Pesa',
     lines: ['Paybill: 522 890', 'Account: Admission No.'],
     note: 'Instant confirmation — keep the SMS as receipt.',
+    featured: true,
   },
   {
     icon: Landmark,
     title: 'Bank deposit',
     lines: ['Equity Bank — Kitui Branch', 'A/C 1234567890'],
     note: 'Bring the slip to the campus finance office.',
+    featured: false,
   },
   {
     icon: Building,
     title: 'Cash at campus',
     lines: ['Finance offices at all 3 campuses', 'Mon–Fri 8:00–17:00, Sat 9:00–13:00'],
     note: 'An official receipt is issued immediately.',
+    featured: false,
   },
+]
+
+const INTAKES = [
+  { month: 'January 2027', note: 'Applying now', open: true },
+  { month: 'May 2027', note: 'Upcoming intake', open: false },
+  { month: 'September 2027', note: 'Upcoming intake', open: false },
 ]
 
 export function AdmissionsView() {
@@ -120,60 +130,107 @@ export function AdmissionsView() {
       />
 
       {/* steps */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8" aria-labelledby="steps-title">
-        <h2 id="steps-title" className="sr-only">
-          Admission steps
-        </h2>
-        <ol className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {STEPS.map((step, i) => (
-            <motion.li key={step.title} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.08 }}>
-              <Card className="relative h-full border-primary/10 transition-shadow hover:shadow-md">
-                <CardContent className="p-6">
-                  <span className="absolute right-4 top-4 text-4xl font-black text-primary/10" aria-hidden="true">
+      <section className="kip-dots" aria-labelledby="steps-title">
+        <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <h2 id="steps-title" className="sr-only">
+            Admission steps
+          </h2>
+          <SectionHeading
+            eyebrow="How to join"
+            title="Four Steps to Your First Class"
+            description="From choosing a programme to reporting to campus — every stage of the journey is guided."
+          />
+          <ol className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+            {STEPS.map((step, i) => (
+              <motion.li
+                key={step.title}
+                {...fadeUp}
+                transition={{ ...fadeUp.transition, delay: i * 0.08 }}
+                className="relative"
+              >
+                {/* vertical dashed rail (below lg) */}
+                {i < STEPS.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute bottom-[-2.5rem] left-[1.375rem] top-14 border-l-2 border-dashed border-brand-600/40 lg:hidden"
+                  />
+                )}
+                {/* horizontal dashed rail (lg) */}
+                {i < STEPS.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute -right-6 left-14 top-[1.375rem] hidden border-t-2 border-dashed border-brand-600/40 lg:block"
+                  />
+                )}
+                <div className="flex gap-4 lg:block">
+                  <span className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-700 font-display text-base font-semibold text-[#f2efe6] shadow-sm ring-4 ring-background lg:mb-4 dark:bg-brand-600">
                     {i + 1}
                   </span>
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <step.icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <h3 className="mt-4 text-base font-semibold">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
-                </CardContent>
-              </Card>
-            </motion.li>
-          ))}
-        </ol>
+                  <div className="min-w-0">
+                    <h3 className="flex items-center gap-2 font-display text-lg font-semibold tracking-tight">
+                      <step.icon
+                        className="h-4 w-4 shrink-0 text-gold-600 dark:text-gold-400"
+                        aria-hidden="true"
+                      />
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
+                  </div>
+                </div>
+              </motion.li>
+            ))}
+          </ol>
+        </div>
       </section>
 
       {/* requirements */}
       <section className="bg-muted/40" aria-labelledby="requirements-title">
-        <div className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-          <h2 id="requirements-title" className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
-            Minimum Entry Requirements
-          </h2>
-          <p className="mt-3 text-center text-sm text-muted-foreground">
-            Per programme level — unsure where you fit? Call{' '}
-            <a href="tel:+254712345678" className="font-medium text-primary hover:underline">
-              0703 710 879
-            </a>{' '}
-            and we will guide you.
-          </p>
-          <motion.div {...fadeUp} className="mt-8 overflow-hidden rounded-xl border bg-card shadow-sm">
+        <div className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">Entry requirements</p>
+            <h2
+              id="requirements-title"
+              className="mt-3 text-balance text-2xl font-bold tracking-tight sm:text-3xl"
+            >
+              Minimum Entry Requirements
+            </h2>
+            <p className="mt-3 text-pretty text-sm text-muted-foreground">
+              Per programme level — unsure where you fit? Call{' '}
+              <a
+                href="tel:+254712345678"
+                className="font-medium text-primary underline-offset-2 transition-colors hover:text-gold-600 hover:underline dark:hover:text-gold-400"
+              >
+                0703 710 879
+              </a>{' '}
+              and we will guide you.
+            </p>
+          </div>
+          <motion.div
+            {...fadeUp}
+            className="mt-8 overflow-hidden rounded-xl border border-brand-900/10 bg-card shadow-sm"
+          >
             <Table>
               <TableHeader>
-                <TableRow className="bg-primary/5 hover:bg-primary/5">
-                  <TableHead className="text-sm font-semibold">Level</TableHead>
-                  <TableHead className="text-sm font-semibold">Requirement</TableHead>
-                  <TableHead className="hidden text-sm font-semibold md:table-cell">
+                <TableRow className="border-brand-900/10 bg-brand-50 hover:bg-brand-50 dark:bg-brand-100/40 dark:hover:bg-brand-100/40">
+                  <TableHead className="py-4 font-display text-sm font-semibold tracking-wide sm:text-base">
+                    Level
+                  </TableHead>
+                  <TableHead className="py-4 font-display text-sm font-semibold tracking-wide sm:text-base">
+                    Requirement
+                  </TableHead>
+                  <TableHead className="hidden py-4 font-display text-sm font-semibold tracking-wide sm:text-base md:table-cell">
                     Example programmes
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {REQUIREMENT_ROWS.map((row) => (
-                  <TableRow key={row.level}>
-                    <TableCell className="font-semibold text-primary">{row.level}</TableCell>
-                    <TableCell>{row.requirement}</TableCell>
-                    <TableCell className="hidden text-muted-foreground md:table-cell">
+                  <TableRow key={row.level} className="border-brand-900/10">
+                    <TableCell className="py-4 font-display font-semibold text-brand-700 dark:text-gold-300">
+                      {row.level}
+                    </TableCell>
+                    <TableCell className="py-4">{row.requirement}</TableCell>
+                    <TableCell className="hidden py-4 text-muted-foreground md:table-cell">
                       {row.example}
                     </TableCell>
                   </TableRow>
@@ -184,10 +241,10 @@ export function AdmissionsView() {
 
           {/* documents */}
           <motion.div {...fadeUp} className="mt-10">
-            <Card className="border-primary/15">
+            <Card className="border-brand-900/10">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <FileText className="h-5 w-5 text-primary" aria-hidden="true" />
+                <CardTitle className="flex items-center gap-2 font-display text-base">
+                  <FileText className="h-5 w-5 text-gold-500" aria-hidden="true" />
                   Documents you&rsquo;ll need
                 </CardTitle>
               </CardHeader>
@@ -195,7 +252,10 @@ export function AdmissionsView() {
                 <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {DOCUMENTS.map((doc) => (
                     <li key={doc} className="flex items-start gap-2.5 text-sm">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                      <BadgeCheck
+                        className="mt-0.5 h-4 w-4 shrink-0 text-gold-500"
+                        aria-hidden="true"
+                      />
                       {doc}
                     </li>
                   ))}
@@ -207,22 +267,41 @@ export function AdmissionsView() {
       </section>
 
       {/* fee payment methods */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8" aria-labelledby="payment-title">
-        <h2 id="payment-title" className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
-          Fee Payment Methods
+      <section
+        className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+        aria-labelledby="payment-title"
+      >
+        <SectionHeading
+          eyebrow="Fees &amp; payments"
+          title="Fee Payment Methods"
+          description="Choose whichever channel suits you — receipts issued for every payment."
+        />
+        <h2 id="payment-title" className="sr-only">
+          Fee payment methods
         </h2>
-        <p className="mt-3 text-center text-sm text-muted-foreground">
-          Choose whichever channel suits you — receipts issued for every payment.
-        </p>
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           {PAYMENT_METHODS.map((method, i) => (
             <motion.div key={method.title} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.08 }}>
-              <Card className="h-full border-primary/10 transition-shadow hover:shadow-md">
+              <Card
+                className={`card-lift h-full ${
+                  method.featured
+                    ? 'border-gold-500/40 bg-gold-400/5'
+                    : 'border-brand-900/10'
+                }`}
+              >
                 <CardContent className="p-6">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <span
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl ${
+                      method.featured
+                        ? 'bg-gold-400/15 text-gold-700 dark:text-gold-400'
+                        : 'bg-brand-50 text-primary dark:bg-brand-100'
+                    }`}
+                  >
                     <method.icon className="h-5 w-5" aria-hidden="true" />
                   </span>
-                  <h3 className="mt-4 text-base font-semibold">{method.title}</h3>
+                  <h3 className="mt-4 font-display text-base font-semibold tracking-tight">
+                    {method.title}
+                  </h3>
                   <div className="mt-2 space-y-0.5 text-sm text-muted-foreground">
                     {method.lines.map((line) => (
                       <p key={line} className="font-medium text-foreground">
@@ -237,43 +316,68 @@ export function AdmissionsView() {
           ))}
         </div>
         <p className="mt-6 flex items-center justify-center gap-2 text-center text-sm text-muted-foreground">
-          <Banknote className="h-4 w-4 text-primary" aria-hidden="true" />
+          <Banknote className="h-4 w-4 text-gold-500" aria-hidden="true" />
           Flexible instalments available — talk to the finance office.
         </p>
       </section>
 
       {/* important dates + CTA */}
-      <section className="bg-gradient-to-br from-primary via-[#123a8a] to-[#0b1f3f]" aria-labelledby="dates-title">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-16 text-center sm:px-6 lg:px-8">
-          <h2 id="dates-title" className="text-balance text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            Next Intakes: January &middot; May &middot; September
-          </h2>
-          <div className="flex flex-wrap justify-center gap-2.5">
-            {['January 2027 intake — applying now', 'May 2027 intake', 'September 2027 intake'].map(
-              (label, i) => (
-                <Badge
-                  key={label}
-                  variant="outline"
-                  className={
-                    i === 0
-                      ? 'border-sky-300/70 bg-sky-400/25 px-4 py-2 text-sm font-medium text-sky-100'
-                      : 'border-white/30 bg-white/10 px-4 py-2 text-sm font-medium text-white/85'
-                  }
-                >
-                  <CalendarDays className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                  {label}
-                </Badge>
-              ),
-            )}
+      <section
+        className="bg-brand-band kip-grain relative overflow-hidden text-[#f2efe6]"
+        aria-labelledby="dates-title"
+      >
+        <div aria-hidden="true" className="kip-pattern absolute inset-0" />
+        <div
+          aria-hidden="true"
+          className="absolute -left-24 -bottom-24 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl"
+        />
+        <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-8 px-4 py-16 text-center sm:px-6 lg:px-8 lg:py-20">
+          <div className="mx-auto max-w-2xl">
+            <p className="eyebrow text-gold-400">Mark your calendar</p>
+            <h2
+              id="dates-title"
+              className="mt-3 text-balance text-2xl font-bold tracking-tight sm:text-3xl"
+            >
+              Next Intakes:{' '}
+              <span className="text-gold-gradient">January &middot; May &middot; September</span>
+            </h2>
           </div>
-          <p className="max-w-xl text-sm leading-relaxed text-white/80">
-            Apply early to secure a place, on-campus hostel room and KASNEB registration for the
-            next sitting. Applications are free.
+          <div className="grid w-full max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
+            {INTAKES.map((intake, i) => (
+              <motion.div
+                key={intake.month}
+                {...fadeUp}
+                transition={{ ...fadeUp.transition, delay: i * 0.08 }}
+                className={`rounded-xl border p-5 text-left backdrop-blur-sm ${
+                  intake.open
+                    ? 'border-gold-400/70 bg-gold-400/10 shadow-lg shadow-gold-500/10'
+                    : 'border-gold-400/30 bg-white/[0.04]'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <CalendarDays
+                    className={intake.open ? 'h-5 w-5 text-gold-300' : 'h-5 w-5 text-gold-400/80'}
+                    aria-hidden="true"
+                  />
+                  {intake.open && (
+                    <Badge className="border-transparent bg-gold-400/95 text-[#0f2e22]">
+                      Applying now
+                    </Badge>
+                  )}
+                </div>
+                <p className="mt-3 font-display text-xl font-semibold text-[#f2efe6]">{intake.month}</p>
+                <p className="mt-1 text-sm text-[#f2efe6]/70">{intake.note}</p>
+              </motion.div>
+            ))}
+          </div>
+          <p className="max-w-xl text-pretty text-sm leading-relaxed text-[#f2efe6]/80">
+            Apply early to secure a place, on-campus hostel room and KASNEB registration for the next
+            sitting. Applications are free.
           </p>
           <Button
             size="lg"
             onClick={() => navigate('/apply')}
-            className="min-h-12 bg-white px-10 text-base font-bold text-primary shadow-lg hover:bg-sky-100"
+            className="btn-gold min-h-12 border-0 px-10 text-base font-bold text-brand-950 hover:bg-gold-400 hover:text-brand-950"
           >
             Start Online Application
             <ArrowRight className="ml-1.5 h-4 w-4" aria-hidden="true" />

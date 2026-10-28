@@ -116,8 +116,8 @@ export function StudentsView() {
 
       {/* Filter bar */}
       <Card>
-        <CardContent className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="relative">
+        <CardContent className="flex flex-wrap items-center gap-2 p-4">
+          <div className="relative w-full sm:w-64">
             <Search
               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
               aria-hidden="true"
@@ -131,7 +131,7 @@ export function StudentsView() {
             />
           </div>
           <Select value={courseId} onValueChange={setCourseId}>
-            <SelectTrigger className="h-11 w-full" aria-label="Filter by course">
+            <SelectTrigger className="h-11 w-full sm:w-44" aria-label="Filter by course">
               <SelectValue placeholder="All courses" />
             </SelectTrigger>
             <SelectContent>
@@ -144,7 +144,7 @@ export function StudentsView() {
             </SelectContent>
           </Select>
           <Select value={campusId} onValueChange={setCampusId}>
-            <SelectTrigger className="h-11 w-full" aria-label="Filter by campus">
+            <SelectTrigger className="h-11 w-full sm:w-44" aria-label="Filter by campus">
               <SelectValue placeholder="All campuses" />
             </SelectTrigger>
             <SelectContent>
@@ -156,9 +156,9 @@ export function StudentsView() {
               ))}
             </SelectContent>
           </Select>
-          <div className="flex gap-2">
+          <div className="flex flex-1 gap-2">
             <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="h-11 w-full" aria-label="Filter by status">
+              <SelectTrigger className="h-11 w-full sm:w-40" aria-label="Filter by status">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -172,7 +172,7 @@ export function StudentsView() {
             {hasFilters && (
               <Button
                 variant="outline"
-                className="min-h-11 shrink-0 px-3"
+                className="min-h-11 shrink-0 px-3 hover:border-gold-400/60 hover:bg-gold-400/10 hover:text-gold-700 dark:hover:text-gold-300"
                 aria-label="Clear filters"
                 onClick={() => {
                   setQ('')
@@ -215,19 +215,19 @@ export function StudentsView() {
               <div className="hidden overflow-x-auto lg:block">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Student</TableHead>
-                      <TableHead>Course</TableHead>
-                      <TableHead>Campus</TableHead>
-                      <TableHead>Year / Term</TableHead>
-                      <TableHead className="text-right">Balance</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                    <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Student</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Course</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Campus</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Year / Term</TableHead>
+                      <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Balance</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Status</TableHead>
+                      <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {(students.data ?? []).map((s) => (
-                      <TableRow key={s.id}>
+                      <TableRow key={s.id} className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30">
                         <TableCell className="min-w-56">
                           <p className="text-sm font-semibold">{s.name}</p>
                           <p className="font-mono text-[11px] text-muted-foreground">
@@ -249,11 +249,11 @@ export function StudentsView() {
                         </TableCell>
                         <TableCell className="text-right">
                           {s.balance > 0 ? (
-                            <span className="text-sm font-semibold text-amber-600 dark:text-amber-400">
+                            <span className="text-sm font-semibold tabular-nums text-gold-700 dark:text-gold-300">
                               {fmtKES(s.balance)}
                             </span>
                           ) : (
-                            <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                            <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
                               Clear
                             </span>
                           )}
@@ -268,7 +268,7 @@ export function StudentsView() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="min-h-11"
+                              className="min-h-11 hover:border-brand-600 hover:bg-brand-50 dark:hover:bg-brand-100/40"
                               onClick={() => navigate(`/admin/students/${s.id}`)}
                             >
                               View
@@ -276,7 +276,7 @@ export function StudentsView() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="min-h-11"
+                              className="min-h-11 hover:border-gold-400/60 hover:bg-gold-400/10"
                               aria-label={`Open ID card for ${s.name}`}
                               onClick={() => setIdCardStudentId(s.id)}
                             >
@@ -294,7 +294,7 @@ export function StudentsView() {
               {/* Mobile stacked cards */}
               <ul className="space-y-3 p-4 lg:hidden">
                 {(students.data ?? []).map((s) => (
-                  <li key={s.id} className="rounded-xl border p-4">
+                  <li key={s.id} className="rounded-xl border border-l-2 border-l-gold-400/70 bg-card p-4 pl-5">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold">{s.name}</p>
@@ -311,11 +311,11 @@ export function StudentsView() {
                     </p>
                     <div className="mt-3 flex items-center justify-between gap-3">
                       {s.balance > 0 ? (
-                        <span className="text-sm font-semibold text-amber-600 dark:text-amber-400">
+                        <span className="text-sm font-semibold tabular-nums text-gold-700 dark:text-gold-300">
                           {fmtKES(s.balance)}
                         </span>
                       ) : (
-                        <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                        <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
                           Clear
                         </span>
                       )}
@@ -464,6 +464,7 @@ function AddStudentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>Add student</DialogTitle>
           <DialogDescription>
             Create a student account with an auto-generated admission number. The student can

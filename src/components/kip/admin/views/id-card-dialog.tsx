@@ -33,11 +33,11 @@ function validThroughLabel(admittedAt: string, durationMonths: number): string {
 }
 
 /**
- * The admin-side student ID card — mirrors the student-facing design
- * (Task 8-b): navy → royal blue gradient, crest, "KITUI INSTITUTE OF
- * PROFESSIONALS / STUDENT ID CARD" header, initials avatar, ACTIVE badge
- * (semantic green), VALID THROUGH stamp and a CSS barcode footer with the
- * college motto. Rendered on-screen inside the dialog and re-mounted into
+ * The admin-side student ID card — mirrors the student-facing design:
+ * deep emerald gradient band with gold accents, crest, “KITUI INSTITUTE OF
+ * PROFESSIONALS / STUDENT ID CARD” header in serif, initials avatar with a
+ * gold ring, ACTIVE badge, VALID THROUGH stamp and a CSS barcode footer with
+ * the college motto. Rendered on-screen inside the dialog and re-mounted into
  * the body-level print portal so ONLY the card prints.
  */
 export function AdminStudentIdCard({ student }: { student: AdminStudentDetail }) {
@@ -48,40 +48,41 @@ export function AdminStudentIdCard({ student }: { student: AdminStudentDetail })
 
   return (
     <div
-      className="relative w-full max-w-[420px] overflow-hidden rounded-2xl text-white shadow-xl ring-1 ring-white/20"
+      className="relative w-full max-w-[420px] overflow-hidden rounded-2xl text-[#f2efe6] shadow-xl ring-1 ring-white/20"
       style={{
-        background: 'linear-gradient(135deg, #0b1f3f 0%, #123a8a 55%, #1565C0 100%)',
+        background: 'linear-gradient(135deg, #06231A 0%, #0B4430 55%, #10543A 100%)',
       }}
       role="img"
       aria-label={`Student ID card for ${student.user.name}, admission number ${student.admissionNo}`}
     >
-      {/* decorative sky accents */}
+      {/* decorative gold accents */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full bg-sky-300/15"
+        className="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full bg-gold-300/15"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-16 -left-12 h-44 w-44 rounded-full bg-sky-300/10"
+        className="pointer-events-none absolute -bottom-16 -left-12 h-44 w-44 rounded-full bg-gold-300/10"
       />
 
       <div className="relative flex aspect-[8/5] flex-col p-4 sm:p-5">
-        {/* header */}
+        {/* header — emerald band with serif institution name */}
         <div className="flex items-center gap-3">
           <KipCrest className="h-10 w-10 shrink-0 text-white" />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[11px] font-black uppercase leading-tight tracking-wide">
+            <p className="font-display truncate text-[11px] font-bold uppercase leading-tight tracking-wide">
               Kitui Institute of Professionals
             </p>
-            <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.24em] text-sky-300">
+            <div className="gold-rule mt-1 w-10" aria-hidden="true" />
+            <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.24em] text-gold-300">
               Student ID Card
             </p>
           </div>
           <Badge
             className={`shrink-0 gap-1 border-transparent px-2 py-0.5 text-[9px] font-bold ${
               student.status === 'ACTIVE'
-                ? 'bg-green-500 text-white'
-                : 'bg-white/20 text-white'
+                ? 'bg-gold-400 text-[#06231A]'
+                : 'bg-white/20 text-[#f2efe6]'
             }`}
           >
             <span className="h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true" />
@@ -93,13 +94,13 @@ export function AdminStudentIdCard({ student }: { student: AdminStudentDetail })
         <div className="mt-3 flex min-h-0 flex-1 items-center gap-4">
           <span
             aria-hidden="true"
-            className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full border-2 border-white/40 bg-white/15 text-xl font-black tracking-wide"
+            className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full border-2 border-gold-400/60 bg-white/10 text-xl font-bold tracking-wide"
           >
             {initialsOf(student.user.name)}
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[15px] font-bold leading-tight">{student.user.name}</p>
-            <p className="mt-1 font-mono text-[10px] font-semibold tracking-wider text-sky-300">
+            <p className="mt-1 font-mono text-[10px] font-semibold tracking-wider text-gold-300">
               {student.admissionNo}
             </p>
             <p className="mt-1.5 line-clamp-2 text-[10px] font-medium leading-snug text-white/90">
@@ -113,7 +114,7 @@ export function AdminStudentIdCard({ student }: { student: AdminStudentDetail })
             <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-white/60">
               Valid through
             </p>
-            <p className="mt-0.5 font-mono text-[13px] font-black tracking-wide">{validThrough}</p>
+            <p className="mt-0.5 font-mono text-[13px] font-bold tracking-wide">{validThrough}</p>
           </div>
         </div>
 
@@ -124,10 +125,10 @@ export function AdminStudentIdCard({ student }: { student: AdminStudentDetail })
             className="h-6 w-40 shrink-0"
             style={{
               backgroundImage:
-                'repeating-linear-gradient(90deg, #0b1f3f 0 2px, transparent 2px 4px, #0b1f3f 4px 7px, transparent 7px 9px, #0b1f3f 9px 10px, transparent 10px 13px, #0b1f3f 13px 15px, transparent 15px 17px)',
+                'repeating-linear-gradient(90deg, #06231A 0 2px, transparent 2px 4px, #06231A 4px 7px, transparent 7px 9px, #06231A 9px 10px, transparent 10px 13px, #06231A 13px 15px, transparent 15px 17px)',
             }}
           />
-          <p className="shrink-0 text-[9px] font-bold italic tracking-wide text-[#0b1f3f]">
+          <p className="shrink-0 text-[9px] font-bold italic tracking-wide text-[#06231A]">
             Training for Excellence
           </p>
         </div>
@@ -171,6 +172,7 @@ export function StudentIdCardDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle className="flex items-center gap-2">
             <IdCard className="h-4 w-4 text-primary" aria-hidden="true" />
             Student ID card

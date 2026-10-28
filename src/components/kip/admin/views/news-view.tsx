@@ -81,11 +81,17 @@ export function NewsView() {
       />
       <Tabs defaultValue="news">
         <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="news" className="min-h-9 flex-1 gap-2 sm:flex-none">
+          <TabsTrigger
+            value="news"
+            className="min-h-9 flex-1 gap-2 data-[state=active]:bg-brand-700 dark:data-[state=active]:bg-brand-700 data-[state=active]:text-[#f2efe6] data-[state=active]:shadow-none sm:flex-none"
+          >
             <Newspaper className="h-4 w-4" aria-hidden="true" />
             News
           </TabsTrigger>
-          <TabsTrigger value="events" className="min-h-9 flex-1 gap-2 sm:flex-none">
+          <TabsTrigger
+            value="events"
+            className="min-h-9 flex-1 gap-2 data-[state=active]:bg-brand-700 dark:data-[state=active]:bg-brand-700 data-[state=active]:text-[#f2efe6] data-[state=active]:shadow-none sm:flex-none"
+          >
             <CalendarDays className="h-4 w-4" aria-hidden="true" />
             Events
           </TabsTrigger>
@@ -223,7 +229,7 @@ function NewsCard({
           <Badge
             className={`text-[10px] ${
               post.published
-                ? 'border-transparent bg-green-600/90 text-white'
+                ? 'border-transparent bg-emerald-700/95 text-white'
                 : 'border-transparent bg-muted text-muted-foreground'
             }`}
           >
@@ -237,7 +243,9 @@ function NewsCard({
             <Badge variant="outline" className="text-[10px]">
               {post.category}
             </Badge>
-            <p className="text-[11px] text-muted-foreground">{fmtDate(post.publishedAt)}</p>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-400/15 px-2 py-0.5 text-[10px] font-semibold text-gold-700 dark:text-gold-300">
+              {fmtDate(post.publishedAt)}
+            </span>
           </div>
           <p className="mt-1.5 text-sm font-semibold leading-snug">{post.title}</p>
           <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{post.excerpt}</p>
@@ -370,6 +378,7 @@ function NewsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>{post ? 'Edit news post' : 'New news post'}</DialogTitle>
           <DialogDescription>
             Published posts appear on the public News page immediately.
@@ -580,11 +589,11 @@ function EventsSection() {
                   <Card>
                     <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:justify-between sm:p-5">
                       <div className="flex items-start gap-4">
-                        <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-brand-50 text-primary dark:bg-brand-100">
                           <span className="text-[10px] font-bold uppercase">
                             {new Date(ev.date).toLocaleDateString('en-GB', { month: 'short' })}
                           </span>
-                          <span className="text-lg font-black leading-none">
+                          <span className="font-display text-lg font-black leading-none">
                             {new Date(ev.date).getDate()}
                           </span>
                         </div>
@@ -594,7 +603,7 @@ function EventsSection() {
                             <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
                             {ev.venue}
                           </p>
-                          <p className="mt-1 text-[11px] text-muted-foreground">
+                          <p className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-gold-400/15 px-2 py-0.5 text-[10px] font-semibold text-gold-700 dark:text-gold-300">
                             {fmtDateTime(ev.date)}
                           </p>
                           <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">
@@ -679,6 +688,7 @@ function AddEventDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>Add event</DialogTitle>
           <DialogDescription>Upcoming events show on the public website.</DialogDescription>
         </DialogHeader>

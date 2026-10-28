@@ -50,9 +50,9 @@ const PAY_METHODS = ['MPESA', 'BANK', 'CASH'] as const
 function methodTone(method: string): string {
   switch (method) {
     case 'MPESA':
-      return 'border-transparent bg-green-600/15 text-green-700 dark:text-green-400'
+      return 'border-transparent bg-emerald-600/15 text-emerald-700 dark:text-emerald-400'
     case 'BANK':
-      return 'border-transparent bg-amber-500/15 text-amber-700 dark:text-amber-400'
+      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
     default:
       return 'border-transparent bg-muted text-muted-foreground'
   }
@@ -127,8 +127,8 @@ function StudentPicker({
                   className={cn(
                     'flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors',
                     s.id === selectedId
-                      ? 'bg-primary/10'
-                      : 'hover:bg-muted/60',
+                      ? 'bg-brand-50 dark:bg-brand-100/60'
+                      : 'hover:bg-brand-50/60 dark:hover:bg-brand-100/30',
                   )}
                 >
                   <span className="min-w-0">
@@ -187,11 +187,17 @@ export function FeesView() {
       >
         <Tabs defaultValue="post">
           <TabsList className="w-full sm:w-auto">
-            <TabsTrigger value="post" className="min-h-9 flex-1 gap-2 sm:flex-none">
+            <TabsTrigger
+              value="post"
+              className="min-h-9 flex-1 gap-2 data-[state=active]:bg-brand-700 dark:data-[state=active]:bg-brand-700 data-[state=active]:text-[#f2efe6] data-[state=active]:shadow-none sm:flex-none"
+            >
               <Receipt className="h-4 w-4" aria-hidden="true" />
               Post fees
             </TabsTrigger>
-            <TabsTrigger value="pay" className="min-h-9 flex-1 gap-2 sm:flex-none">
+            <TabsTrigger
+              value="pay"
+              className="min-h-9 flex-1 gap-2 data-[state=active]:bg-brand-700 dark:data-[state=active]:bg-brand-700 data-[state=active]:text-[#f2efe6] data-[state=active]:shadow-none sm:flex-none"
+            >
               <Wallet className="h-4 w-4" aria-hidden="true" />
               Record payment
             </TabsTrigger>
@@ -217,7 +223,7 @@ export function FeesView() {
       {/* Recent payments ledger */}
       <Card>
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 font-display text-base">
             <Clock className="h-4 w-4 text-primary" aria-hidden="true" />
             Payments ledger
           </CardTitle>
@@ -245,19 +251,19 @@ export function FeesView() {
                 <div className="hidden md:block">
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Student</TableHead>
-                        <TableHead>Course</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead>Method</TableHead>
-                        <TableHead>Reference</TableHead>
-                        <TableHead>Note</TableHead>
-                        <TableHead className="text-right">Paid</TableHead>
+                      <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                        <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Student</TableHead>
+                        <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Course</TableHead>
+                        <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Amount</TableHead>
+                        <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Method</TableHead>
+                        <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Reference</TableHead>
+                        <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Note</TableHead>
+                        <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Paid</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {(payments.data ?? []).map((p) => (
-                        <TableRow key={p.id}>
+                        <TableRow key={p.id} className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30">
                           <TableCell>
                             <p className="text-sm font-semibold">{p.studentName}</p>
                             <p className="font-mono text-[11px] text-muted-foreground">
@@ -267,7 +273,7 @@ export function FeesView() {
                           <TableCell className="max-w-48 truncate text-sm text-muted-foreground">
                             {p.course}
                           </TableCell>
-                          <TableCell className="text-right text-sm font-bold text-green-600 dark:text-green-400">
+                          <TableCell className="text-right text-sm font-bold tabular-nums text-emerald-700 dark:text-emerald-400">
                             {fmtKES(p.amount)}
                           </TableCell>
                           <TableCell>
@@ -290,7 +296,7 @@ export function FeesView() {
                 {/* Mobile stacked */}
                 <ul className="space-y-3 md:hidden">
                   {(payments.data ?? []).map((p) => (
-                    <li key={p.id} className="rounded-xl border p-4">
+                    <li key={p.id} className="rounded-xl border border-l-2 border-l-gold-400/70 bg-card p-4 pl-5">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold">{p.studentName}</p>
@@ -298,7 +304,7 @@ export function FeesView() {
                             {p.admissionNo}
                           </p>
                         </div>
-                        <p className="shrink-0 text-sm font-bold text-green-600 dark:text-green-400">
+                        <p className="shrink-0 text-sm font-bold tabular-nums text-emerald-700 dark:text-emerald-400">
                           {fmtKES(p.amount)}
                         </p>
                       </div>
@@ -400,7 +406,7 @@ function PostFeeForm({
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
       <Card>
         <CardHeader className="pb-4">
-          <CardTitle className="text-base">Post a fee item</CardTitle>
+          <CardTitle className="font-display text-base">Post a fee item</CardTitle>
           <p className="text-xs text-muted-foreground">
             Charge one student, or bulk-charge every active student in a course.
           </p>
@@ -408,7 +414,7 @@ function PostFeeForm({
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Target</Label>
+              <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Target</Label>
               <RadioGroup
                 value={target}
                 onValueChange={(v) => setTarget(v as 'student' | 'course')}
@@ -620,7 +626,7 @@ function RecordPaymentForm({ students }: { students: AdminStudentRow[] }) {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
       <Card>
         <CardHeader className="pb-4">
-          <CardTitle className="text-base">Record a payment</CardTitle>
+          <CardTitle className="font-display text-base">Record a payment</CardTitle>
           <p className="text-xs text-muted-foreground">
             Confirm a fee payment received at the office (M-Pesa, bank or cash).
           </p>

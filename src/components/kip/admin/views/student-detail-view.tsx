@@ -75,9 +75,9 @@ function statusVariant(status: string): 'default' | 'secondary' | 'destructive' 
 function feeTypeTone(type: string): string {
   switch (type) {
     case 'TUITION':
-      return 'border-transparent bg-primary/10 text-primary'
+      return 'border-transparent bg-emerald-600/10 text-emerald-700 dark:text-emerald-400'
     case 'REGISTRATION':
-      return 'border-transparent bg-amber-400/15 text-amber-700 dark:text-amber-400'
+      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
     case 'EXAM':
       return 'border-transparent bg-orange-500/15 text-orange-700 dark:text-orange-400'
     default:
@@ -88,9 +88,9 @@ function feeTypeTone(type: string): string {
 function methodTone(method: string): string {
   switch (method) {
     case 'MPESA':
-      return 'border-transparent bg-green-600/15 text-green-700 dark:text-green-400'
+      return 'border-transparent bg-emerald-600/15 text-emerald-700 dark:text-emerald-400'
     case 'BANK':
-      return 'border-transparent bg-amber-500/15 text-amber-700 dark:text-amber-400'
+      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
     default:
       return 'border-transparent bg-muted text-muted-foreground'
   }
@@ -212,7 +212,7 @@ function ProfileHeader({
           <div className="flex items-start gap-4">
             <span
               aria-hidden="true"
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-lg font-bold text-primary-foreground"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-lg font-bold text-primary-foreground ring-2 ring-gold-400/50"
             >
               {student.user.name
                 .split(' ')
@@ -228,7 +228,11 @@ function ProfileHeader({
                   {student.status}
                 </Badge>
               </div>
-              <p className="font-mono text-sm text-primary">{student.admissionNo}</p>
+              <p className="font-mono text-sm">
+                <span className="inline-flex items-center rounded-full bg-gold-400/15 px-2.5 py-0.5 text-xs font-semibold text-gold-700 dark:text-gold-300">
+                  {student.admissionNo}
+                </span>
+              </p>
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5">
                   <Mail className="h-3.5 w-3.5" aria-hidden="true" />
@@ -334,7 +338,7 @@ function FeesSection({
   return (
     <Card>
       <CardHeader className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 font-display text-base">
           <Receipt className="h-4 w-4 text-primary" aria-hidden="true" />
           Fees &amp; payments
         </CardTitle>
@@ -351,22 +355,22 @@ function FeesSection({
       <CardContent className="space-y-5">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="rounded-xl border p-4">
-            <p className="text-xs text-muted-foreground">Total charged</p>
-            <p className="mt-1 text-lg font-bold">{fmtKES(student.totalCharged)}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Total charged</p>
+            <p className="font-display mt-1 text-lg font-bold tabular-nums">{fmtKES(student.totalCharged)}</p>
           </div>
           <div className="rounded-xl border p-4">
-            <p className="text-xs text-muted-foreground">Total paid</p>
-            <p className="mt-1 text-lg font-bold text-green-600 dark:text-green-400">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Total paid</p>
+            <p className="font-display mt-1 text-lg font-bold tabular-nums text-emerald-700 dark:text-emerald-400">
               {fmtKES(student.totalPaid)}
             </p>
           </div>
           <div className="rounded-xl border p-4">
-            <p className="text-xs text-muted-foreground">Balance</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Balance</p>
             <p
-              className={`mt-1 text-lg font-bold ${
+              className={`font-display mt-1 text-lg font-bold tabular-nums ${
                 student.balance > 0
-                  ? 'text-amber-600 dark:text-amber-400'
-                  : 'text-green-600 dark:text-green-400'
+                  ? 'text-gold-700 dark:text-gold-300'
+                  : 'text-emerald-700 dark:text-emerald-400'
               }`}
             >
               {student.balance > 0 ? fmtKES(student.balance) : 'Clear'}
@@ -382,7 +386,7 @@ function FeesSection({
             aria-valuemax={100}
             aria-label="Fee payment progress"
           >
-            <div className="h-full rounded-full bg-primary" style={{ width: `${paidPct}%` }} />
+            <div className="h-full rounded-full bg-gradient-to-r from-brand-700 to-brand-500" style={{ width: `${paidPct}%` }} />
           </div>
           <p className="mt-1.5 text-[11px] text-muted-foreground">
             {paidPct}% of charged fees collected
@@ -391,10 +395,16 @@ function FeesSection({
 
         <Tabs defaultValue="charges">
           <TabsList className="w-full sm:w-auto">
-            <TabsTrigger value="charges" className="min-h-9 flex-1 sm:flex-none">
+            <TabsTrigger
+              value="charges"
+              className="min-h-9 flex-1 gap-2 data-[state=active]:bg-brand-700 dark:data-[state=active]:bg-brand-700 data-[state=active]:text-[#f2efe6] data-[state=active]:shadow-none sm:flex-none"
+            >
               Fee items ({student.feeItems.length})
             </TabsTrigger>
-            <TabsTrigger value="payments" className="min-h-9 flex-1 sm:flex-none">
+            <TabsTrigger
+              value="payments"
+              className="min-h-9 flex-1 gap-2 data-[state=active]:bg-brand-700 dark:data-[state=active]:bg-brand-700 data-[state=active]:text-[#f2efe6] data-[state=active]:shadow-none sm:flex-none"
+            >
               Payments ({student.payments.length})
             </TabsTrigger>
           </TabsList>
@@ -411,17 +421,17 @@ function FeesSection({
               <div className="max-h-96 overflow-y-auto custom-scrollbar">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Term</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
-                      <TableHead>Due</TableHead>
+                    <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Term</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Description</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Type</TableHead>
+                      <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Amount</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Due</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {student.feeItems.map((f) => (
-                      <TableRow key={f.id}>
+                      <TableRow key={f.id} className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30">
                         <TableCell className="whitespace-nowrap text-xs font-medium">
                           {f.term}
                         </TableCell>
@@ -429,7 +439,7 @@ function FeesSection({
                         <TableCell>
                           <Badge className={`text-[10px] ${feeTypeTone(f.type)}`}>{f.type}</Badge>
                         </TableCell>
-                        <TableCell className="text-right text-sm font-semibold">
+                        <TableCell className="text-right text-sm font-semibold tabular-nums">
                           {fmtKES(f.amount)}
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
@@ -455,21 +465,21 @@ function FeesSection({
               <div className="max-h-96 overflow-y-auto custom-scrollbar">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Paid on</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
-                      <TableHead>Method</TableHead>
-                      <TableHead>Reference</TableHead>
-                      <TableHead>Note</TableHead>
+                    <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Paid on</TableHead>
+                      <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Amount</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Method</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Reference</TableHead>
+                      <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Note</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {student.payments.map((p) => (
-                      <TableRow key={p.id}>
+                      <TableRow key={p.id} className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30">
                         <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                           {fmtDate(p.paidAt)}
                         </TableCell>
-                        <TableCell className="text-right text-sm font-semibold text-green-600 dark:text-green-400">
+                        <TableCell className="text-right text-sm font-semibold tabular-nums text-emerald-700 dark:text-emerald-400">
                           {fmtKES(p.amount)}
                         </TableCell>
                         <TableCell>
@@ -501,7 +511,7 @@ function ResultsSection({ student }: { student: AdminStudentDetail }) {
   return (
     <Card>
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle className="flex items-center gap-2 font-display text-base">
           <Award className="h-4 w-4 text-primary" aria-hidden="true" />
           Results ({student.results.length})
         </CardTitle>
@@ -518,18 +528,18 @@ function ResultsSection({ student }: { student: AdminStudentDetail }) {
           <div className="max-h-96 overflow-y-auto custom-scrollbar">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Unit</TableHead>
-                  <TableHead>Term</TableHead>
-                  <TableHead className="text-center">Marks</TableHead>
-                  <TableHead className="text-center">Grade</TableHead>
-                  <TableHead>Remark</TableHead>
-                  <TableHead className="text-center">Published</TableHead>
+                <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Unit</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Term</TableHead>
+                  <TableHead className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Marks</TableHead>
+                  <TableHead className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Grade</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Remark</TableHead>
+                  <TableHead className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Published</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {student.results.map((r) => (
-                  <TableRow key={r.id}>
+                  <TableRow key={r.id} className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30">
                     <TableCell>
                       <p className="text-sm font-medium">{r.unitName}</p>
                       <p className="font-mono text-[10px] text-muted-foreground">
@@ -539,7 +549,7 @@ function ResultsSection({ student }: { student: AdminStudentDetail }) {
                     <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                       {r.term}
                     </TableCell>
-                    <TableCell className="text-center text-sm font-semibold">
+                    <TableCell className="text-center text-sm font-semibold tabular-nums">
                       {r.marks.toFixed(0)}
                     </TableCell>
                     <TableCell className="text-center">
@@ -548,9 +558,9 @@ function ResultsSection({ student }: { student: AdminStudentDetail }) {
                     <TableCell className="text-xs text-muted-foreground">{r.remark ?? '—'}</TableCell>
                     <TableCell className="text-center">
                       {r.published ? (
-                        <BadgeCheck className="mx-auto h-4 w-4 text-primary" aria-label="Published" />
+                        <BadgeCheck className="mx-auto h-4 w-4 text-emerald-600 dark:text-emerald-400" aria-label="Published" />
                       ) : (
-                        <ShieldAlert className="mx-auto h-4 w-4 text-amber-500" aria-label="Unpublished" />
+                        <ShieldAlert className="mx-auto h-4 w-4 text-gold-600 dark:text-gold-400" aria-label="Unpublished" />
                       )}
                     </TableCell>
                   </TableRow>
@@ -569,7 +579,7 @@ function TimetableSummary({ student }: { student: AdminStudentDetail }) {
     <Card>
       <CardContent className="flex flex-col items-start justify-between gap-4 p-4 sm:flex-row sm:items-center sm:p-6">
         <div className="flex items-center gap-4">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-primary dark:bg-brand-100">
             <CalendarDays className="h-5 w-5" aria-hidden="true" />
           </span>
           <div>
@@ -653,6 +663,7 @@ function PostFeeDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>Post fee item</DialogTitle>
           <DialogDescription>
             Charge {student.user.name} ({student.admissionNo}).
@@ -805,6 +816,7 @@ function RecordPaymentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>Record payment</DialogTitle>
           <DialogDescription>
             Confirm a payment for {student.user.name} ({student.admissionNo}). Current balance{' '}
@@ -941,6 +953,7 @@ function EditStudentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
             Update {student.admissionNo}'s contact details and stage.

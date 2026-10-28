@@ -33,9 +33,9 @@ function statusVariant(status: string): 'default' | 'secondary' | 'outline' {
 function statusTone(status: string): string {
   switch (status) {
     case 'NEW':
-      return 'border-transparent bg-red-500/90 text-white'
+      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
     case 'REPLIED':
-      return 'border-transparent bg-green-600/15 text-green-700 dark:text-green-400'
+      return 'border-transparent bg-emerald-600/15 text-emerald-700 dark:text-emerald-400'
     default:
       return 'border-transparent bg-muted text-muted-foreground'
   }
@@ -88,12 +88,18 @@ export function MessagesView() {
                     type="button"
                     onClick={() => setSelected(m)}
                     className={cn(
-                      'w-full rounded-xl border p-4 text-left transition-colors hover:border-primary/30 hover:bg-primary/5 sm:p-5',
-                      m.status === 'NEW' && 'border-red-500/25 bg-red-500/[0.03]',
+                      'focus-glow w-full rounded-xl border p-4 text-left transition-colors hover:border-brand-600/40 hover:bg-brand-50/60 dark:hover:border-brand-500/40 dark:hover:bg-brand-100/30 sm:p-5',
+                      m.status === 'NEW' && 'border-gold-400/50 bg-gold-400/10 hover:border-gold-400/70 hover:bg-gold-400/15 dark:hover:border-gold-400/70 dark:hover:bg-gold-400/15',
                     )}
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap items-center gap-2">
+                        {m.status === 'NEW' && (
+                          <span
+                            aria-hidden="true"
+                            className="h-2 w-2 shrink-0 rounded-full bg-gold-500 ring-4 ring-gold-400/20"
+                          />
+                        )}
                         <p className="text-sm font-semibold">{m.name}</p>
                         <Badge className={`text-[10px] font-semibold ${statusTone(m.status)}`}>
                           {m.status}
@@ -149,6 +155,7 @@ function MessageDialog({
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
+          <div className="gold-rule mb-2 w-8" aria-hidden="true" />
           <DialogTitle>{message.subject}</DialogTitle>
           <DialogDescription>
             From {message.name} · {fmtDateTime(message.createdAt)}

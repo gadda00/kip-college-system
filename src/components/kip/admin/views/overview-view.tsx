@@ -18,7 +18,9 @@ import {
 } from 'recharts'
 import {
   ArrowUpRight,
+  Award,
   Building2,
+  CalendarDays,
   CheckCircle2,
   Inbox,
   Landmark,
@@ -46,16 +48,16 @@ import { fmtKES, fmtDate } from '@/components/kip/lib/format'
 import { KpiGridSkeleton, TableSkeleton, ViewHeading } from '@/components/kip/portal/shared'
 import type { AdminOverview } from '@/components/kip/admin/types'
 
-/** Brand chart palette — greens + gold + amber only (no blue/indigo). */
-const BLUE = '#1a4fd0'
-const SKY = '#38bdf8'
-const AMBER = '#d97706'
-const EMERALD = '#0d9488'
+/** Brand chart palette — emerald / gold / bronze / sage via CSS vars. */
+const EMERALD = 'var(--chart-1)'
+const GOLD = 'var(--chart-2)'
+const SAGE = 'var(--chart-4)'
+const BRONZE = 'var(--chart-5)'
 
 const CATEGORY_COLORS: Record<string, string> = {
-  TECHNICAL: BLUE,
-  BUSINESS: SKY,
-  KASNEB: AMBER,
+  TECHNICAL: EMERALD,
+  BUSINESS: GOLD,
+  KASNEB: BRONZE,
 }
 
 function monthLabel(month: string): string {
@@ -78,23 +80,23 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
       label: 'Pending review',
       count: data.applicationsPending,
       icon: Inbox,
-      bar: 'bg-amber-400',
-      text: 'text-amber-600 dark:text-amber-400',
+      bar: 'bg-gold-400',
+      text: 'text-gold-700 dark:text-gold-300',
     },
     {
       key: 'ACCEPTED',
       label: 'Accepted & enrolled',
       count: data.applicationsAccepted,
       icon: CheckCircle2,
-      bar: 'bg-green-500',
-      text: 'text-green-600 dark:text-green-400',
+      bar: 'bg-emerald-600',
+      text: 'text-emerald-700 dark:text-emerald-400',
     },
     {
       key: 'REJECTED',
       label: 'Rejected',
       count: data.applicationsRejected,
       icon: XCircle,
-      bar: 'bg-red-500',
+      bar: 'bg-red-600',
       text: 'text-red-600 dark:text-red-400',
     },
   ]
@@ -105,7 +107,7 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
       {/* Collections vs outstanding */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 font-display text-base">
             <Wallet className="h-4 w-4 text-primary" aria-hidden="true" />
             Collections vs outstanding
           </CardTitle>
@@ -117,8 +119,8 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
           {/* fee collection rate KPI */}
           <div className="flex items-end justify-between gap-3">
             <div>
-              <p className="text-xs font-medium text-muted-foreground">Fee collection rate</p>
-              <p className="text-3xl font-bold tracking-tight text-primary">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Fee collection rate</p>
+              <p className="font-display text-3xl font-bold tabular-nums tracking-tight text-primary">
                 {collectionRate.toLocaleString('en-KE', { maximumFractionDigits: 1 })}%
               </p>
             </div>
@@ -139,7 +141,7 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
             aria-label="Fee collection rate"
           >
             <div
-              className="h-full rounded-full bg-green-500"
+              className="h-full rounded-full bg-gradient-to-r from-brand-700 to-brand-500"
               style={{ width: `${Math.min(100, collectionRate)}%` }}
             />
           </div>
@@ -148,8 +150,8 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="rounded-xl border p-4">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-xs font-medium text-muted-foreground">Collected</p>
-                <p className="text-sm font-bold text-green-600 dark:text-green-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Collected</p>
+                <p className="text-sm font-bold tabular-nums text-emerald-700 dark:text-emerald-400">
                   {fmtKES(collected)}
                 </p>
               </div>
@@ -162,7 +164,7 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
                 aria-label="Share of billed fees collected"
               >
                 <div
-                  className="h-full rounded-full bg-green-500"
+                  className="h-full rounded-full bg-emerald-600"
                   style={{ width: `${Math.min(100, collectionRate)}%` }}
                 />
               </div>
@@ -172,8 +174,8 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
             </div>
             <div className="rounded-xl border p-4">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-xs font-medium text-muted-foreground">Outstanding</p>
-                <p className="text-sm font-bold text-amber-600 dark:text-amber-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Outstanding</p>
+                <p className="text-sm font-bold tabular-nums text-gold-700 dark:text-gold-300">
                   {fmtKES(outstanding)}
                 </p>
               </div>
@@ -186,7 +188,7 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
                 aria-label="Share of billed fees outstanding"
               >
                 <div
-                  className="h-full rounded-full bg-amber-400"
+                  className="h-full rounded-full bg-gold-400"
                   style={{ width: `${Math.min(100, outstandingShare)}%` }}
                 />
               </div>
@@ -202,7 +204,7 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
             onClick={() => navigate('/admin/reports')}
           >
             Export the outstanding-fees CSV
-            <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            <ArrowUpRight className="ml-2 h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
           </Button>
         </CardContent>
       </Card>
@@ -210,7 +212,7 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
       {/* Applications funnel */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 font-display text-base">
             <Inbox className="h-4 w-4 text-primary" aria-hidden="true" />
             Applications funnel
           </CardTitle>
@@ -256,7 +258,7 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
             onClick={() => navigate('/admin/applications')}
           >
             Review applications
-            <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            <ArrowUpRight className="ml-2 h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
           </Button>
         </CardContent>
       </Card>
@@ -267,9 +269,9 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
 function methodBadgeVariant(method: string): string {
   switch (method) {
     case 'MPESA':
-      return 'border-transparent bg-green-600/15 text-green-700 dark:text-green-400'
+      return 'border-transparent bg-emerald-600/15 text-emerald-700 dark:text-emerald-400'
     case 'BANK':
-      return 'border-transparent bg-amber-500/15 text-amber-700 dark:text-amber-400'
+      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
     default:
       return 'border-transparent bg-muted text-muted-foreground'
   }
@@ -277,13 +279,18 @@ function methodBadgeVariant(method: string): string {
 
 function ChartTooltipStyle() {
   return {
-    backgroundColor: 'rgba(13, 40, 24, 0.94)',
-    border: '1px solid rgba(255,255,255,0.15)',
+    backgroundColor: 'var(--popover)',
+    border: '1px solid var(--border)',
     borderRadius: '8px',
-    color: '#fff',
+    color: 'var(--popover-foreground)',
     fontSize: '12px',
+    boxShadow: '0 12px 32px -16px rgba(0, 0, 0, 0.35)',
   } as const
 }
+
+/** Shared axis/tick props so every chart stays on the brand token palette. */
+const AXIS_TICK = { fill: 'var(--muted-foreground)', fontSize: 11 } as const
+const GRID_STROKE = 'var(--border)'
 
 export function OverviewView() {
   const { data, status, error, refetch } = useQuery<AdminOverview>({
@@ -306,7 +313,12 @@ export function OverviewView() {
       >
         {data && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <KpiCard icon={Users} label="Active students" value={data.studentsActive} />
+            <KpiCard
+              icon={Users}
+              label="Active students"
+              value={data.studentsActive}
+              className="rule-top-gold"
+            />
             <button
               type="button"
               onClick={() => navigate('/admin/applications')}
@@ -318,7 +330,7 @@ export function OverviewView() {
                 label="Pending applications"
                 value={data.applicationsPending}
                 delta={{ text: 'Review now →', positive: data.applicationsPending > 0 }}
-                className="h-full w-full text-left transition-colors hover:border-primary/40 hover:bg-primary/5"
+                className="h-full w-full text-left transition-colors hover:border-gold-400/60 hover:bg-gold-400/5"
               />
             </button>
             <KpiCard
@@ -335,6 +347,60 @@ export function OverviewView() {
           </div>
         )}
       </QueryBoundary>
+
+      {/* Quick actions — registrar shortcuts */}
+      <Card className="kip-dots border-brand-100 dark:border-white/10">
+        <CardContent className="flex flex-wrap items-center gap-2 p-4">
+          <p className="mr-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Quick actions
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            onClick={() => navigate('/admin/students')}
+          >
+            <Users className="mr-2 h-4 w-4 text-primary" aria-hidden="true" />
+            Enrol student
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            onClick={() => navigate('/admin/applications')}
+          >
+            <Inbox className="mr-2 h-4 w-4 text-primary" aria-hidden="true" />
+            Review applications
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            onClick={() => navigate('/admin/fees')}
+          >
+            <Wallet className="mr-2 h-4 w-4 text-primary" aria-hidden="true" />
+            Post fees
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            onClick={() => navigate('/admin/results')}
+          >
+            <Award className="mr-2 h-4 w-4 text-primary" aria-hidden="true" />
+            Enter results
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="min-h-11"
+            onClick={() => navigate('/admin/timetable')}
+          >
+            <CalendarDays className="mr-2 h-4 w-4 text-primary" aria-hidden="true" />
+            Build timetable
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Task 8-c: collections comparison + applications funnel */}
       <QueryBoundary
@@ -357,7 +423,7 @@ export function OverviewView() {
             {/* Revenue trend */}
             <Card className="xl:col-span-2">
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
+                <CardTitle className="flex items-center gap-2 font-display text-base">
                   <TrendingUp className="h-4 w-4 text-primary" aria-hidden="true" />
                   Revenue — last 8 months
                 </CardTitle>
@@ -374,20 +440,20 @@ export function OverviewView() {
                     >
                       <defs>
                         <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={BLUE} stopOpacity={0.35} />
-                          <stop offset="100%" stopColor={BLUE} stopOpacity={0.03} />
+                          <stop offset="0%" stopColor={EMERALD} stopOpacity={0.32} />
+                          <stop offset="100%" stopColor={EMERALD} stopOpacity={0.03} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" vertical={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE} vertical={false} />
                       <XAxis
                         dataKey="month"
                         tickFormatter={monthLabel}
-                        tick={{ fontSize: 11 }}
-                        stroke="rgba(0,0,0,0.45)"
+                        tick={AXIS_TICK}
+                        stroke="var(--muted-foreground)"
                       />
                       <YAxis
-                        tick={{ fontSize: 11 }}
-                        stroke="rgba(0,0,0,0.45)"
+                        tick={AXIS_TICK}
+                        stroke="var(--muted-foreground)"
                         tickFormatter={(v: number) => (v >= 1000 ? `${Math.round(v / 1000)}k` : String(v))}
                       />
                       <Tooltip
@@ -401,7 +467,7 @@ export function OverviewView() {
                       <Area
                         type="monotone"
                         dataKey="total"
-                        stroke={BLUE}
+                        stroke={EMERALD}
                         strokeWidth={2.5}
                         fill="url(#revenueFill)"
                       />
@@ -414,7 +480,7 @@ export function OverviewView() {
             {/* Students by category donut */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Students by category</CardTitle>
+                <CardTitle className="font-display text-base">Students by category</CardTitle>
                 <p className="text-xs text-muted-foreground">Active enrolments</p>
               </CardHeader>
               <CardContent>
@@ -433,7 +499,7 @@ export function OverviewView() {
                         {data.studentsByCategory.map((entry) => (
                           <Cell
                             key={entry.category}
-                            fill={CATEGORY_COLORS[entry.category] ?? EMERALD}
+                            fill={CATEGORY_COLORS[entry.category] ?? SAGE}
                           />
                         ))}
                       </Pie>
@@ -470,7 +536,7 @@ export function OverviewView() {
             {/* Top courses bar */}
             <Card className="xl:col-span-2">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Top courses by enrollment</CardTitle>
+                <CardTitle className="font-display text-base">Top courses by enrollment</CardTitle>
                 <p className="text-xs text-muted-foreground">Active students per course (top 8)</p>
               </CardHeader>
               <CardContent>
@@ -481,14 +547,14 @@ export function OverviewView() {
                       layout="vertical"
                       margin={{ top: 4, right: 24, left: 8, bottom: 0 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" horizontal={false} />
-                      <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} stroke="rgba(0,0,0,0.45)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE} horizontal={false} />
+                      <XAxis type="number" allowDecimals={false} tick={AXIS_TICK} stroke="var(--muted-foreground)" />
                       <YAxis
                         type="category"
                         dataKey="course"
                         width={190}
-                        tick={{ fontSize: 10.5 }}
-                        stroke="rgba(0,0,0,0.45)"
+                        tick={{ fill: 'var(--muted-foreground)', fontSize: 10.5 }}
+                        stroke="var(--muted-foreground)"
                         tickFormatter={(v: string) =>
                           v.length > 30 ? `${v.slice(0, 29)}…` : v
                         }
@@ -501,7 +567,7 @@ export function OverviewView() {
                           'Enrolled',
                         ]}
                       />
-                      <Bar dataKey="count" fill={BLUE} radius={[0, 6, 6, 0]} barSize={18} />
+                      <Bar dataKey="count" fill={EMERALD} radius={[0, 6, 6, 0]} barSize={18} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -511,7 +577,7 @@ export function OverviewView() {
             {/* Students by campus */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
+                <CardTitle className="flex items-center gap-2 font-display text-base">
                   <Building2 className="h-4 w-4 text-primary" aria-hidden="true" />
                   Students by campus
                 </CardTitle>
@@ -539,7 +605,7 @@ export function OverviewView() {
                         aria-label={`${c.campus} share of active students`}
                       >
                         <div
-                          className="h-full rounded-full bg-primary"
+                          className="h-full rounded-full bg-gradient-to-r from-brand-700 to-brand-500"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -553,7 +619,7 @@ export function OverviewView() {
                   onClick={() => navigate('/admin/students')}
                 >
                   Manage students
-                  <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                  <ArrowUpRight className="ml-2 h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
                 </Button>
               </CardContent>
             </Card>
@@ -571,7 +637,7 @@ export function OverviewView() {
         {data && (
           <Card>
             <CardHeader className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between">
-              <CardTitle className="text-base">Recent payments</CardTitle>
+              <CardTitle className="font-display text-base">Recent activity — payments</CardTitle>
               <Button
                 variant="outline"
                 size="sm"
@@ -579,7 +645,7 @@ export function OverviewView() {
                 onClick={() => navigate('/admin/fees')}
               >
                 Fees &amp; payments
-                <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                <ArrowUpRight className="ml-2 h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
               </Button>
             </CardHeader>
             <CardContent>
@@ -593,18 +659,18 @@ export function OverviewView() {
                   <div className="hidden overflow-x-auto md:block">
                     <Table>
                       <TableHeader>
-                        <TableRow>
-                          <TableHead>Student</TableHead>
-                          <TableHead>Course</TableHead>
-                          <TableHead className="text-right">Amount</TableHead>
-                          <TableHead>Method</TableHead>
-                          <TableHead>Reference</TableHead>
-                          <TableHead className="text-right">Date</TableHead>
+                        <TableRow className="border-brand-200/70 bg-brand-50/70 hover:bg-brand-50/70 dark:border-white/10 dark:bg-brand-100 dark:hover:bg-brand-100">
+                          <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Student</TableHead>
+                          <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Course</TableHead>
+                          <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Amount</TableHead>
+                          <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Method</TableHead>
+                          <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Reference</TableHead>
+                          <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Date</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {data.recentPayments.map((p) => (
-                          <TableRow key={p.id}>
+                          <TableRow key={p.id} className="odd:bg-muted/40 hover:bg-brand-50/60 dark:hover:bg-brand-100/30">
                             <TableCell>
                               <p className="text-sm font-semibold">{p.studentName}</p>
                               <p className="font-mono text-[11px] text-muted-foreground">
@@ -614,7 +680,7 @@ export function OverviewView() {
                             <TableCell className="max-w-56 truncate text-sm text-muted-foreground">
                               {p.course}
                             </TableCell>
-                            <TableCell className="text-right text-sm font-bold text-primary">
+                            <TableCell className="text-right text-sm font-bold tabular-nums text-emerald-700 dark:text-emerald-400">
                               {fmtKES(p.amount)}
                             </TableCell>
                             <TableCell>
@@ -633,10 +699,14 @@ export function OverviewView() {
                       </TableBody>
                     </Table>
                   </div>
-                  {/* Mobile stacked cards */}
+                  {/* Mobile stacked cards — gold-dot activity timeline */}
                   <ul className="space-y-3 md:hidden">
                     {data.recentPayments.map((p) => (
-                      <li key={p.id} className="rounded-xl border p-4">
+                      <li key={p.id} className="relative rounded-xl border border-l-2 border-l-gold-400/70 bg-card p-4 pl-5">
+                        <span
+                          aria-hidden="true"
+                          className="absolute -left-[5px] top-6 h-2.5 w-2.5 rounded-full bg-gold-400 ring-4 ring-gold-400/20"
+                        />
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <p className="truncate text-sm font-semibold">{p.studentName}</p>
@@ -644,7 +714,7 @@ export function OverviewView() {
                               {p.admissionNo}
                             </p>
                           </div>
-                          <p className="shrink-0 text-sm font-bold text-primary">
+                          <p className="shrink-0 text-sm font-bold tabular-nums text-emerald-700 dark:text-emerald-400">
                             {fmtKES(p.amount)}
                           </p>
                         </div>

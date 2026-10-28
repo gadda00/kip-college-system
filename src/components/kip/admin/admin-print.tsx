@@ -9,7 +9,9 @@ import { createPortal } from 'react-dom'
  * (`.kip-print-portal`, a DIRECT child of <body>) and calls window.print().
  * The global @media print CSS in globals.css hides every other direct child
  * of <body>, so ONLY the portalled document prints — no admin sidebar,
- * header, footer or toasts.
+ * header, footer or toasts. Documents carry the emerald + gold print identity
+ * (deep emerald header bands, gold rules, serif institution name) with
+ * `print-color-adjust: exact` keeping the brand colours on paper.
  *
  * Usage:
  *   const { print, printDoc } = useAdminPrintDoc(() => <MyDocument />)

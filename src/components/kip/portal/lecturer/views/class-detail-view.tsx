@@ -11,6 +11,7 @@ import {
   GraduationCap,
   Mail,
   Phone,
+  Printer,
   TrendingUp,
   Users,
 } from 'lucide-react'
@@ -18,6 +19,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -39,8 +41,11 @@ import { EmptyState } from '@/components/kip/components/empty-state'
 import { QueryBoundary } from '@/components/kip/components/loading'
 import { api } from '@/components/kip/lib/api'
 import { navigate } from '@/components/kip/lib/router'
-import { RowsSkeleton, ViewHeading, GradeBadge } from '@/components/kip/portal/shared'
+import { RowsSkeleton, ViewHeading, GradeBadge, initialsOf } from '@/components/kip/portal/shared'
+import { ClassRegisterDoc, usePrintDoc } from '@/components/kip/portal/print-doc'
+import { useAuthStore } from '@/components/kip/stores/auth-store'
 import type { LecturerClassAnalytics, LecturerClassDetail } from '@/components/kip/portal/types'
+import { cn } from '@/lib/utils'
 
 export function ClassDetailView({ unitId }: { unitId: string }) {
   const { data, status, error, refetch } = useQuery<LecturerClassDetail>({
@@ -64,15 +69,27 @@ export function ClassDetailView({ unitId }: { unitId: string }) {
 function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
   const { unit, students, analytics } = data
   const withResults = students.filter((s) => s.result).length
+  const user = useAuthStore((s) => s.user)
+  const { print, printDoc } = usePrintDoc(
+    () => <ClassRegisterDoc data={data} lecturerName={user?.name ?? 'Class lecturer'} />,
+  )
 
   return (
     <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+      >
         <ViewHeading
           title={unit.name}
           description={`${unit.course.title} · ${unit.stageLabel}`}
           actions={
-            <Button variant="outline" className="min-h-11" onClick={() => navigate('/lecturer/classes')}>
+            <Button
+              variant="outline"
+              className="min-h-11"
+              onClick={() => navigate('/lecturer/classes')}
+            >
               <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
               All classes
             </Button>
@@ -80,22 +97,24 @@ function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
         />
       </motion.div>
 
-      {/* Unit header */}
+      {/* Unit header — emerald wash + gold top rule */}
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, delay: 0.05 }}
         aria-label="Unit details"
       >
-        <Card className="border-primary/15 bg-gradient-to-br from-primary/5 via-card to-card">
+        <Card className="rule-top-gold relative overflow-hidden border-brand-700/20 bg-gradient-to-br from-brand-50/70 via-card to-card dark:border-brand-500/20 dark:from-brand-100/40">
           <CardContent className="flex flex-wrap items-start justify-between gap-4 p-4 sm:p-6">
             <div className="flex min-w-0 items-start gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-primary dark:bg-brand-100">
                 <BookOpen className="h-6 w-6" aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <p className="font-mono text-xs font-semibold text-primary">{unit.code}</p>
-                <h2 className="mt-0.5 text-lg font-bold leading-snug">{unit.name}</h2>
+                <span className="inline-flex items-center rounded-md bg-brand-50 px-2 py-0.5 font-mono text-[11px] font-semibold text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                  {unit.code}
+                </span>
+                <h2 className="mt-1.5 font-display text-lg font-bold leading-snug">{unit.name}</h2>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   <Badge variant="secondary" className="text-[10px]">
                     {unit.stageLabel}
@@ -111,13 +130,24 @@ function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
                 </div>
               </div>
             </div>
-            <Button
-              onClick={() => navigate(`/lecturer/results/${unit.id}`)}
-              className="min-h-11 shrink-0"
-            >
-              <ClipboardEdit className="mr-2 h-4 w-4" aria-hidden="true" />
-              Enter results for this unit
-            </Button>
+            <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+              <Button
+                onClick={() => print()}
+                variant="outline"
+                className="min-h-11"
+                aria-label="Print the official class register for this unit"
+              >
+                <Printer className="mr-2 h-4 w-4" aria-hidden="true" />
+                Print register
+              </Button>
+              <Button
+                onClick={() => navigate(`/lecturer/results/${unit.id}`)}
+                className="btn-gold min-h-11"
+              >
+                <ClipboardEdit className="mr-2 h-4 w-4" aria-hidden="true" />
+                Enter results for this unit
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </motion.section>
@@ -134,15 +164,13 @@ function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
       >
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle id="roster" className="flex flex-wrap items-center gap-2 text-base">
+            <CardTitle id="roster" className="flex flex-wrap items-center gap-2 font-display text-base">
               <Users className="h-4 w-4 text-primary" aria-hidden="true" />
               Class roster
               <Badge variant="secondary" className="text-[10px]">
                 {students.length} enrolled
               </Badge>
-              <Badge
-                className="bg-amber-400/15 text-amber-700 hover:bg-amber-400/15 dark:text-amber-400"
-              >
+              <Badge className="border border-gold-400/40 bg-gold-400/15 text-[10px] font-semibold text-gold-700 hover:bg-gold-400/15 dark:text-gold-300">
                 {withResults} with results
               </Badge>
             </CardTitle>
@@ -159,19 +187,39 @@ function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead className="sticky left-0 z-10 bg-card min-w-44">Student</TableHead>
-                      <TableHead className="min-w-32">Admission No</TableHead>
-                      <TableHead className="min-w-36">Contact</TableHead>
-                      <TableHead className="min-w-20 text-center">Term</TableHead>
-                      <TableHead className="min-w-40 text-center">Current result</TableHead>
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead className="sticky left-0 z-10 min-w-44 bg-brand-50 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                        Student
+                      </TableHead>
+                      <TableHead className="min-w-32 bg-brand-50 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                        Admission No
+                      </TableHead>
+                      <TableHead className="min-w-36 bg-brand-50 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                        Contact
+                      </TableHead>
+                      <TableHead className="min-w-20 bg-brand-50 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                        Term
+                      </TableHead>
+                      <TableHead className="min-w-40 bg-brand-50 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-[#f2efe6]">
+                        Current result
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {students.map((s) => (
-                      <TableRow key={s.id}>
-                        <TableCell className="sticky left-0 z-10 bg-card">
-                          <p className="text-sm font-semibold">{s.name}</p>
+                    {students.map((s, i) => (
+                      <TableRow key={s.id} className="odd:bg-muted">
+                        <TableCell
+                          className={cn('sticky left-0 z-10', i % 2 === 1 ? 'bg-muted' : 'bg-card')}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span
+                              aria-hidden="true"
+                              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-700 text-[11px] font-bold text-[#f2efe6]"
+                            >
+                              {initialsOf(s.name)}
+                            </span>
+                            <p className="min-w-0 truncate text-sm font-semibold">{s.name}</p>
+                          </div>
                         </TableCell>
                         <TableCell className="font-mono text-xs text-muted-foreground">
                           {s.admissionNo}
@@ -190,18 +238,24 @@ function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
                             </p>
                           </div>
                         </TableCell>
-                        <TableCell className="text-center text-sm">
+                        <TableCell className="text-center text-sm tabular-nums">
                           T{s.currentTerm}
                         </TableCell>
                         <TableCell className="text-center">
                           {s.result ? (
                             <div className="inline-flex items-center gap-2">
                               <GradeBadge grade={s.result.grade} />
-                              <span className="text-xs font-semibold">{s.result.marks.toFixed(0)}</span>
-                              <span className="text-[10px] text-muted-foreground">{s.result.term}</span>
+                              <span className="text-xs font-semibold tabular-nums">
+                                {s.result.marks.toFixed(0)}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground">
+                                {s.result.term}
+                              </span>
                             </div>
                           ) : (
-                            <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                            <Badge
+                              className="border border-gold-400/40 bg-gold-400/15 text-[10px] font-medium text-gold-700 hover:bg-gold-400/15 dark:text-gold-300"
+                            >
                               Not entered
                             </Badge>
                           )}
@@ -215,6 +269,8 @@ function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
           </CardContent>
         </Card>
       </motion.section>
+
+      {printDoc}
     </div>
   )
 }
@@ -223,7 +279,14 @@ function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
 // Class analytics (Task 8-b)
 // ---------------------------------------------------------------------------
 
-const BLUE = '#1a4fd0'
+/** Grade → chart palette token (emerald, gold, teal, sage, bronze). */
+const GRADE_CHART_COLOR: Record<string, string> = {
+  A: 'var(--chart-1)',
+  B: 'var(--chart-2)',
+  C: 'var(--chart-3)',
+  D: 'var(--chart-4)',
+  E: 'var(--chart-5)',
+}
 
 /** Grade distribution bar chart data. */
 function gradeChartData(gradeCounts: Record<string, number>) {
@@ -231,16 +294,6 @@ function gradeChartData(gradeCounts: Record<string, number>) {
     grade,
     count: gradeCounts[grade] ?? 0,
   }))
-}
-
-function ChartTooltipStyle() {
-  return {
-    backgroundColor: 'rgba(11, 31, 63, 0.94)',
-    border: '1px solid rgba(255,255,255,0.15)',
-    borderRadius: '8px',
-    color: '#fff',
-    fontSize: '12px',
-  } as const
 }
 
 /** Class analytics card: KPIs + grade distribution chart. */
@@ -260,7 +313,7 @@ function ClassAnalytics({ analytics }: { analytics: LecturerClassAnalytics }) {
     >
       <Card>
         <CardHeader className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle id="class-analytics" className="flex items-center gap-2 text-base">
+          <CardTitle id="class-analytics" className="flex items-center gap-2 font-display text-base">
             <ChartColumn className="h-4 w-4 text-primary" aria-hidden="true" />
             Class analytics
           </CardTitle>
@@ -319,25 +372,29 @@ function ClassAnalytics({ analytics }: { analytics: LecturerClassAnalytics }) {
                   <BarChart data={chartData} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke="currentColor"
-                      opacity={0.15}
+                      stroke="var(--border)"
                       vertical={false}
                     />
                     <XAxis
                       dataKey="grade"
-                      tick={{ fontSize: 12, fill: 'currentColor' }}
-                      stroke="currentColor"
-                      opacity={0.45}
+                      tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
+                      stroke="var(--border)"
                     />
                     <YAxis
                       allowDecimals={false}
-                      tick={{ fontSize: 11, fill: 'currentColor' }}
-                      stroke="currentColor"
-                      opacity={0.45}
+                      tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
+                      stroke="var(--border)"
                     />
                     <Tooltip
-                      contentStyle={ChartTooltipStyle()}
-                      cursor={{ fill: 'rgba(26, 79, 208, 0.08)' }}
+                      contentStyle={{
+                        backgroundColor: 'var(--brand-950)',
+                        border: '1px solid color-mix(in oklch, var(--gold-400) 45%, transparent)',
+                        borderRadius: '8px',
+                        color: '#f2efe6',
+                        fontSize: '12px',
+                      }}
+                      labelStyle={{ color: 'var(--gold-300)', fontWeight: 700 }}
+                      cursor={{ fill: 'var(--brand-50)' }}
                       formatter={(value: number | string) => [
                         `${value} student${Number(value) === 1 ? '' : 's'}`,
                         'Grade',
@@ -345,11 +402,14 @@ function ClassAnalytics({ analytics }: { analytics: LecturerClassAnalytics }) {
                     />
                     <Bar
                       dataKey="count"
-                      fill={BLUE}
                       radius={[6, 6, 0, 0]}
                       maxBarSize={56}
                       aria-label="Number of students per grade"
-                    />
+                    >
+                      {chartData.map((d) => (
+                        <Cell key={d.grade} fill={GRADE_CHART_COLOR[d.grade] ?? 'var(--chart-1)'} />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -374,14 +434,15 @@ function AnalyticsTile({
 }) {
   return (
     <div
-      className={`rounded-xl border p-3 sm:p-4 ${
-        highlight ? 'border-primary/25 bg-primary/5' : ''
-      }`}
+      className={cn(
+        'rounded-xl border p-3 sm:p-4',
+        highlight ? 'border-gold-400/45 bg-gold-400/10' : 'border-border/70',
+      )}
     >
       <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
-      <p className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">
+      <p className="mt-1 font-display text-xl font-semibold tracking-tight tabular-nums sm:text-2xl">
         {value}
-        <span className="ml-0.5 text-xs font-semibold text-muted-foreground">{unit}</span>
+        <span className="ml-0.5 font-sans text-xs font-semibold text-muted-foreground">{unit}</span>
       </p>
     </div>
   )

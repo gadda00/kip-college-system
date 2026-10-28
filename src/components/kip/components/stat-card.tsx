@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-/** Stat card with an animated count-up value. */
+/** Stat card with an animated count-up value, gold rule + serif numerals. */
 export function StatCard({
   icon: Icon,
   label,
@@ -37,26 +37,31 @@ export function StatCard({
   }, [value, duration])
 
   return (
-    <Card className={cn('relative overflow-hidden border-border/60 py-0', className)}>
-      {/* 3px left accent bar */}
-      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px] bg-primary" />
+    <Card className={cn('card-lift relative overflow-hidden border-border/60 py-0', className)}>
+      {/* gold top rule */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-gold-500 via-gold-300 to-transparent"
+      />
       <CardContent className="p-5 sm:p-6">
-        <div className="flex items-center gap-2">
-          <Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-          <p className="truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-primary dark:bg-brand-100">
+            <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+          </span>
+          <p className="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             {label}
           </p>
         </div>
-        <p className="mt-3 text-3xl font-black tabular-nums tracking-tight text-foreground sm:text-4xl">
+        <p className="font-display mt-3 text-3xl font-bold tabular-nums tracking-tight text-foreground sm:text-4xl">
           {display.toLocaleString('en-KE')}
-          {suffix}
+          <span className="text-gold-500 dark:text-gold-400">{suffix}</span>
         </p>
       </CardContent>
     </Card>
   )
 }
 
-/** Small KPI card: icon + label + value + optional delta text. */
+/** Small KPI card: icon chip + label + value + optional delta text. */
 export function KpiCard({
   icon: Icon,
   label,
@@ -71,20 +76,24 @@ export function KpiCard({
   className?: string
 }) {
   return (
-    <Card className={className}>
+    <Card className={cn('card-lift relative overflow-hidden py-0', className)}>
       <CardContent className="p-4 sm:p-5">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-medium text-muted-foreground">{label}</p>
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-primary dark:bg-brand-100">
             <Icon className="h-4 w-4" aria-hidden="true" />
           </span>
         </div>
-        <p className="mt-2 truncate text-xl font-bold tracking-tight sm:text-2xl">{value}</p>
+        <p className="font-display mt-2 truncate text-xl font-bold tracking-tight sm:text-2xl">
+          {value}
+        </p>
         {delta && (
           <p
             className={cn(
               'mt-1 text-xs font-medium',
-              delta.positive === false ? 'text-destructive' : 'text-green-600 dark:text-green-400',
+              delta.positive === false
+                ? 'text-destructive'
+                : 'text-brand-600 dark:text-brand-500',
             )}
           >
             {delta.text}

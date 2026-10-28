@@ -207,12 +207,12 @@ export function ReportsView() {
                   <Card className="flex h-full flex-col">
                     <CardContent className="flex flex-1 flex-col gap-4 p-4 sm:p-5">
                       <div className="flex items-start gap-3">
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-primary dark:bg-brand-100">
                           <Icon className="h-5 w-5" aria-hidden="true" />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-sm font-semibold">{kind.title}</p>
+                            <p className="font-display text-sm font-semibold">{kind.title}</p>
                             <Badge variant="secondary" className="text-[10px]">
                               {count === null ? '…' : `${count} row${count === 1 ? '' : 's'}`}
                             </Badge>
@@ -284,7 +284,8 @@ export function ReportsView() {
 
                       <div className="mt-auto flex items-center gap-2">
                         <Button
-                          className="min-h-11 flex-1"
+                          variant="outline"
+                          className="min-h-11 flex-1 hover:border-gold-400/60 hover:bg-gold-400/10 hover:text-gold-700 dark:hover:text-gold-300"
                           disabled={downloading !== null}
                           onClick={() => void downloadCsv(kind)}
                         >
@@ -302,7 +303,7 @@ export function ReportsView() {
                         </Button>
                       </div>
                       {isPayments && count === 0 && (
-                        <p role="note" className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                        <p role="note" className="text-xs font-medium text-gold-700 dark:text-gold-400">
                           No payments in the selected range — widen the dates or clear the filter.
                         </p>
                       )}
@@ -318,14 +319,14 @@ export function ReportsView() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, delay: 0.2 }}
             >
-              <Card className="h-full border-primary/20 bg-primary/5">
+              <Card className="rule-top-gold h-full border-primary/20 bg-primary/5">
                 <CardContent className="flex h-full flex-col gap-3 p-4 sm:p-5">
                   <div className="flex items-start gap-3">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-primary dark:bg-brand-100">
                       <FileSpreadsheet className="h-5 w-5" aria-hidden="true" />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold">Working with exports</p>
+                      <p className="font-display text-sm font-semibold">Working with exports</p>
                       <ul className="mt-2 space-y-2 text-xs leading-relaxed text-muted-foreground">
                         <li className="flex items-start gap-2">
                           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />

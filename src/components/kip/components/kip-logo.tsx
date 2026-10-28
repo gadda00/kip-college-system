@@ -4,9 +4,10 @@ import { cn } from '@/lib/utils'
 
 /**
  * KIP College crest — faithful recreation of the official Kitui Institute of
- * Professionals emblem: a navy shield with double border, "K.I.P" monogram at
- * the top, a lightbulb at the centre (ideas & enlightenment) and a silver
- * ribbon carrying "Excellence". Motto: "Training for Excellence".
+ * Professionals emblem: a deep emerald shield with double border, "KIP"
+ * monogram in gold at the top, a glowing lightbulb at the centre (ideas &
+ * enlightenment) and a gold ribbon carrying "Excellence".
+ * Motto: "Training for Excellence".
  */
 export function KipLogo({
   className,
@@ -21,10 +22,10 @@ export function KipLogo({
       <KipCrest className="h-9 w-9 shrink-0" />
       {variant === 'default' && (
         <span className="flex flex-col leading-none">
-          <span className="text-base font-extrabold tracking-tight sm:text-lg">
+          <span className="font-display text-base font-bold tracking-tight sm:text-lg">
             KIP COLLEGE
           </span>
-          <span className="mt-1 text-[9px] font-medium tracking-[0.22em] text-muted-foreground">
+          <span className="mt-1 text-[9px] font-semibold tracking-[0.24em] text-gold-600 dark:text-gold-400">
             TRAINING FOR EXCELLENCE
           </span>
         </span>
@@ -35,7 +36,7 @@ export function KipLogo({
 
 /**
  * The crest alone — safe to reuse in dark headers, avatars and chat bubbles.
- * Lightbulb glow uses the brand warm tone; shield strokes follow currentColor.
+ * Shield strokes follow currentColor; lightbulb + ribbon are always gold.
  */
 export function KipCrest({ className }: { className?: string }) {
   return (
@@ -68,7 +69,7 @@ export function KipCrest({ className }: { className?: string }) {
         strokeLinejoin="round"
         opacity="0.55"
       />
-      {/* K.I.P monogram */}
+      {/* K.I.P monogram in gold */}
       <text
         x="24"
         y="13.4"
@@ -76,7 +77,7 @@ export function KipCrest({ className }: { className?: string }) {
         fontSize="6.4"
         fontWeight="800"
         letterSpacing="0.6"
-        fill="currentColor"
+        fill="#e3a51c"
         fontFamily="inherit"
       >
         KIP
@@ -100,7 +101,7 @@ export function KipCrest({ className }: { className?: string }) {
         <path
           d="M22.9 24.2c.3-.6.7-.6 1.1 0 .3.6.7.6 1.1 0"
           fill="none"
-          stroke="#0b1f3f"
+          stroke="#0f2e22"
           strokeWidth="0.7"
           strokeLinecap="round"
         />
@@ -111,14 +112,14 @@ export function KipCrest({ className }: { className?: string }) {
           <line x1="23.4" y1="29" x2="24.6" y2="29" />
         </g>
       </g>
-      {/* silver ribbon with "Excellence" */}
+      {/* gold ribbon with "Excellence" */}
       <g>
         <path
           d="M10.5 31.2h27l-2.6 4h-21.8l-2.6-4Z"
-          fill="#cfd8dc"
+          fill="#e3a51c"
         />
-        <path d="M10.5 31.2 7.9 33.2l2.6 2" fill="#b0bec5" />
-        <path d="M37.5 31.2l2.6 2-2.6 2" fill="#b0bec5" />
+        <path d="M10.5 31.2 7.9 33.2l2.6 2" fill="#c9880a" />
+        <path d="M37.5 31.2l2.6 2-2.6 2" fill="#c9880a" />
         <text
           x="24"
           y="34.8"
@@ -126,7 +127,7 @@ export function KipCrest({ className }: { className?: string }) {
           fontSize="3.6"
           fontWeight="700"
           fontStyle="italic"
-          fill="#0b1f3f"
+          fill="#0f2e22"
           fontFamily="Georgia, 'Times New Roman', serif"
         >
           Excellence
@@ -143,7 +144,7 @@ export function KipCrest({ className }: { className?: string }) {
   )
 }
 
-/** White-on-navy variant (footer, utility bars). */
+/** Cream-on-emerald variant (footer, utility bars, dark surfaces). */
 export function KipLogoLight({ className }: { className?: string }) {
-  return <KipLogo className={cn('text-white [&_svg]:text-white', className)} />
+  return <KipLogo className={cn('text-[#f2efe6]', className)} />
 }
