@@ -39,3 +39,25 @@ Work Log:
 Stage Summary:
 - PG_E2E: 30/30 checks passed
 - Production PG provisioning verified end-to-end on real PostgreSQL; scripts/pg-e2e-run.sh + scripts/pg-e2e-test.ts kept in repo for re-verification.
+---
+Task ID: 16
+Agent: deliverables-subagent (Z.ai Code)
+Task: Regenerate client-facing deliverables — professional proposal PDF + presentation PPTX — updated with the live Vercel deployment links.
+
+Work Log:
+- Loaded pdf and pptx skills; read report brief + fonts config + typesetting specs (cover, palette, overflow, pagination, fill-engine, typography) before writing any code.
+- PROPOSAL PDF (/home/z/my-project/public/downloads/KIP-College-System-Proposal.pdf): 11 pages, A4, ~199 KB, blue institutional theme via pdf skill Template 07 "Crystal Blue" (dark #0a1628 cover with luminous #4da8da frame rendered from proposal-build/cover.html through html2poster.js; light-blue ReportLab body using the template's fixed body palette).
+  - Pipeline: cover HTML -> poster_validate + cover_validate (both pass) -> html2poster.js --width 794px; body via ReportLab TocDocTemplate + multiBuild (auto TOC with clickable entries, roman "i" front matter, Arabic body numbering reset to 1); merged as page 0 via pypdf with A4 normalization; meta.brand applied.
+  - Sections: cover; TOC; 1 Executive Summary (+ stakeholder outcomes table, stat callouts 21+ programmes / 3 campuses / KES 64,000 / 6-8 weeks); 2 About KIP (campus table for Main/Town/Mwingi, 21+ programmes, KASNEB/KNEC/NITA/TVET-CDACC); 3 The Proposed Solution (6-module feature table + student journey); 4 See It Live (prominent URL callout + demo credentials table + suggested things to try per role); 5 Technology & Security (stack table: Next.js 16, TypeScript, Tailwind + shadcn/ui, PostgreSQL via Prisma Postgres, Vercel; RBAC, rate limiting, audit trail, secure sessions, validation, headers); 6 Investment (KES 64,000 = 15,000 + 22,000 + 18,000 + 9,000 + milestone table 32,000/16,000/16,000); 7 Recurring Costs (hosting 10,000/yr, maintenance & support 36,000/yr = 3,000/month, total 46,000/yr); 8 Delivery Timeline (6 phases, ~6-8 weeks); 9 Next Steps & Contacts (+254 703 710 879 flagged "to be verified by owner", info@kipskitui.com) with footnote that phone numbers and fee figures are pending owner verification.
+  - QA: pdf_qa.py PASS except one non-blocking warning (cover margin asymmetry — inherent to the left-anchored Template 07 design, within overflow.md 1.5 ranges); font.check 0 issues; toc.check/toc_validate pass; pages.clean found no blank pages; code.sanitize run before every execution.
+  - Verified via PyMuPDF text extraction: URL present (contiguous, in the callout), "64,000" x6, all line items, all three demo credentials, contact details, verification footnote — all found.
+- PRESENTATION PPTX (/home/z/my-project/public/downloads/KIP-College-System-Presentation.pptx): 14 slides, 16:9, ~1.6 MB, matching Crystal Blue theme (dark #0a1628 title/demo/closing slides with luminous frame; light #f5f8fc content slides; Playfair Display headings + Inter).
+  - Pipeline per pptx skill: slides/global.css (palette + typography tokens only) + slides/slides_brief.json manifest + 14 standalone 1280x720 HTML slides (Tailwind CDN + Material Icons, no images/fabricated URLs), then batch_html2pptx.js -> single .pptx. First export had BOUNDS warnings from decorative glows extending past slide edges; clamped glows inside bounds and re-exported — final export clean (0 warnings).
+  - Slides: 1 title; 2 agenda; 3 about KIP (3 campuses); 4 challenge/opportunity; 5 solution at a glance (6 modules); 6 SEE IT LIVE (prominent URL + 3 demo credential cards); 7 platform tour public site + admissions; 8 platform tour student/lecturer/admin portals; 9 technology & security; 10 investment KES 64,000 breakdown (15,000/22,000/18,000/9,000); 11 recurring costs (10,000 + 36,000 = 46,000/yr) & milestones (32,000/16,000/16,000); 12 six-phase timeline; 13 why this platform / next steps; 14 thank-you/contact (email, phone flagged to-be-verified, URL).
+  - Verified with python-pptx: 14 slides, 960x540 px (16:9), all key strings found (URL x2, KES 64,000 x3, every price figure, all credentials, contacts, "pending owner verification"); LibreOffice round-trip render: 14 pages, content intact.
+- Regeneration sources kept under proposal-build/ (cover.html, generate_proposal.py, slides/*, build/*) with README.md documenting the exact rebuild commands, design decisions and verification snippet.
+
+Stage Summary:
+- Both deliverables exist at the required exact paths and carry the live deployment URL https://kip-college-system.vercel.app with the three demo accounts and the exact contractual pricing (KES 64,000 one-off; 10,000/yr hosting; 36,000/yr support; 50/25/25 milestones).
+- Owner-verification items carried in both documents: phone +254 703 710 879 (flagged "to be verified by owner") and fee figures (footnoted as pending owner verification), plus programme list/fee structures to be confirmed in Phase 1.
+- No files outside public/downloads/** and proposal-build/** were touched; no git commands run; worklog.md not appended (this entry is the integration record).
