@@ -3,26 +3,11 @@ import { db } from '@/lib/db'
 import { handle, ok, readJson } from '@/lib/api-helpers'
 import { HttpError } from '@/lib/auth'
 import { currentStudent } from '@/lib/roles'
+import { rateLimited, RATE_LIMITS } from '@/lib/rate-limit'
 // SERVER-ONLY import — the z-ai SDK must never be bundled into client code.
 import ZAI from 'z-ai-web-dev-sdk'
 
 export const dynamic = 'force-dynamic'
-
-// ---- simple in-memory rate limit: max 30 requests / minute / IP ----
-const RATE_LIMIT = 30
-const WINDOW_MS = 60_000
-const hits = new Map<string, { count: number; windowStart: number }>()
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now()
-  const entry = hits.get(ip)
-  if (!entry || now - entry.windowStart >= WINDOW_MS) {
-    hits.set(ip, { count: 1, windowStart: now })
-    return false
-  }
-  entry.count += 1
-  return entry.count > RATE_LIMIT
-}
 
 const messageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -103,13 +88,14 @@ async function buildSystemPrompt(): Promise<{
 /** Student AI study assistant — auth-guarded, multi-turn history from the client. */
 export async function POST(req: Request) {
   return handle(async () => {
-    const ip =
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      req.headers.get('x-real-ip') ||
-      'local'
-    if (rateLimited(ip)) throw new HttpError(429, 'Too many requests — please wait a moment and try again')
-
     // STUDENT-only guard (same session pattern as every other student route)
+    const { user } = await currentStudent()
+    if (
+      rateLimited(`study-assistant:${user.id}`, RATE_LIMITS.ai.limit, RATE_LIMITS.ai.windowMs)
+    ) {
+      throw new HttpError(429, 'Too many requests — please wait a moment and try again')
+    }
+
     const body = bodySchema.parse(await readJson(req))
 
     // keep at most the latest 12 client messages; system prompt is always first

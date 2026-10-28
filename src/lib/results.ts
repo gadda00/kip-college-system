@@ -3,13 +3,17 @@ import { HttpError } from '@/lib/auth'
 import { gradeFor } from '@/lib/api-helpers'
 
 /**
- * Batch upsert of published results with KIP auto-grading
+ * Batch upsert of results with KIP auto-grading
  * (A≥80, B 65–79, C 50–64, D 40–49, E<40). Shared by lecturer & admin routes.
+ *
+ * Marks are SAVED AS DRAFT unless `publish: true` is passed — students never
+ * see results until an explicit publish action flips `published`.
  */
 export async function upsertResults(input: {
   unitId: string
   term: string
   entries: { studentId: string; marks: number }[]
+  publish?: boolean
 }) {
   const unit = await db.unit.findUnique({
     where: { id: input.unitId },
@@ -32,6 +36,7 @@ export async function upsertResults(input: {
     }
   }
 
+  const publish = input.publish === true
   const saved = await db.$transaction(
     input.entries.map((e) => {
       const { grade, remark } = gradeFor(e.marks)
@@ -44,7 +49,7 @@ export async function upsertResults(input: {
           marks: e.marks,
           grade,
           remark,
-          published: true,
+          published: publish,
           examBody: unit.course.examBody,
         },
         update: {
@@ -52,7 +57,8 @@ export async function upsertResults(input: {
           marks: e.marks,
           grade,
           remark,
-          published: true,
+          // re-saving a published result keeps it published unless unpublished deliberately
+          published: publish ? true : undefined,
           examBody: unit.course.examBody,
         },
       })
@@ -61,10 +67,38 @@ export async function upsertResults(input: {
 
   return {
     unit: { id: unit.id, code: unit.code, name: unit.name, stageLabel: unit.stageLabel, course: unit.course },
+    published: publish,
+    savedCount: saved.length,
     saved: saved.map((r) => ({
       ...r,
       studentName: byId.get(r.studentId)?.user.name ?? null,
       admissionNo: byId.get(r.studentId)?.admissionNo ?? null,
     })),
+  }
+}
+
+/**
+ * Explicit publication of previously-saved draft results for a unit+term.
+ * Returns the number of results published.
+ */
+export async function publishResults(input: { unitId: string; term?: string }) {
+  const unit = await db.unit.findUnique({
+    where: { id: input.unitId },
+    include: { course: { select: { title: true } } },
+  })
+  if (!unit) throw new HttpError(404, 'Unit not found')
+
+  const result = await db.result.updateMany({
+    where: {
+      unitId: input.unitId,
+      published: false,
+      ...(input.term ? { term: input.term } : {}),
+    },
+    data: { published: true },
+  })
+
+  return {
+    unit: { id: unit.id, code: unit.code, name: unit.name, course: unit.course },
+    publishedCount: result.count,
   }
 }

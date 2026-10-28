@@ -2,6 +2,8 @@ import { z } from 'zod'
 import { db } from '@/lib/db'
 import { handle, ok, readJson } from '@/lib/api-helpers'
 import { HttpError } from '@/lib/auth'
+import { clientIp, rateLimited, RATE_LIMITS } from '@/lib/rate-limit'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,12 +28,25 @@ const applySchema = z.object({
   dob: z.coerce.date().optional(),
   guardianName: z.string().trim().optional(),
   guardianPhone: z.string().trim().optional(),
-  message: z.string().trim().optional(),
+  message: z.string().trim().max(2000, 'Message is too long').optional(),
 })
+
+/** Human-readable application reference, e.g. KIP/APP/2026/4F7K. */
+function applicationReference(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // no ambiguous 0/O/1/I
+  let suffix = ''
+  for (let i = 0; i < 5; i++) suffix += chars[Math.floor(Math.random() * chars.length)]
+  return `KIP/APP/${new Date().getFullYear()}/${suffix}`
+}
 
 /** Public admission application submission. */
 export async function POST(req: Request) {
   return handle(async () => {
+    const ip = clientIp(req)
+    if (rateLimited(`apply:${ip}`, RATE_LIMITS.application.limit, RATE_LIMITS.application.windowMs)) {
+      throw new HttpError(429, 'Too many applications from this connection — please contact admissions@kipskitui.com')
+    }
+
     const body = applySchema.parse(await readJson(req))
 
     const [course, campus, duplicate] = await Promise.all([
@@ -60,10 +75,32 @@ export async function POST(req: Request) {
         guardianName: body.guardianName || null,
         guardianPhone: body.guardianPhone || null,
         message: body.message || null,
+        adminNote: applicationReference(), // reference shown to the applicant
       },
       include: { course: { select: { title: true, code: true } }, campus: { select: { name: true } } },
     })
 
-    return ok(application, 201)
+    await logAudit({
+      action: 'APPLICATION_SUBMITTED',
+      entity: 'application',
+      entityId: application.id,
+      actorEmail: body.email,
+      meta: { course: course.title, campus: campus.name, reference: application.adminNote },
+      ip,
+    })
+
+    return ok(
+      {
+        ...application,
+        reference: application.adminNote,
+        nextSteps: [
+          'Our admissions team reviews applications within 48 hours (Mon–Fri).',
+          `Keep your reference ${application.adminNote} for any follow-up.`,
+          'Watch your email and phone — we may request your KCSE certificate scan.',
+          'Accepted applicants receive login credentials for the student portal by email.',
+        ],
+      },
+      201,
+    )
   })
 }

@@ -1,8 +1,9 @@
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { currentTermLabel, handle, ok, nextAdmissionNo, readJson } from '@/lib/api-helpers'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,7 +15,8 @@ const actionSchema = z.object({
 /** Review an application: accept (enrol student + post fees) or reject. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req)
+    const admin = await requireRole('ADMIN')
     const { id } = await params
     const body = actionSchema.parse(await readJson(req))
 
@@ -40,6 +42,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
           course: { select: { id: true, code: true, title: true } },
           campus: { select: { id: true, name: true } },
         },
+      })
+      await logAudit({
+        actorId: admin.id,
+        actorEmail: admin.email,
+        action: 'APPLICATION_REJECTED',
+        entity: 'application',
+        entityId: id,
+        meta: { applicant: application.applicantName, note: body.adminNote ?? null },
       })
       return ok(updated)
     }
@@ -128,6 +138,21 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         },
       })
       return { profile, feeItemsPosted: feeItems.count, updatedApplication }
+    })
+
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'APPLICATION_ACCEPTED',
+      entity: 'application',
+      entityId: id,
+      meta: {
+        applicant: application.applicantName,
+        admissionNo,
+        course: application.course.title,
+        campus: application.campus.name,
+        feeItemsPosted,
+      },
     })
 
     return ok({

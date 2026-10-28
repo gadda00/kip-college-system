@@ -217,6 +217,8 @@ export type LecturerClassDetail = {
 
 export type SavedResultsResponse = {
   unit: { id: string; code: string; name: string; stageLabel: string; course: unknown }
+  published?: boolean
+  savedCount?: number
   saved: {
     id: string
     studentId: string
@@ -230,4 +232,9 @@ export type SavedResultsResponse = {
     studentName: string | null
     admissionNo: string | null
   }[]
+}
+
+export type PublishResultsResponse = {
+  unit: { id: string; code: string; name: string; course: unknown }
+  publishedCount: number
 }

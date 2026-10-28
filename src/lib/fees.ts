@@ -1,8 +1,11 @@
 import { db } from '@/lib/db'
+import { fromCents, toCents } from '@/lib/money'
 
 /**
  * Fee ledger for one student:
  * totalCharged = Σ FeeItem.amount, totalPaid = Σ CONFIRMED Payment.amount.
+ * All subtraction happens in integer cents (see src/lib/money.ts) — no
+ * floating-point drift on balances.
  */
 export async function computeBalance(studentId: string): Promise<{
   totalCharged: number
@@ -15,7 +18,8 @@ export async function computeBalance(studentId: string): Promise<{
   ])
   const totalCharged = charged._sum.amount ?? 0
   const totalPaid = paid._sum.amount ?? 0
-  return { totalCharged, totalPaid, balance: Math.round((totalCharged - totalPaid) * 100) / 100 }
+  const balance = fromCents(toCents(totalCharged) - toCents(totalPaid))
+  return { totalCharged, totalPaid, balance }
 }
 
 /**
@@ -45,7 +49,7 @@ export async function computeBalances(studentIds: string[]): Promise<Map<string,
     if (entry) entry.totalPaid = row._sum.amount ?? 0
   }
   for (const entry of result.values()) {
-    entry.balance = Math.round((entry.totalCharged - entry.totalPaid) * 100) / 100
+    entry.balance = fromCents(toCents(entry.totalCharged) - toCents(entry.totalPaid))
   }
   return result
 }
