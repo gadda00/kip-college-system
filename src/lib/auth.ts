@@ -6,15 +6,40 @@ import { cookies } from 'next/headers'
 export const SESSION_COOKIE = 'kip_session'
 const SESSION_DAYS = 30
 
+/**
+ * CSRF-lite: for cookie-authenticated state changes, require that the
+ * request's Origin (or Referer fallback) matches the serving Host.
+ * Applied by route handlers via `assertSameOrigin(req)` before mutations.
+ */
+export function assertSameOrigin(req: Request): void {
+  const origin = req.headers.get('origin') || req.headers.get('referer')
+  if (!origin) return // non-browser clients (curl/tests) — auth still required
+  let originHost: string | null = null
+  let host: string | null = null
+  try {
+    originHost = new URL(origin).host
+    host = req.headers.get('host')
+  } catch {
+    throw new HttpError(403, 'Invalid request origin')
+  }
+  if (originHost && host && originHost !== host) {
+    throw new HttpError(403, 'Cross-origin request rejected')
+  }
+}
+
 export async function createSession(userId: string) {
   const token = randomBytes(32).toString('hex')
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 3600 * 1000)
   await db.session.create({ data: { token, userId, expiresAt } })
+  // opportunistic cleanup of this user's expired sessions
+  await db.session.deleteMany({ where: { userId, expiresAt: { lt: new Date() } } }).catch(() => {})
   const jar = await cookies()
   jar.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: false,
+    // `secure` requires HTTPS — enabled automatically in production
+    // (Vercel/Netlify serve HTTPS; local dev stays on http://localhost).
+    secure: process.env.NODE_ENV === 'production',
     path: '/',
     expires: expiresAt,
   })

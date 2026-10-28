@@ -2,19 +2,31 @@ import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireUser, SESSION_COOKIE } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireUser, SESSION_COOKIE } from '@/lib/auth'
 import { handle, ok, readJson } from '@/lib/api-helpers'
+import { clientIp, rateLimited, RATE_LIMITS } from '@/lib/rate-limit'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),
-  newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+  newPassword: z
+    .string()
+    .min(8, 'New password must be at least 8 characters')
+    .regex(/[A-Za-z]/, 'Password must include a letter')
+    .regex(/[0-9]/, 'Password must include a number'),
 })
 
 export async function POST(req: Request) {
   return handle(async () => {
+    assertSameOrigin(req)
     const user = await requireUser()
+    const ip = clientIp(req)
+    if (rateLimited(`password:${user.id}`, RATE_LIMITS.password.limit, RATE_LIMITS.password.windowMs)) {
+      throw new HttpError(429, 'Too many password changes — please try again later')
+    }
+
     const body = passwordSchema.parse(await readJson(req))
 
     const dbUser = await db.user.findUnique({ where: { id: user.id } })
@@ -31,6 +43,15 @@ export async function POST(req: Request) {
     const currentToken = jar.get(SESSION_COOKIE)?.value
     await db.session.deleteMany({
       where: { userId: user.id, ...(currentToken ? { NOT: { token: currentToken } } : {}) },
+    })
+
+    await logAudit({
+      actorId: user.id,
+      actorEmail: user.email,
+      action: 'AUTH_PASSWORD_CHANGED',
+      entity: 'user',
+      entityId: user.id,
+      ip,
     })
 
     return ok({ updated: true })

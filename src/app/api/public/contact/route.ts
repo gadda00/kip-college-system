@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { handle, ok, readJson } from '@/lib/api-helpers'
+import { HttpError } from '@/lib/auth'
+import { clientIp, rateLimited, RATE_LIMITS } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,6 +17,10 @@ const contactSchema = z.object({
 /** Public contact form submission. */
 export async function POST(req: Request) {
   return handle(async () => {
+    const ip = clientIp(req)
+    if (rateLimited(`contact:${ip}`, RATE_LIMITS.contact.limit, RATE_LIMITS.contact.windowMs)) {
+      throw new HttpError(429, 'Too many messages sent — please try again later')
+    }
     const body = contactSchema.parse(await readJson(req))
 
     const created = await db.contactMessage.create({

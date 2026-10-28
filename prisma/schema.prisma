@@ -337,3 +337,20 @@ model DownloadResource {
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
 }
+
+// ============ SECURITY & COMPLIANCE ============
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String? // User.id when authenticated
+  actorEmail String? // convenience for display
+  action     String // e.g. AUTH_LOGIN, APPLICATION_SUBMITTED, RESULTS_PUBLISHED
+  entity     String? // e.g. "application", "payment"
+  entityId   String?
+  meta       String? // JSON string with action-specific context
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([action])
+  @@index([entityId])
+  @@index([createdAt])
+}
