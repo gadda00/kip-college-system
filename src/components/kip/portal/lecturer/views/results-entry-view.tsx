@@ -47,6 +47,7 @@ import {
 import type {
   LecturerClass,
   LecturerClassDetail,
+  PublishResultsResponse,
   SavedResultsResponse,
 } from '@/components/kip/portal/types'
 import { cn } from '@/lib/utils'
@@ -176,19 +177,49 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState<SavedResultsResponse | null>(null)
 
+  // students whose existing result is still an unpublished draft for this sheet
+  const draftCount = data.students.filter((s) => s.result && !s.result.published).length
+
   const save = useMutation({
-    mutationFn: (entries: { studentId: string; marks: number }[]) =>
-      post<SavedResultsResponse>('/api/lecturer/results', { unitId, term, entries }),
+    mutationFn: (args: { entries: { studentId: string; marks: number }[]; publish: boolean }) =>
+      post<SavedResultsResponse>('/api/lecturer/results', {
+        unitId,
+        term,
+        entries: args.entries,
+        publish: args.publish,
+      }),
     onSuccess: (res) => {
       setSaved(res)
-      toast.success('Results published', {
-        description: `${res.saved.length} result${res.saved.length === 1 ? '' : 's'} saved for ${res.unit.code} — ${term}.`,
-      })
+      const n = res.saved.length
+      if (res.published) {
+        toast.success('Results published', {
+          description: `${n} result${n === 1 ? '' : 's'} published for ${res.unit.code} — ${term}. Students can now see them.`,
+        })
+      } else {
+        toast.success('Draft saved', {
+          description: `${n} mark${n === 1 ? '' : 's'} saved as draft for ${res.unit.code} — ${term}. Publish when ready.`,
+        })
+      }
       void queryClient.invalidateQueries({ queryKey: ['lecturer-class', unitId] })
       void queryClient.invalidateQueries({ queryKey: ['lecturer-overview'] })
     },
     onError: (err) => {
       setSaveError(err instanceof Error ? err.message : 'Could not save results — try again.')
+    },
+  })
+
+  const publishDrafts = useMutation({
+    mutationFn: () => post<PublishResultsResponse>('/api/lecturer/results', { action: 'publish', unitId, term }),
+    onSuccess: (res) => {
+      toast.success('Drafts published', {
+        description: `${res.publishedCount} draft result${res.publishedCount === 1 ? '' : 's'} for ${res.unit.code} are now visible to students.`,
+      })
+      setSaved(null)
+      void queryClient.invalidateQueries({ queryKey: ['lecturer-class', unitId] })
+      void queryClient.invalidateQueries({ queryKey: ['lecturer-overview'] })
+    },
+    onError: (err) => {
+      setSaveError(err instanceof Error ? err.message : 'Could not publish drafts — try again.')
     },
   })
 
@@ -202,22 +233,22 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
     })
   }, [data, marks])
 
-  const handleSave = () => {
+  const collectEntries = (): { studentId: string; marks: number }[] | null => {
     const entries: { studentId: string; marks: number }[] = []
     for (const r of rows) {
       if (r.raw.trim() === '') continue
       if (r.invalid) {
         setSaveError(`Fix the invalid mark for ${r.student.name} (0–100).`)
-        return
+        return null
       }
       if (r.num !== null) entries.push({ studentId: r.student.id, marks: r.num })
     }
     if (entries.length === 0) {
       setSaveError('Enter at least one mark before saving.')
-      return
+      return null
     }
     setSaveError(null)
-    save.mutate(entries)
+    return entries
   }
 
   return (
@@ -249,15 +280,22 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                 animate={{ opacity: 1, y: 0 }}
                 aria-live="polite"
               >
-                <Card className="border-green-600/30 bg-green-500/5">
+                <Card className={saved.published ? 'border-green-600/30 bg-green-500/5' : 'border-sky-600/30 bg-sky-500/5'}>
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex items-start gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-500/15 text-green-600 dark:text-green-400">
+                      <span
+                        className={cn(
+                          'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
+                          saved.published
+                            ? 'bg-green-500/15 text-green-600 dark:text-green-400'
+                            : 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
+                        )}
+                      >
                         <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
                       </span>
                       <div className="min-w-0 flex-1">
                         <h2 className="text-base font-semibold">
-                          Published — {saved.saved.length} result
+                          {saved.published ? 'Published' : 'Draft saved'} — {saved.saved.length} result
                           {saved.saved.length === 1 ? '' : 's'} for {term}
                         </h2>
                         <ul className="mt-2 flex flex-wrap gap-2">
@@ -273,8 +311,9 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                           ))}
                         </ul>
                         <p className="mt-2 text-xs text-muted-foreground">
-                          Students can now see these marks in their portal. Grades follow the KIP
-                          scale (A ≥ 80, B 65–79, C 50–64, D 40–49, E &lt; 40).
+                          {saved.published
+                            ? 'Students can now see these marks in their portal. Grades follow the KIP scale (A ≥ 80, B 65–79, C 50–64, D 40–49, E < 40).'
+                            : 'These marks are hidden from students until you publish them (button below the sheet).'}
                         </p>
                       </div>
                     </div>
@@ -325,7 +364,22 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                         </Select>
                       </div>
                       <Button
-                        onClick={handleSave}
+                        variant="outline"
+                        onClick={() => {
+                          const entries = collectEntries()
+                          if (entries) save.mutate({ entries, publish: false })
+                        }}
+                        disabled={save.isPending}
+                        className="min-h-11"
+                      >
+                        <Save className="mr-2 h-4 w-4" aria-hidden="true" />
+                        Save draft
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          const entries = collectEntries()
+                          if (entries) save.mutate({ entries, publish: true })
+                        }}
                         disabled={save.isPending}
                         className="min-h-11"
                       >
@@ -335,11 +389,11 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                               className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground"
                               aria-hidden="true"
                             />
-                            Publishing…
+                            Saving…
                           </>
                         ) : (
                           <>
-                            <Save className="mr-2 h-4 w-4" aria-hidden="true" />
+                            <BadgeCheck className="mr-2 h-4 w-4" aria-hidden="true" />
                             Save &amp; publish
                           </>
                         )}
@@ -472,9 +526,27 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                     )}
 
                     <p className="mt-4 text-xs text-muted-foreground">
-                      Leave a row blank to skip that student. Saving publishes marks immediately
-                      (auto-graded on the KIP scale) and updates any existing entry.
+                      Leave a row blank to skip that student. <strong>Save draft</strong> keeps marks
+                      hidden from students; <strong>Save &amp; publish</strong> makes them visible
+                      immediately (auto-graded on the KIP scale: A ≥ 80, B 65–79, C 50–64, D 40–49,
+                      E &lt; 40).
                     </p>
+                    {draftCount > 0 && (
+                      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
+                        <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
+                          {draftCount} draft result{draftCount === 1 ? '' : 's'} for this unit are not
+                          yet visible to students.
+                        </p>
+                        <Button
+                          size="sm"
+                          onClick={() => publishDrafts.mutate()}
+                          disabled={publishDrafts.isPending}
+                          className="min-h-9"
+                        >
+                          {publishDrafts.isPending ? 'Publishing…' : 'Publish drafts'}
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.section>
