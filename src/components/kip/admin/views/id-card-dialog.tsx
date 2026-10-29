@@ -34,7 +34,7 @@ function validThroughLabel(admittedAt: string, durationMonths: number): string {
 
 /**
  * The admin-side student ID card — mirrors the student-facing design:
- * deep emerald gradient band with gold accents, crest, “KITUI INSTITUTE OF
+ * deep sapphire gradient band with gold accents, crest, “KITUI INSTITUTE OF
  * PROFESSIONALS / STUDENT ID CARD” header in serif, initials avatar with a
  * gold ring, ACTIVE badge, VALID THROUGH stamp and a CSS barcode footer with
  * the college motto. Rendered on-screen inside the dialog and re-mounted into
@@ -50,7 +50,7 @@ export function AdminStudentIdCard({ student }: { student: AdminStudentDetail })
     <div
       className="relative w-full max-w-[420px] overflow-hidden rounded-2xl text-[#f2efe6] shadow-xl ring-1 ring-white/20"
       style={{
-        background: 'linear-gradient(135deg, #06231A 0%, #0B4430 55%, #10543A 100%)',
+        background: 'linear-gradient(135deg, #0a1626 0%, #0C2E55 55%, #123A68 100%)',
       }}
       role="img"
       aria-label={`Student ID card for ${student.user.name}, admission number ${student.admissionNo}`}
@@ -66,7 +66,7 @@ export function AdminStudentIdCard({ student }: { student: AdminStudentDetail })
       />
 
       <div className="relative flex aspect-[8/5] flex-col p-4 sm:p-5">
-        {/* header — emerald band with serif institution name */}
+        {/* header — sapphire band with serif institution name */}
         <div className="flex items-center gap-3">
           <KipCrest className="h-10 w-10 shrink-0 text-white" />
           <div className="min-w-0 flex-1">
@@ -81,7 +81,7 @@ export function AdminStudentIdCard({ student }: { student: AdminStudentDetail })
           <Badge
             className={`shrink-0 gap-1 border-transparent px-2 py-0.5 text-[9px] font-bold ${
               student.status === 'ACTIVE'
-                ? 'bg-gold-400 text-[#06231A]'
+                ? 'bg-gold-400 text-[#0a1626]'
                 : 'bg-white/20 text-[#f2efe6]'
             }`}
           >
@@ -125,10 +125,10 @@ export function AdminStudentIdCard({ student }: { student: AdminStudentDetail })
             className="h-6 w-40 shrink-0"
             style={{
               backgroundImage:
-                'repeating-linear-gradient(90deg, #06231A 0 2px, transparent 2px 4px, #06231A 4px 7px, transparent 7px 9px, #06231A 9px 10px, transparent 10px 13px, #06231A 13px 15px, transparent 15px 17px)',
+                'repeating-linear-gradient(90deg, #0a1626 0 2px, transparent 2px 4px, #0a1626 4px 7px, transparent 7px 9px, #0a1626 9px 10px, transparent 10px 13px, #0a1626 13px 15px, transparent 15px 17px)',
             }}
           />
-          <p className="shrink-0 text-[9px] font-bold italic tracking-wide text-[#06231A]">
+          <p className="shrink-0 text-[9px] font-bold italic tracking-wide text-[#0a1626]">
             Training for Excellence
           </p>
         </div>

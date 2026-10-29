@@ -106,14 +106,14 @@ export function CourseDetailView({ courseId }: { courseId: string }) {
                 sizes="(min-width: 1024px) 66vw, 100vw"
                 className="object-cover"
               />
-              {/* emerald overlay for legible serif title */}
+              {/* sapphire overlay for legible serif title */}
               <div
                 aria-hidden="true"
                 className="absolute inset-0 bg-gradient-to-t from-brand-950/95 via-brand-950/80 to-brand-950/25"
               />
               <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge className="border border-gold-500/50 bg-gold-400/95 text-[#0f2e22] shadow-sm">
+                  <Badge className="border border-gold-500/50 bg-gold-400/95 text-[#0e2233] shadow-sm">
                     {course.category}
                   </Badge>
                   <Badge className="gap-1 border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm">

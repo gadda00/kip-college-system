@@ -233,7 +233,7 @@ export function TimetableView() {
                           </TableBody>
                         </Table>
                       </div>
-                      {/* Mobile stacked — emerald class blocks */}
+                      {/* Mobile stacked — sapphire class blocks */}
                       <ul className="space-y-3 md:hidden">
                         {entries.data.map((e) => (
                           <li

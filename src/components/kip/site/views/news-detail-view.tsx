@@ -148,7 +148,7 @@ export function NewsDetailView({ newsId }: { newsId: string }) {
         </div>
       </motion.article>
 
-      {/* CTA — emerald band with gold action */}
+      {/* CTA — sapphire band with gold action */}
       <Card className="bg-brand-band kip-pattern kip-grain relative mt-12 overflow-hidden border-0 text-[#f2efe6]">
         <div
           aria-hidden="true"

@@ -97,7 +97,7 @@ function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
         />
       </motion.div>
 
-      {/* Unit header — emerald wash + gold top rule */}
+      {/* Unit header — sapphire wash + gold top rule */}
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -279,7 +279,7 @@ function ClassDetailBody({ data }: { data: LecturerClassDetail }) {
 // Class analytics (Task 8-b)
 // ---------------------------------------------------------------------------
 
-/** Grade → chart palette token (emerald, gold, teal, sage, bronze). */
+/** Grade → chart palette token (sapphire, gold, teal, sage, bronze). */
 const GRADE_CHART_COLOR: Record<string, string> = {
   A: 'var(--chart-1)',
   B: 'var(--chart-2)',

@@ -91,7 +91,7 @@ export function NewsView() {
                     aria-hidden="true"
                     className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-brand-950/50 to-transparent"
                   />
-                  <span className="absolute left-3 top-3 rounded-full border border-gold-500/50 bg-gold-400/95 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[#0f2e22] shadow-sm">
+                  <span className="absolute left-3 top-3 rounded-full border border-gold-500/50 bg-gold-400/95 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[#0e2233] shadow-sm">
                     ★ Featured
                   </span>
                 </div>

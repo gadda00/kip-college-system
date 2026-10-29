@@ -111,3 +111,22 @@ Work Log:
 
 Stage Summary:
 - All four user-reported issues fixed at root cause and browser-verified; plus hydration + title repairs and sitewide image optimization.
+
+---
+Task ID: 22
+Agent: main-orchestrator (Z.ai Code)
+Task: Rebrand emerald → sapphire/blue theme (user request) + full-system verification & polish
+
+Work Log:
+- THEME CONVERSION (globals.css): full sapphire ramp mirroring the emerald ramp's lightness/chroma structure (WCAG contrast ratios preserved) — --primary, --ring, brand-950…50, chart palette (sapphire/gold/sky/teal/bronze), ice-tint secondary, cool-stone muted, sapphire-ink foreground, porcelain background, navy-tinted dark-mode surfaces, --info now true sapphire. Gold ramp untouched (navy + gold = classic academic identity). Semantic SUCCESS stays green by convention (paid/active/published badges) — only brand surfaces converted.
+- LITERAL HEX SWEEP: kip-logo crest ink + ribbon text (#0f2e22→#0e2233), icon.svg gradient + layout.tsx themeColor (#14563f→#1e3a8a), student print-docs ink/washes (#0f2e22, #e8f3ed → sapphire equivalents), lecturer register print-doc (REGISTER_BRAND/ink/zebra), admin+student ID cards (gradient bands, guilloche, text-on-gold), gallery/news/admissions/course-detail gold-badge ink. All comments re-worded emerald→sapphire (EMERALD chart const → SAPPHIRE).
+- GREEN-MASS REFINEMENT (post-VLM review): student fee statement PAYMENT row washes mint→brand-500/8 (mobile cards border-brand-600/25); lecturer results-entry dirty-cell washes emerald→brand-500/15 (matches sapphire dirty indicator); learning-view Assignment chip→primary. Success callout banners & status badges intentionally remain green.
+- RAMP COMPLETION (bug found during sweep): brand-200/300/400 were referenced (13× borders, 7× dark:text) but UNDEFINED — silent no-op classes. Added missing steps to both light+dark ramps + @theme registrations; converted the 7 dark:text-brand-300 → brand-500 (established pattern).
+- Categorical colors: timetable campus dots now sapphire/gold/sky (Main/Town/Mwingi); book cover gradients cover-0 emerald→blue, cover-3 teal→sky.
+- og-image.png verified already navy (no regen needed); public/logo.svg is an unreferenced legacy asset.
+- VERIFIED IN BROWSER (fresh session; real clicks): homepage/login/portals all compute to navy brand band (lab 7.35 2.63 -17.77); student login→portal (sidebar Fees/ID Card nav), dark mode navy surfaces, staff sign-in page + lecturer & admin portals role-routed, fee PAYMENT rows blue-washed, mobile 390px action bar + responsive layout, DCL 225ms, 0 console/page errors. VLM review of 8 screenshots: no green-branded surfaces, contrast OK, no glitches.
+- Note: agent-browser clicks silently no-op in a >6h-old session after many Fast Refreshes — restart the browser before interaction tests.
+- Gates: tsc 0 errors, eslint clean, 15/15 unit tests.
+
+Stage Summary:
+- Complete green→blue brand conversion across tokens, hexes, print identity, ID cards and categorical colors, with semantic success-green preserved and two latent broken-token bugs fixed.

@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 
 /**
  * Subpage hero banner: breadcrumb, display-serif title, subtitle on the deep
- * emerald band with woven-reed texture and a gold baseline.
+ * sapphire band with woven-reed texture and a gold baseline.
  */
 export function PageHero({
   eyebrow,

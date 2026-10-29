@@ -11,11 +11,11 @@ import { WEEKDAYS, fmtTimeSlot, todayDowClient } from '@/components/kip/portal/s
 import type { TimetableEntryDTO } from '@/components/kip/portal/types'
 import { cn } from '@/lib/utils'
 
-/** Campus colour dots used across timetable grids (emerald · gold · teal). */
+/** Campus colour dots used across timetable grids (sapphire · gold · teal). */
 const CAMPUS_DOT: Record<string, string> = {
   'Main Campus': 'bg-brand-600',
   'Town Campus': 'bg-gold-500',
-  'Mwingi Campus': 'bg-teal-500',
+  'Mwingi Campus': 'bg-sky-500',
 }
 
 function campusDot(campusName: string | null): string {
@@ -34,7 +34,7 @@ function sortKey(e: TimetableEntryDTO): number {
 
 /**
  * Weekly Mon–Fri timetable card shared by the student and lecturer portals.
- * Desktop: 5-column slot grid with an emerald day header band and a gold
+ * Desktop: 5-column slot grid with an sapphire day header band and a gold
  * TODAY column; mobile: day tabs with lists. Today is highlighted and a print
  * button is included.
  */
@@ -88,7 +88,7 @@ export function WeeklyTimetableCard({ entries }: { entries: TimetableEntryDTO[] 
         </div>
       </CardHeader>
       <CardContent>
-        {/* Desktop grid — emerald day header band + gold TODAY column */}
+        {/* Desktop grid — sapphire day header band + gold TODAY column */}
         <div className="hidden overflow-x-auto lg:block">
           <div role="table" aria-label="Weekly class grid" className="min-w-[880px]">
             <div role="row" className="grid grid-cols-[110px_repeat(5,minmax(0,1fr))] gap-2">

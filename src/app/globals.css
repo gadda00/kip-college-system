@@ -51,13 +51,16 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* ---- KIP brand scale: deep emerald "brand-forest" + warm gold ---- */
+  /* ---- KIP brand scale: deep sapphire "brand-royal" + warm gold ---- */
   --color-brand-950: var(--brand-950);
   --color-brand-900: var(--brand-900);
   --color-brand-800: var(--brand-800);
   --color-brand-700: var(--brand-700);
   --color-brand-600: var(--brand-600);
   --color-brand-500: var(--brand-500);
+  --color-brand-400: var(--brand-400);
+  --color-brand-300: var(--brand-300);
+  --color-brand-200: var(--brand-200);
   --color-brand-100: var(--brand-100);
   --color-brand-50: var(--brand-50);
   --color-gold-300: var(--gold-300);
@@ -70,59 +73,63 @@
 :root {
   --radius: 0.75rem;
 
-  /* Warm paper neutrals */
-  --background: oklch(0.988 0.004 90);
-  --foreground: oklch(0.255 0.028 160);
+  /* Porcelain neutrals — cool, gold-friendly */
+  --background: oklch(0.988 0.004 220);
+  --foreground: oklch(0.255 0.035 255);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.255 0.028 160);
+  --card-foreground: oklch(0.255 0.035 255);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.255 0.028 160);
+  --popover-foreground: oklch(0.255 0.035 255);
 
-  /* Deep emerald primary */
-  --primary: oklch(0.44 0.102 158);
+  /* Deep sapphire primary */
+  --primary: oklch(0.44 0.13 258);
   --primary-foreground: oklch(0.975 0.02 92);
 
-  /* Sage tint */
-  --secondary: oklch(0.945 0.022 150);
-  --secondary-foreground: oklch(0.34 0.055 158);
+  /* Ice tint */
+  --secondary: oklch(0.945 0.022 240);
+  --secondary-foreground: oklch(0.34 0.07 258);
 
-  /* Warm stone */
-  --muted: oklch(0.955 0.008 95);
-  --muted-foreground: oklch(0.46 0.022 105);
+  /* Cool stone */
+  --muted: oklch(0.955 0.008 220);
+  --muted-foreground: oklch(0.46 0.022 240);
 
   /* Soft gold wash */
   --accent: oklch(0.955 0.042 88);
   --accent-foreground: oklch(0.42 0.085 70);
 
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.905 0.014 100);
-  --input: oklch(0.905 0.014 100);
-  --ring: oklch(0.44 0.102 158);
+  --border: oklch(0.905 0.012 230);
+  --input: oklch(0.905 0.012 230);
+  --ring: oklch(0.44 0.13 258);
 
-  /* Semantic status (teal info — no blue in the KIP palette) */
+  /* Semantic status — success stays green (universal convention);
+   * info is true sapphire now that the brand is blue */
   --success: oklch(0.52 0.115 152);
   --success-foreground: oklch(0.985 0.012 150);
   --warning: oklch(0.72 0.14 75);
   --warning-foreground: oklch(0.3 0.06 62);
-  --info: oklch(0.5 0.085 195);
-  --info-foreground: oklch(0.985 0.01 195);
+  --info: oklch(0.55 0.12 250);
+  --info-foreground: oklch(0.985 0.01 250);
 
-  /* Chart palette: emerald → gold → teal → sage → bronze */
-  --chart-1: oklch(0.52 0.115 156);
+  /* Chart palette: sapphire → gold → sky → teal → bronze */
+  --chart-1: oklch(0.52 0.13 258);
   --chart-2: oklch(0.75 0.145 82);
-  --chart-3: oklch(0.55 0.075 195);
-  --chart-4: oklch(0.68 0.06 140);
+  --chart-3: oklch(0.6 0.11 230);
+  --chart-4: oklch(0.68 0.09 185);
   --chart-5: oklch(0.62 0.095 60);
 
-  /* Brand ramp (light) */
-  --brand-950: oklch(0.205 0.038 165);
-  --brand-900: oklch(0.28 0.055 162);
-  --brand-800: oklch(0.36 0.08 160);
-  --brand-700: oklch(0.44 0.102 158);
-  --brand-600: oklch(0.55 0.112 156);
-  --brand-500: oklch(0.65 0.11 154);
-  --brand-100: oklch(0.93 0.03 152);
-  --brand-50: oklch(0.965 0.015 150);
+  /* Brand ramp (light) — deep sapphire */
+  --brand-950: oklch(0.205 0.05 265);
+  --brand-900: oklch(0.28 0.07 262);
+  --brand-800: oklch(0.36 0.1 260);
+  --brand-700: oklch(0.44 0.13 258);
+  --brand-600: oklch(0.55 0.14 256);
+  --brand-500: oklch(0.65 0.13 254);
+  --brand-400: oklch(0.74 0.1 250);
+  --brand-300: oklch(0.82 0.07 246);
+  --brand-200: oklch(0.885 0.045 244);
+  --brand-100: oklch(0.93 0.03 245);
+  --brand-50: oklch(0.965 0.015 240);
 
   /* Gold ramp (crest #f5b301 family) */
   --gold-300: oklch(0.87 0.115 88);
@@ -132,61 +139,64 @@
   --gold-700: oklch(0.5 0.1 65);
 
   --sidebar: var(--brand-950);
-  --sidebar-foreground: oklch(0.93 0.015 150);
+  --sidebar-foreground: oklch(0.93 0.02 240);
   --sidebar-primary: var(--gold-400);
-  --sidebar-primary-foreground: oklch(0.205 0.038 165);
-  --sidebar-accent: oklch(0.3 0.05 162);
+  --sidebar-primary-foreground: oklch(0.205 0.05 265);
+  --sidebar-accent: oklch(0.3 0.06 260);
   --sidebar-accent-foreground: oklch(0.95 0.02 92);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: var(--gold-400);
 }
 
 .dark {
-  --background: oklch(0.19 0.024 165);
+  --background: oklch(0.19 0.03 260);
   --foreground: oklch(0.94 0.012 95);
-  --card: oklch(0.235 0.028 165);
+  --card: oklch(0.235 0.035 260);
   --card-foreground: oklch(0.94 0.012 95);
-  --popover: oklch(0.235 0.028 165);
+  --popover: oklch(0.235 0.035 260);
   --popover-foreground: oklch(0.94 0.012 95);
 
-  /* Bright emerald */
-  --primary: oklch(0.74 0.128 156);
-  --primary-foreground: oklch(0.2 0.045 162);
+  /* Bright sapphire */
+  --primary: oklch(0.72 0.13 250);
+  --primary-foreground: oklch(0.2 0.05 260);
 
-  --secondary: oklch(0.295 0.032 160);
+  --secondary: oklch(0.295 0.04 255);
   --secondary-foreground: oklch(0.94 0.012 95);
-  --muted: oklch(0.28 0.024 160);
-  --muted-foreground: oklch(0.71 0.018 100);
+  --muted: oklch(0.28 0.03 255);
+  --muted-foreground: oklch(0.71 0.015 220);
   --accent: oklch(0.33 0.055 80);
   --accent-foreground: oklch(0.88 0.115 88);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 11%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.74 0.128 156);
+  --ring: oklch(0.72 0.13 250);
 
   /* Semantic status (dark: lifted for contrast) */
   --success: oklch(0.7 0.13 152);
   --success-foreground: oklch(0.2 0.05 152);
   --warning: oklch(0.8 0.14 80);
   --warning-foreground: oklch(0.28 0.06 62);
-  --info: oklch(0.7 0.09 195);
-  --info-foreground: oklch(0.2 0.04 195);
+  --info: oklch(0.7 0.11 250);
+  --info-foreground: oklch(0.2 0.04 250);
 
-  --chart-1: oklch(0.74 0.128 156);
+  --chart-1: oklch(0.72 0.13 250);
   --chart-2: oklch(0.8 0.148 83);
-  --chart-3: oklch(0.68 0.09 195);
-  --chart-4: oklch(0.76 0.07 140);
+  --chart-3: oklch(0.68 0.1 230);
+  --chart-4: oklch(0.76 0.08 185);
   --chart-5: oklch(0.72 0.1 60);
 
-  /* Brand ramp (dark: lifted) */
-  --brand-950: oklch(0.17 0.022 165);
-  --brand-900: oklch(0.225 0.032 165);
-  --brand-800: oklch(0.28 0.045 163);
-  --brand-700: oklch(0.36 0.07 160);
-  --brand-600: oklch(0.5 0.1 157);
-  --brand-500: oklch(0.62 0.11 155);
-  --brand-100: oklch(0.32 0.045 158);
-  --brand-50: oklch(0.26 0.032 160);
+  /* Brand ramp (dark: lifted) — deep sapphire */
+  --brand-950: oklch(0.17 0.03 265);
+  --brand-900: oklch(0.225 0.045 265);
+  --brand-800: oklch(0.28 0.06 262);
+  --brand-700: oklch(0.36 0.09 260);
+  --brand-600: oklch(0.5 0.12 257);
+  --brand-500: oklch(0.62 0.13 255);
+  --brand-400: oklch(0.54 0.11 256);
+  --brand-300: oklch(0.45 0.08 258);
+  --brand-200: oklch(0.36 0.055 260);
+  --brand-100: oklch(0.32 0.055 258);
+  --brand-50: oklch(0.26 0.04 260);
 
   /* Gold ramp (dark: glowing) */
   --gold-300: oklch(0.9 0.105 90);
@@ -196,10 +206,10 @@
   --gold-700: oklch(0.62 0.12 72);
 
   --sidebar: var(--brand-950);
-  --sidebar-foreground: oklch(0.93 0.015 150);
+  --sidebar-foreground: oklch(0.93 0.02 240);
   --sidebar-primary: var(--gold-400);
-  --sidebar-primary-foreground: oklch(0.205 0.038 165);
-  --sidebar-accent: oklch(0.28 0.04 163);
+  --sidebar-primary-foreground: oklch(0.205 0.05 265);
+  --sidebar-accent: oklch(0.28 0.05 258);
   --sidebar-accent-foreground: oklch(0.95 0.02 92);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: var(--gold-400);
@@ -269,7 +279,7 @@
     color: transparent;
   }
 
-  /* Subtle "woven reeds" diagonal texture for dark green surfaces.
+  /* Subtle "woven reeds" diagonal texture for dark brand surfaces.
    * DECLARED BEFORE .bg-brand-band on purpose: elements that combine both
    * classes (portal sidebars, brand panels) must let the band's own layered
    * background-image (which already includes this texture) win — with the
@@ -281,14 +291,14 @@
       repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 9px);
   }
 
-  /* Deep emerald band — gold glow + woven-reeds texture + emerald gradient
+  /* Deep sapphire band — gold glow + woven-reeds texture + sapphire gradient
    * in ONE background-image stack so no other class can clobber it. */
   .bg-brand-band {
     background-image:
       radial-gradient(120% 90% at 85% -10%, color-mix(in oklch, var(--gold-400) 16%, transparent) 0%, transparent 55%),
       repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.028) 0 2px, transparent 2px 14px),
       repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 9px),
-      linear-gradient(160deg, var(--brand-900) 0%, var(--brand-950) 62%, oklch(0.16 0.02 168) 100%);
+      linear-gradient(160deg, var(--brand-900) 0%, var(--brand-950) 62%, oklch(0.16 0.03 268) 100%);
     background-color: var(--brand-950);
   }
 
@@ -308,7 +318,7 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Card hover: quiet 2px lift, soft emerald shadow (gold reserved for CTAs) */
+  /* Card hover: quiet 2px lift, soft sapphire shadow (gold reserved for CTAs) */
   .card-lift {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -384,10 +394,10 @@
 }
 
 /* Book cover gradients — richer duotones on brand hues */
-.cover-0 { background: linear-gradient(135deg, #065f46 0%, #10b981 55%, #6ee7b7 100%); }
+.cover-0 { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 55%, #93c5fd 100%); }
 .cover-1 { background: linear-gradient(135deg, #92600a 0%, #f5b301 55%, #fde68a 100%); }
 .cover-2 { background: linear-gradient(135deg, #881337 0%, #e11d48 55%, #fda4af 100%); }
-.cover-3 { background: linear-gradient(135deg, #134e4a 0%, #0d9488 55%, #5eead4 100%); }
+.cover-3 { background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 55%, #7dd3fc 100%); }
 .cover-4 { background: linear-gradient(135deg, #581c87 0%, #7c3aed 55%, #c4b5fd 100%); }
 .cover-5 { background: linear-gradient(135deg, #1e3a5f 0%, #3b82a0 55%, #a5d8e6 100%); }
 .cover-6 { background: linear-gradient(135deg, #374151 0%, #6b7280 55%, #d1d5db 100%); }

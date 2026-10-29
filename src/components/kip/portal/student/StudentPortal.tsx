@@ -58,7 +58,7 @@ const STUDENT_BOTTOM_NAV: PortalNavItem[] = [
 ]
 
 /**
- * Fixed bottom tab bar for phones — visible below lg only, emerald active
+ * Fixed bottom tab bar for phones — visible below lg only, sapphire active
  * state, 44px+ touch targets and safe-area padding for home-indicator
  * devices. `print:hidden` (plus the global print-isolation CSS that hides
  * everything except the print portal) keeps it off printed statements.
@@ -104,7 +104,7 @@ function StudentBottomNav({ sub }: { sub: string }) {
   )
 }
 
-/** Light-on-dark chip tones for the emerald sidebar identity panel. */
+/** Light-on-dark chip tones for the sapphire sidebar identity panel. */
 function statusTone(status: string): string {
   if (status === 'ACTIVE') return 'border-emerald-400/30 bg-emerald-400/15 text-emerald-300'
   if (status === 'GRADUATED') return 'border-gold-400/30 bg-gold-400/15 text-gold-300'
@@ -149,7 +149,7 @@ function MustChangePasswordGate() {
   )
 }
 
-/** Sidebar identity card for the signed-in student — light-on-dark emerald panel. */
+/** Sidebar identity card for the signed-in student — light-on-dark sapphire panel. */
 function StudentIdentity({ user }: { user: SafeUser }) {
   const sp = user.studentProfile
   return (

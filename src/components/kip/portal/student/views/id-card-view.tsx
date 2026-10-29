@@ -38,7 +38,7 @@ function qrCells(seed: string): boolean[] {
 }
 
 /**
- * The student ID card itself — premium CR80-style emerald & gold face with
+ * The student ID card itself — premium CR80-style sapphire & gold face with
  * crest, gold-ringed initials photo placeholder, mono admission number,
  * holographic sheen and a CSS barcode strip. Used on-screen (#/portal/id-card)
  * and re-mounted in the print portal so ONLY the card prints.
@@ -143,7 +143,7 @@ export function StudentIdCard({ profile }: { profile: StudentProfileFull }) {
             className="h-full w-32 shrink-0"
             style={{
               backgroundImage:
-                'repeating-linear-gradient(90deg, #0f2e22 0 2px, transparent 2px 4px, #0f2e22 4px 7px, transparent 7px 9px, #0f2e22 9px 10px, transparent 10px 13px, #0f2e22 13px 15px, transparent 15px 17px)',
+                'repeating-linear-gradient(90deg, #0e2233 0 2px, transparent 2px 4px, #0e2233 4px 7px, transparent 7px 9px, #0e2233 9px 10px, transparent 10px 13px, #0e2233 13px 15px, transparent 15px 17px)',
             }}
           />
           <p className="shrink-0 text-[8px] font-bold italic tracking-wide text-brand-900">

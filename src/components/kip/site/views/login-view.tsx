@@ -76,7 +76,7 @@ const DEMO_ACCOUNTS: Array<{
   },
 ]
 
-/** Gold-bullet trust points on the emerald brand panel — per audience. */
+/** Gold-bullet trust points on the sapphire brand panel — per audience. */
 type TrustPoint = {
   icon: typeof ShieldCheck
   title: string
@@ -222,7 +222,7 @@ export function LoginView({ mode }: { mode: LoginMode }) {
         />
       </div>
 
-      {/* ── left: emerald brand panel (lg+) ── */}
+      {/* ── left: sapphire brand panel (lg+) ── */}
       <aside className="bg-brand-band kip-grain relative hidden overflow-hidden lg:flex lg:flex-col lg:justify-between lg:px-12 lg:py-12 xl:px-16">
         {/* corner gold glows */}
         <div

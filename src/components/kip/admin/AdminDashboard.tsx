@@ -95,7 +95,7 @@ const SUB_VIEWS = new Set([
   'reports',
 ])
 
-/** Deep emerald sidebar surface with a soft gold glow (dark variant). */
+/** Deep sapphire sidebar surface with a soft gold glow (dark variant). */
 const SIDEBAR_BG = 'bg-brand-band kip-pattern'
 const SIDEBAR_TEXT = 'text-[#f2efe6]'
 
@@ -245,7 +245,7 @@ function AdminSidebarContent({
 }
 
 /**
- * Admin dashboard shell — role guard, deep emerald sidebar with gold accents
+ * Admin dashboard shell — role guard, deep sapphire sidebar with gold accents
  * (Sheet drawer on mobile) and sub-view resolution for all #/admin/* routes.
  */
 export function AdminDashboard({ sub, id }: { sub: string; id?: string }) {
@@ -316,7 +316,7 @@ export function AdminDashboard({ sub, id }: { sub: string; id?: string }) {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8 lg:pt-8">
       <div className="gap-6 lg:flex lg:gap-8">
-        {/* Desktop sidebar — deep emerald band with gold accents */}
+        {/* Desktop sidebar — deep sapphire band with gold accents */}
         <aside className="hidden w-64 shrink-0 lg:block print:hidden">
           <div
             className={cn(

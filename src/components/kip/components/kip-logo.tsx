@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 
 /**
  * KIP College crest — faithful recreation of the official Kitui Institute of
- * Professionals emblem: a deep emerald shield with double border, "KIP"
+ * Professionals emblem: a deep sapphire shield with double border, "KIP"
  * monogram in gold at the top, a glowing lightbulb at the centre (ideas &
  * enlightenment) and a gold ribbon carrying "Excellence".
  * Motto: "Training for Excellence".
@@ -101,7 +101,7 @@ export function KipCrest({ className }: { className?: string }) {
         <path
           d="M22.9 24.2c.3-.6.7-.6 1.1 0 .3.6.7.6 1.1 0"
           fill="none"
-          stroke="#0f2e22"
+          stroke="#0e2233"
           strokeWidth="0.7"
           strokeLinecap="round"
         />
@@ -127,7 +127,7 @@ export function KipCrest({ className }: { className?: string }) {
           fontSize="3.6"
           fontWeight="700"
           fontStyle="italic"
-          fill="#0f2e22"
+          fill="#0e2233"
           fontFamily="Georgia, 'Times New Roman', serif"
         >
           Excellence
@@ -144,7 +144,7 @@ export function KipCrest({ className }: { className?: string }) {
   )
 }
 
-/** Cream-on-emerald variant (footer, utility bars, dark surfaces). */
+/** Cream-on-sapphire variant (footer, utility bars, dark surfaces). */
 export function KipLogoLight({ className }: { className?: string }) {
   return <KipLogo className={cn('text-[#f2efe6]', className)} />
 }

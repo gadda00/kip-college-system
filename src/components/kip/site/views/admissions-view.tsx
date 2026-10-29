@@ -360,7 +360,7 @@ export function AdmissionsView() {
                     aria-hidden="true"
                   />
                   {intake.open && (
-                    <Badge className="border-transparent bg-gold-400/95 text-[#0f2e22]">
+                    <Badge className="border-transparent bg-gold-400/95 text-[#0e2233]">
                       Applying now
                     </Badge>
                   )}

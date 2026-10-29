@@ -82,7 +82,7 @@ function DashboardBody({ data }: { data: StudentDashboard }) {
   const nextClass = nextClasses[0] ?? null
   const nowMin = new Date().getHours() * 60 + new Date().getMinutes()
 
-  // fee standing: paid = emerald, partial = gold, heavy balance = destructive
+  // fee standing: paid = sapphire, partial = gold, heavy balance = destructive
   const feeStanding =
     fees.balance <= 0
       ? {
@@ -188,7 +188,7 @@ function DashboardBody({ data }: { data: StudentDashboard }) {
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-medium text-muted-foreground">Fees paid</p>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-300">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-500">
                 <Wallet className="h-4 w-4" aria-hidden="true" />
               </span>
             </div>
@@ -247,7 +247,7 @@ function DashboardBody({ data }: { data: StudentDashboard }) {
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-medium text-muted-foreground">Units enrolled</p>
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-300">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-500">
                 <BookOpen className="h-4 w-4" aria-hidden="true" />
               </span>
             </div>

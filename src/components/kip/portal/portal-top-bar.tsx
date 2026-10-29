@@ -18,7 +18,7 @@ const PORTAL_LABELS: Record<string, string> = {
 /**
  * Dedicated top bar for the authenticated portals — deliberately NOT the
  * public marketing header: no site navigation, no Apply button, no utility
- * strip. A compact emerald work bar with the crest, the portal name, the
+ * strip. A compact sapphire work bar with the crest, the portal name, the
  * signed-in user, a theme toggle and logout; "Back to website" exits to the
  * public site. Fixed height (h-16) so portal shells can anchor sticky
  * elements below it.

@@ -242,7 +242,7 @@ export function PortalShell({
   return (
     <div className="mx-auto w-full max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8 lg:pt-8">
       <div className="gap-6 lg:flex lg:gap-8">
-        {/* Desktop sidebar — deep emerald panel with gold accents */}
+        {/* Desktop sidebar — deep sapphire panel with gold accents */}
         <aside className="hidden w-64 shrink-0 lg:block print:hidden">
           <div className="bg-brand-band kip-pattern sticky top-20 space-y-5 rounded-xl border border-brand-800/60 p-4 text-[#f2efe6]">
             <KipLogo className="text-[#f2efe6]" />

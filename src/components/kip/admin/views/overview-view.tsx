@@ -60,14 +60,14 @@ import {
 } from '@/components/kip/admin/views/fees-view'
 import type { AdminOverview, AdminPaymentRow } from '@/components/kip/admin/types'
 
-/** Brand chart palette — emerald / gold / bronze / sage via CSS vars. */
-const EMERALD = 'var(--chart-1)'
+/** Brand chart palette — sapphire / gold / bronze / sage via CSS vars. */
+const SAPPHIRE = 'var(--chart-1)'
 const GOLD = 'var(--chart-2)'
 const SAGE = 'var(--chart-4)'
 const BRONZE = 'var(--chart-5)'
 
 const CATEGORY_COLORS: Record<string, string> = {
-  TECHNICAL: EMERALD,
+  TECHNICAL: SAPPHIRE,
   BUSINESS: GOLD,
   KASNEB: BRONZE,
 }
@@ -576,8 +576,8 @@ export function OverviewView() {
                     >
                       <defs>
                         <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={EMERALD} stopOpacity={0.32} />
-                          <stop offset="100%" stopColor={EMERALD} stopOpacity={0.03} />
+                          <stop offset="0%" stopColor={SAPPHIRE} stopOpacity={0.32} />
+                          <stop offset="100%" stopColor={SAPPHIRE} stopOpacity={0.03} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE} vertical={false} />
@@ -603,7 +603,7 @@ export function OverviewView() {
                       <Area
                         type="monotone"
                         dataKey="total"
-                        stroke={EMERALD}
+                        stroke={SAPPHIRE}
                         strokeWidth={2.5}
                         fill="url(#revenueFill)"
                       />
@@ -703,7 +703,7 @@ export function OverviewView() {
                           'Enrolled',
                         ]}
                       />
-                      <Bar dataKey="count" fill={EMERALD} radius={[0, 6, 6, 0]} barSize={18} />
+                      <Bar dataKey="count" fill={SAPPHIRE} radius={[0, 6, 6, 0]} barSize={18} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

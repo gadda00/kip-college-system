@@ -28,7 +28,7 @@ const LECTURER_NAV: PortalNavItem[] = [
 const SUB_VIEWS = new Set([...LECTURER_NAV.map((n) => n.key), 'class', 'results'])
 
 /**
- * Sidebar identity card for the signed-in lecturer — light-on-dark emerald
+ * Sidebar identity card for the signed-in lecturer — light-on-dark sapphire
  * plate with a gold-ringed avatar, cream name and gold role chip (renders on
  * the dark desktop sidebar band and inside the mobile drawer alike).
  */

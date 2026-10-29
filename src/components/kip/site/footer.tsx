@@ -31,7 +31,7 @@ const SOCIALS = [
   { label: 'YouTube', icon: Youtube, href: 'https://youtube.com' },
 ]
 
-/** Column heading — cream on emerald with a short emerald rule (gold is
+/** Column heading — cream on sapphire with a short sapphire rule (gold is
  *  reserved for the Apply CTA and active highlights). */
 function FooterHeading({ children }: { children: ReactNode }) {
   return (
@@ -42,7 +42,7 @@ function FooterHeading({ children }: { children: ReactNode }) {
   )
 }
 
-/** Footer nav entry — a real KipLink anchor with an emerald slide-in tick. */
+/** Footer nav entry — a real KipLink anchor with an sapphire slide-in tick. */
 function FooterLink({ to, children }: { to: string; children: ReactNode }) {
   return (
     <li>

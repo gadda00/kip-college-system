@@ -253,7 +253,7 @@ function SummaryCard({
       <CardContent className="p-4 sm:p-5">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-medium text-muted-foreground">{label}</p>
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-300">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600/10 text-brand-700 dark:text-brand-500">
             <Icon className="h-4 w-4" aria-hidden="true" />
           </span>
         </div>
@@ -737,7 +737,7 @@ function feeTypeBadge(type: string) {
   switch (type) {
     case 'TUITION':
       return (
-        <span className={cn(base, 'border-transparent bg-brand-600/10 text-brand-700 dark:text-brand-300')}>
+        <span className={cn(base, 'border-transparent bg-brand-600/10 text-brand-700 dark:text-brand-500')}>
           Tuition
         </span>
       )
@@ -837,7 +837,7 @@ function StatementTable({ data, confirmedCount }: { data: FeeStatement; confirme
                         key={row.key}
                         className={cn(
                           'transition-colors hover:bg-brand-50/60 dark:hover:bg-brand-100/15',
-                          row.type === 'PAYMENT' ? 'bg-emerald-500/5' : 'odd:bg-muted/40',
+                          row.type === 'PAYMENT' ? 'bg-brand-500/8' : 'odd:bg-muted/40',
                         )}
                       >
                         <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
@@ -917,7 +917,7 @@ function StatementTable({ data, confirmedCount }: { data: FeeStatement; confirme
                     key={row.key}
                     className={cn(
                       'rounded-xl border p-4',
-                      row.type === 'PAYMENT' && 'border-emerald-600/25 bg-emerald-500/5',
+                      row.type === 'PAYMENT' && 'border-brand-600/25 bg-brand-500/8',
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">

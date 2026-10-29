@@ -256,7 +256,7 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
     })
   }, [data, marks, baseline])
 
-  // changed cells — drives the emerald indicator, the guard and the Save count
+  // changed cells — drives the sapphire indicator, the guard and the Save count
   const dirtyCount = rows.filter((r) => r.dirty).length
 
   // unsaved-changes guard: warn before the tab closes or another route loads.
@@ -583,7 +583,7 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                                   className={cn(
                                     // borderless-in-cell spreadsheet feel
                                     'mx-auto h-10 w-24 rounded-md border-0 bg-transparent text-center font-semibold tabular-nums shadow-none focus-visible:ring-2 focus-visible:ring-primary/40',
-                                    r.dirty && 'bg-emerald-500/15',
+                                    r.dirty && 'bg-brand-500/15',
                                     r.invalid &&
                                       'border border-destructive bg-destructive/5 focus-visible:ring-destructive/30',
                                   )}
@@ -651,7 +651,7 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                               aria-invalid={r.invalid}
                               className={cn(
                                 'h-11 w-24 rounded-md border-0 bg-transparent text-center font-semibold tabular-nums shadow-none focus-visible:ring-2 focus-visible:ring-primary/40',
-                                r.dirty && 'bg-emerald-500/15',
+                                r.dirty && 'bg-brand-500/15',
                                 r.invalid &&
                                   'border border-destructive bg-destructive/5 focus-visible:ring-destructive/30',
                               )}

@@ -81,7 +81,7 @@ function DashboardBody({ data }: { data: LecturerOverview }) {
 
   return (
     <div className="space-y-6">
-      {/* Greeting banner — deep emerald band with reed texture + gold glow */}
+      {/* Greeting banner — deep sapphire band with reed texture + gold glow */}
       <motion.section {...fade} transition={{ duration: 0.25 }} aria-labelledby="dash-greeting">
         <div className="bg-brand-band kip-pattern relative overflow-hidden rounded-2xl px-6 py-7 sm:px-8">
           <div

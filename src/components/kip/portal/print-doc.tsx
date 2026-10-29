@@ -56,20 +56,20 @@ export function usePrintDoc(render: () => ReactNode) {
 }
 
 // ---------------------------------------------------------------------------
-// Lecturer printable — official class register (Emerald & Gold identity)
+// Lecturer printable — official class register (Sapphire & Gold identity)
 // ---------------------------------------------------------------------------
 // Print-safe hex palette (print-color-adjust: exact is set on .kip-print-portal
 // in globals.css, so these brand colours survive on paper):
-//   deep emerald band #06281e · emerald text #123f2e · gold fill #f5b301
-//   gold text on white #8a6508 · zebra wash #eef5f1 · cream #f2efe6
+//   deep sapphire band #0a1a2a · sapphire text #123a5e · gold fill #f5b301
+//   gold text on white #8a6508 · zebra wash #eef2f9 · cream #f2efe6
 
-const REGISTER_EMERALD = '#06281e'
+const REGISTER_BRAND = '#0a1a2a'
 const REGISTER_GOLD_FILL = '#f5b301'
 const REGISTER_GOLD_TEXT = '#8a6508'
-const REGISTER_ZEBRA = '#eef5f1'
+const REGISTER_ZEBRA = '#eef2f9'
 
 /**
- * Official class register for a taught unit — emerald letterhead band with
+ * Official class register for a taught unit — sapphire letterhead band with
  * crest, gold rules, enrolment/summary meta, zebra roster and signature
  * lines. Rendered ONLY inside the print portal via `usePrintDoc`.
  */
@@ -85,11 +85,11 @@ export function ClassRegisterDoc({
   const withResults = students.filter((s) => s.result).length
 
   return (
-    <article className="kip-sheet mx-auto w-full max-w-[820px] bg-white px-8 py-10 text-[#123f2e]">
-      {/* Emerald letterhead band */}
+    <article className="kip-sheet mx-auto w-full max-w-[820px] bg-white px-8 py-10 text-[#123a5e]">
+      {/* Sapphire letterhead band */}
       <header
         className="flex flex-wrap items-start justify-between gap-4 rounded-lg px-6 py-5"
-        style={{ backgroundColor: REGISTER_EMERALD, color: '#f2efe6' }}
+        style={{ backgroundColor: REGISTER_BRAND, color: '#f2efe6' }}
       >
         <div className="flex items-center gap-4">
           <KipCrest className="h-16 w-16 shrink-0 text-[#f2efe6]" />
@@ -114,7 +114,7 @@ export function ClassRegisterDoc({
         <div className="text-right">
           <p
             className="inline-block rounded-md px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest"
-            style={{ backgroundColor: REGISTER_GOLD_FILL, color: REGISTER_EMERALD }}
+            style={{ backgroundColor: REGISTER_GOLD_FILL, color: REGISTER_BRAND }}
           >
             Class Register
           </p>
@@ -135,7 +135,7 @@ export function ClassRegisterDoc({
       {/* Unit meta */}
       <section
         className="mt-5 rounded-lg border px-4 py-3"
-        style={{ borderColor: 'rgba(18, 63, 46, 0.2)', backgroundColor: REGISTER_ZEBRA }}
+        style={{ borderColor: 'rgba(18, 58, 94, 0.2)', backgroundColor: REGISTER_ZEBRA }}
       >
         <h2
           className="text-[10px] font-bold uppercase tracking-[0.18em]"
@@ -145,60 +145,60 @@ export function ClassRegisterDoc({
         </h2>
         <dl className="mt-2 grid grid-cols-2 gap-x-8 gap-y-2 md:grid-cols-4">
           <div className="min-w-0">
-            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123f2e]/55">
+            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123a5e]/55">
               Unit name
             </dt>
-            <dd className="mt-0.5 text-[11px] font-bold text-[#123f2e]">{unit.name}</dd>
+            <dd className="mt-0.5 text-[11px] font-bold text-[#123a5e]">{unit.name}</dd>
           </div>
           <div className="min-w-0">
-            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123f2e]/55">
+            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123a5e]/55">
               Unit code
             </dt>
-            <dd className="mt-0.5 font-mono text-[11px] font-bold text-[#123f2e]">{unit.code}</dd>
+            <dd className="mt-0.5 font-mono text-[11px] font-bold text-[#123a5e]">{unit.code}</dd>
           </div>
           <div className="min-w-0">
-            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123f2e]/55">
+            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123a5e]/55">
               Course
             </dt>
-            <dd className="mt-0.5 truncate text-[11px] font-bold text-[#123f2e]">
+            <dd className="mt-0.5 truncate text-[11px] font-bold text-[#123a5e]">
               {unit.course.title}
             </dd>
           </div>
           <div className="min-w-0">
-            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123f2e]/55">
+            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123a5e]/55">
               Stage
             </dt>
-            <dd className="mt-0.5 text-[11px] font-bold text-[#123f2e]">{unit.stageLabel}</dd>
+            <dd className="mt-0.5 text-[11px] font-bold text-[#123a5e]">{unit.stageLabel}</dd>
           </div>
           <div className="min-w-0">
-            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123f2e]/55">
+            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123a5e]/55">
               Enrolled
             </dt>
-            <dd className="mt-0.5 text-[11px] font-bold text-[#123f2e]">
+            <dd className="mt-0.5 text-[11px] font-bold text-[#123a5e]">
               {students.length} student{students.length === 1 ? '' : 's'}
             </dd>
           </div>
           <div className="min-w-0">
-            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123f2e]/55">
+            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123a5e]/55">
               Results entered
             </dt>
-            <dd className="mt-0.5 text-[11px] font-bold text-[#123f2e]">
+            <dd className="mt-0.5 text-[11px] font-bold text-[#123a5e]">
               {withResults}/{students.length}
             </dd>
           </div>
           <div className="min-w-0">
-            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123f2e]/55">
+            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123a5e]/55">
               Class average
             </dt>
-            <dd className="mt-0.5 text-[11px] font-bold text-[#123f2e]">
+            <dd className="mt-0.5 text-[11px] font-bold text-[#123a5e]">
               {analytics.average != null ? `${analytics.average.toFixed(1)}%` : '—'}
             </dd>
           </div>
           <div className="min-w-0">
-            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123f2e]/55">
+            <dt className="text-[9px] font-semibold uppercase tracking-wide text-[#123a5e]/55">
               Contact hours
             </dt>
-            <dd className="mt-0.5 text-[11px] font-bold text-[#123f2e]">
+            <dd className="mt-0.5 text-[11px] font-bold text-[#123a5e]">
               {unit.weekHours}h/week
             </dd>
           </div>
@@ -214,7 +214,7 @@ export function ClassRegisterDoc({
           Class register — attendance &amp; continuous assessment
         </h2>
         {students.length === 0 ? (
-          <p className="mt-2 text-[11px] text-[#123f2e]/70">
+          <p className="mt-2 text-[11px] text-[#123a5e]/70">
             No students enrolled at this stage of the course.
           </p>
         ) : (
@@ -224,7 +224,7 @@ export function ClassRegisterDoc({
                 className="border-y text-left text-white"
                 style={{
                   borderColor: 'rgba(18, 63, 46, 0.25)',
-                  backgroundColor: REGISTER_EMERALD,
+                  backgroundColor: REGISTER_BRAND,
                 }}
               >
                 <th className="px-2 py-1.5 font-semibold">#</th>
@@ -246,7 +246,7 @@ export function ClassRegisterDoc({
                     backgroundColor: i % 2 === 1 ? REGISTER_ZEBRA : undefined,
                   }}
                 >
-                  <td className="px-2 py-2 text-center font-mono text-[9px] text-[#123f2e]/60">
+                  <td className="px-2 py-2 text-center font-mono text-[9px] text-[#123a5e]/60">
                     {i + 1}
                   </td>
                   <td className="whitespace-nowrap px-2 py-2 font-mono text-[9px] font-semibold">
@@ -280,8 +280,8 @@ export function ClassRegisterDoc({
             style={{ borderColor: 'rgba(18, 63, 46, 0.5)' }}
             aria-hidden="true"
           />
-          <p className="font-semibold text-[#123f2e]">Class lecturer</p>
-          <p className="mt-0.5 text-[#123f2e]/70">{lecturerName}</p>
+          <p className="font-semibold text-[#123a5e]">Class lecturer</p>
+          <p className="mt-0.5 text-[#123a5e]/70">{lecturerName}</p>
         </div>
         <div>
           <span
@@ -289,13 +289,13 @@ export function ClassRegisterDoc({
             style={{ borderColor: 'rgba(18, 63, 46, 0.5)' }}
             aria-hidden="true"
           />
-          <p className="font-semibold text-[#123f2e]">Academic registrar</p>
-          <p className="mt-0.5 text-[#123f2e]/70">For: Kitui Institute of Professionals</p>
+          <p className="font-semibold text-[#123a5e]">Academic registrar</p>
+          <p className="mt-0.5 text-[#123a5e]/70">For: Kitui Institute of Professionals</p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="mt-8 border-t pt-3 text-[9px] leading-relaxed text-[#123f2e]/70" style={{ borderColor: 'rgba(18, 63, 46, 0.2)' }}>
+      <footer className="mt-8 border-t pt-3 text-[9px] leading-relaxed text-[#123a5e]/70" style={{ borderColor: 'rgba(18, 58, 94, 0.2)' }}>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="font-semibold italic">

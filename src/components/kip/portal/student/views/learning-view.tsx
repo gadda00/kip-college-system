@@ -346,11 +346,11 @@ const MATERIAL_TABS = [
 function materialMeta(type: string) {
   switch (type) {
     case 'NOTES':
-      return { icon: NotebookPen, label: 'Notes', classes: 'bg-brand-600/10 text-brand-700 dark:text-brand-300' }
+      return { icon: NotebookPen, label: 'Notes', classes: 'bg-brand-600/10 text-brand-700 dark:text-brand-500' }
     case 'PAST_PAPER':
       return { icon: ScrollText, label: 'Past paper', classes: 'bg-gold-400/15 text-gold-700 dark:text-gold-400' }
     default:
-      return { icon: FileText, label: 'Assignment', classes: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' }
+      return { icon: FileText, label: 'Assignment', classes: 'bg-primary/10 text-primary' }
   }
 }
 

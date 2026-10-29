@@ -82,7 +82,7 @@ function isActive(current: string, to: string): boolean {
   return current === to.replace(/^\/+/, '')
 }
 
-/** Theme toggle for the dark emerald utility bar. */
+/** Theme toggle for the dark sapphire utility bar. */
 function UtilityThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
   const toggle = () => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')

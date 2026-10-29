@@ -121,7 +121,7 @@ export function GalleryView() {
                       size="icon"
                       aria-label="Previous photo"
                       onClick={showPrev}
-                      className="absolute left-3 h-11 w-11 rounded-full border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm hover:bg-gold-400 hover:text-[#0f2e22]"
+                      className="absolute left-3 h-11 w-11 rounded-full border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm hover:bg-gold-400 hover:text-[#0e2233]"
                     >
                       <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                     </Button>
@@ -130,7 +130,7 @@ export function GalleryView() {
                       size="icon"
                       aria-label="Next photo"
                       onClick={showNext}
-                      className="absolute right-3 h-11 w-11 rounded-full border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm hover:bg-gold-400 hover:text-[#0f2e22]"
+                      className="absolute right-3 h-11 w-11 rounded-full border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm hover:bg-gold-400 hover:text-[#0e2233]"
                     >
                       <ChevronRight className="h-5 w-5" aria-hidden="true" />
                     </Button>
@@ -155,7 +155,7 @@ export function GalleryView() {
             size="icon"
             aria-label="Close gallery"
             onClick={close}
-            className="absolute right-3 top-3 h-11 w-11 rounded-full border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm hover:bg-gold-400 hover:text-[#0f2e22] md:hidden"
+            className="absolute right-3 top-3 h-11 w-11 rounded-full border border-white/15 bg-white/10 text-[#f2efe6] backdrop-blur-sm hover:bg-gold-400 hover:text-[#0e2233] md:hidden"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </Button>
