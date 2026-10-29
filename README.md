@@ -23,10 +23,12 @@ Shown on the login page when `NEXT_PUBLIC_DEMO_MODE=1` (see `.env.example`).
 | Lecturer | lecturer@kipskitui.com | Lecturer@123 |
 | Student | student@kipskitui.com | Student@123 |
 
+> **Production warning:** production deploys **no longer auto-seed the demo dataset** — a fresh production database starts empty so no publicly-known credentials exist next to real student data. Demo seeding only runs when `DEMO_MODE=1` is set (or outside production, e.g. local dev and preview deployments). If you deliberately enable `DEMO_MODE=1` on a production deploy, **rotate these demo passwords immediately** (Admin → Users, or via each user's portal profile page) before entering real student data — the passwords above are published in this README.
+
 ## Production (PostgreSQL)
 Set `DATABASE_URL` to a PostgreSQL connection string (e.g. Prisma Postgres). The correct Prisma client is generated automatically from the URL (`scripts/prisma-generate.mjs`, run via `postinstall` and `build`). 
 
-**Runtime auto-provisioning:** on the first request against a fresh database the app takes an advisory lock, creates all 22 tables (`IF NOT EXISTS`) and seeds the full demo dataset — no migration step required (`src/lib/provision.ts`). Verify with `GET /api/health` → `{"ok":true}`.
+**Runtime auto-provisioning:** on the first request against a fresh database the app takes an advisory lock, creates all 22 tables (`IF NOT EXISTS`) and — only when demo seeding is enabled (`DEMO_MODE=1` or non-production `NODE_ENV`) — seeds the full demo dataset. No migration step is required (`src/lib/provision.ts`). Production databases start empty by default. Verify with `GET /api/health` → `{"ok":true}`.
 
 ### Deploy to Vercel
 1. Import this GitHub repo (pushes to `main` auto-deploy).

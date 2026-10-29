@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { handle, ok, readJson, timeToMinutes } from '@/lib/api-helpers'
 import { mapTimetableEntry, timetableInclude } from '@/lib/timetable'
+import { logAudit } from '@/lib/audit'
 import type { Prisma } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
@@ -30,7 +31,8 @@ const updateSchema = z.object({
 /** Update a timetable entry (validating times and relations). */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const { id } = await params
     const body = updateSchema.parse(await readJson(req))
 
@@ -80,18 +82,34 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     }
 
     const entry = await db.timetableEntry.update({ where: { id }, data, include: timetableInclude })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'TIMETABLE_ENTRY_UPDATED',
+      entity: 'timetableEntry',
+      entityId: id,
+      meta: { fields: Object.keys(data) },
+    })
     return ok(mapTimetableEntry(entry))
   })
 }
 
 /** Delete a timetable entry. */
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const { id } = await params
     const existing = await db.timetableEntry.findUnique({ where: { id }, select: { id: true } })
     if (!existing) throw new HttpError(404, 'Timetable entry not found')
     await db.timetableEntry.delete({ where: { id } })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'TIMETABLE_ENTRY_DELETED',
+      entity: 'timetableEntry',
+      entityId: id,
+    })
     return ok({ deleted: true, id })
   })
 }

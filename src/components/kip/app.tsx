@@ -7,6 +7,7 @@ import { useHashRoute, routeTitle } from '@/components/kip/lib/router'
 import { useAuthStore } from '@/components/kip/stores/auth-store'
 import { Header } from '@/components/kip/site/header'
 import { Footer } from '@/components/kip/site/footer'
+import { MobileActionBar } from '@/components/kip/site/mobile-action-bar'
 import { ChatWidget } from '@/components/kip/chat-widget'
 import { BackToTop } from '@/components/kip/components/back-to-top'
 
@@ -129,6 +130,10 @@ function resolveView(path: string, params: string[], query: Record<string, strin
   }
 }
 
+/** Route segments whose views manage their own full-screen chrome — no
+ *  public footer quick-actions there. */
+const PRIVATE_ROUTE_PATHS = new Set(['portal', 'lecturer', 'admin'])
+
 function NotFoundView() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
@@ -157,7 +162,11 @@ export default function KipApp() {
   }, [route.path, route.params.join('/'), route])
 
   const view = resolveView(route.path, route.params, route.query)
-  const viewKey = `${route.path}/${route.params.join('/')}`
+  // include the query in the key so e.g. #/academics?category=KASNEB (footer
+  // programme links) remounts the view with the new filter applied
+  const queryKey = new URLSearchParams(route.query).toString()
+  const viewKey = `${route.path}/${route.params.join('/')}${queryKey ? `?${queryKey}` : ''}`
+  const isPublicRoute = !PRIVATE_ROUTE_PATHS.has(route.path)
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -176,8 +185,22 @@ export default function KipApp() {
         </AnimatePresence>
       </main>
       <Footer />
-      <ChatWidget />
-      <BackToTop />
+      {/* Reserve scroll space on phones (<lg) so the fixed quick-action bar
+          never covers footer content — safe area included for the iOS home
+          indicator. Rendered only when the bar itself shows (public routes). */}
+      {isPublicRoute && (
+        <div className="h-16 pb-[env(safe-area-inset-bottom)] lg:hidden" aria-hidden="true" />
+      )}
+      {/* Sticky phone quick actions (Apply / WhatsApp / Call) — public pages
+          only; the bar also self-hides on private routes and when printing. */}
+      {isPublicRoute && <MobileActionBar />}
+      {/* Floating utilities (AI assistant, back-to-top) — lifted above the
+          mobile quick-action bar on phones so they never cover the Apply or
+          Call buttons; desktop positions are untouched. */}
+      <div className="max-lg:[&>button]:bottom-[calc(env(safe-area-inset-bottom)_+_5rem)] max-lg:[&>section]:bottom-[calc(env(safe-area-inset-bottom)_+_9rem)]">
+        <ChatWidget />
+        <BackToTop />
+      </div>
     </div>
   )
 }

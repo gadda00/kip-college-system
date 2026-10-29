@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { handle, ok, readJson } from '@/lib/api-helpers'
 import { computeBalance } from '@/lib/fees'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,7 +66,8 @@ const postFeeSchema = z
 /** Post a fee item to one student, or bulk-post to all ACTIVE students of a course. */
 export async function POST(req: Request) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const body = postFeeSchema.parse(await readJson(req))
 
     if (body.studentId) {
@@ -84,6 +86,14 @@ export async function POST(req: Request) {
           amount: body.amount,
           dueDate: body.dueDate ?? null,
         },
+      })
+      await logAudit({
+        actorId: admin.id,
+        actorEmail: admin.email,
+        action: 'FEE_ITEM_POSTED',
+        entity: 'student',
+        entityId: body.studentId,
+        meta: { term: body.term, type: body.type, amount: body.amount, description: body.description },
       })
       const summary = await computeBalance(body.studentId)
       return ok({ posted: 1, feeItem, ...summary }, 201)
@@ -112,6 +122,14 @@ export async function POST(req: Request) {
         amount: body.amount,
         dueDate: body.dueDate ?? null,
       })),
+    })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'FEE_ITEMS_BULK_POSTED',
+      entity: 'course',
+      entityId: course.id,
+      meta: { course: course.title, term: body.term, type: body.type, amount: body.amount, posted: result.count },
     })
     return ok({ posted: result.count, course: course.title }, 201)
   })

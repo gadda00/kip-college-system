@@ -53,3 +53,8 @@ next-env.d.ts
 tool-results/
 skills/
 db/*.db-journal
+# local database — provision with `bun run db:push && bun run db:seed` (see README)
+db/*.db
+# agent work records + verification screenshots — local only
+agent-ctx/
+screenshots/

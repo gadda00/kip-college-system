@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { requireRole } from '@/lib/auth'
+import { assertSameOrigin, requireRole } from '@/lib/auth'
 import { boolish, handle, ok, readJson } from '@/lib/api-helpers'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,10 +28,19 @@ const createSchema = z.object({
 /** Create a news post (publishedAt set when published). */
 export async function POST(req: Request) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const body = createSchema.parse(await readJson(req))
     const newsPost = await db.newsPost.create({
       data: { ...body, publishedAt: new Date() },
+    })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'NEWS_POST_CREATED',
+      entity: 'newsPost',
+      entityId: newsPost.id,
+      meta: { title: body.title, published: body.published },
     })
     return ok(newsPost, 201)
   })

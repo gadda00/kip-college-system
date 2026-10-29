@@ -45,6 +45,62 @@ const STUDENT_NAV: PortalNavItem[] = [
 
 const SUB_VIEWS = new Set(STUDENT_NAV.map((n) => n.key))
 
+/** Mobile bottom tab bar (<lg): the five everyday destinations. */
+const STUDENT_BOTTOM_NAV: PortalNavItem[] = [
+  { key: 'dashboard', label: 'Home', icon: LayoutDashboard, to: '/portal' },
+  { key: 'fees', label: 'Fees', icon: Receipt, to: '/portal/fees' },
+  { key: 'results', label: 'Results', icon: Award, to: '/portal/results' },
+  { key: 'learning', label: 'Learning', icon: BookOpen, to: '/portal/learning' },
+  { key: 'profile', label: 'Profile', icon: UserRound, to: '/portal/profile' },
+]
+
+/**
+ * Fixed bottom tab bar for phones — visible below lg only, emerald active
+ * state, 44px+ touch targets and safe-area padding for home-indicator
+ * devices. `print:hidden` (plus the global print-isolation CSS that hides
+ * everything except the print portal) keeps it off printed statements.
+ */
+function StudentBottomNav({ sub }: { sub: string }) {
+  return (
+    <nav
+      aria-label="Student portal sections"
+      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden print:hidden"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
+      <ul className="mx-auto grid max-w-md grid-cols-5">
+        {STUDENT_BOTTOM_NAV.map((item) => {
+          const active = item.key === sub
+          const Icon = item.icon
+          return (
+            <li key={item.key}>
+              <button
+                type="button"
+                onClick={() => navigate(item.to)}
+                aria-current={active ? 'page' : undefined}
+                className={cn(
+                  'relative flex min-h-[3.25rem] w-full flex-col items-center justify-center gap-1 px-1 py-1.5 text-[10px] font-medium transition-colors',
+                  active
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+                )}
+              >
+                {active && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-primary"
+                  />
+                )}
+                <Icon className="h-5 w-5" aria-hidden="true" />
+                {item.label}
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
+  )
+}
+
 /** Light-on-dark chip tones for the emerald sidebar identity panel. */
 function statusTone(status: string): string {
   if (status === 'ACTIVE') return 'border-emerald-400/30 bg-emerald-400/15 text-emerald-300'
@@ -119,20 +175,26 @@ export function StudentPortal({ sub }: { sub: string }) {
   const activeSub = SUB_VIEWS.has(sub) ? sub : 'dashboard'
 
   return (
-    <PortalShell
-      nav={STUDENT_NAV}
-      sub={activeSub}
-      portalLabel="Student Portal"
-      identity={<StudentIdentity user={guard.user} />}
-    >
-      {activeSub === 'dashboard' && <DashboardView />}
-      {activeSub === 'learning' && <LearningView />}
-      {activeSub === 'fees' && <FeesView />}
-      {activeSub === 'results' && <ResultsView />}
-      {activeSub === 'timetable' && <TimetableView />}
-      {activeSub === 'announcements' && <AnnouncementsView />}
-      {activeSub === 'id-card' && <IdCardView />}
-      {activeSub === 'profile' && <ProfileView />}
-    </PortalShell>
+    <>
+      <PortalShell
+        nav={STUDENT_NAV}
+        sub={activeSub}
+        portalLabel="Student Portal"
+        identity={<StudentIdentity user={guard.user} />}
+      >
+        {activeSub === 'dashboard' && <DashboardView />}
+        {activeSub === 'learning' && <LearningView />}
+        {activeSub === 'fees' && <FeesView />}
+        {activeSub === 'results' && <ResultsView />}
+        {activeSub === 'timetable' && <TimetableView />}
+        {activeSub === 'announcements' && <AnnouncementsView />}
+        {activeSub === 'id-card' && <IdCardView />}
+        {activeSub === 'profile' && <ProfileView />}
+      </PortalShell>
+      {/* bottom spacer so the fixed tab bar never covers the last row of
+          content on small screens (nav height + safe area) */}
+      <div aria-hidden="true" className="h-20 lg:hidden print:hidden" />
+      <StudentBottomNav sub={activeSub} />
+    </>
   )
 }

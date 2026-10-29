@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
@@ -179,23 +179,39 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
   const [term, setTerm] = useState(
     existingTerm && TERM_OPTIONS.includes(existingTerm) ? existingTerm : TERM_OPTIONS[0]!,
   )
+  // marks under edit + the saved baseline they diverge from (a cell is dirty
+  // when its text differs from the baseline — blank vs saved counts as a change)
   const [marks, setMarks] = useState<Record<string, string>>(initialMarks)
+  const [baseline, setBaseline] = useState<Record<string, string>>(initialMarks)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState<SavedResultsResponse | null>(null)
+
+  // spreadsheet focus management: one marks input per student row, desktop
+  // table + mobile stack each keep their own ref (focus follows the visible one)
+  const desktopInputs = useRef<(HTMLInputElement | null)[]>([])
+  const mobileInputs = useRef<(HTMLInputElement | null)[]>([])
 
   // students whose existing result is still an unpublished draft for this sheet
   const draftCount = data.students.filter((s) => s.result && !s.result.published).length
 
   const save = useMutation({
-    mutationFn: (args: { entries: { studentId: string; marks: number }[]; publish: boolean }) =>
+    mutationFn: (args: {
+      entries: { studentId: string; marks: number }[]
+      publish: boolean
+      /** marks snapshot at save time — rebaselines the sheet on success */
+      snapshot: Record<string, string>
+    }) =>
       post<SavedResultsResponse>('/api/lecturer/results', {
         unitId,
         term,
         entries: args.entries,
         publish: args.publish,
       }),
-    onSuccess: (res) => {
+    onSuccess: (res, vars) => {
       setSaved(res)
+      // the just-saved marks become the new clean baseline, so the dirty
+      // count drops to zero and the unsaved-changes guard disengages
+      setBaseline({ ...vars.snapshot })
       const n = res.saved.length
       if (res.published) {
         toast.success('Results published', {
@@ -235,12 +251,70 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
       const num = raw === '' ? null : Number(raw)
       const invalid = num !== null && (Number.isNaN(num) || num < 0 || num > 100)
       const preview = num !== null && !invalid ? gradeForClient(num) : null
-      return { student: s, raw, num, invalid, preview }
+      const dirty = (baseline[s.id] ?? '') !== raw.trim()
+      return { student: s, raw, num, invalid, preview, dirty }
     })
-  }, [data, marks])
+  }, [data, marks, baseline])
 
-  // presentation-only: gold "unsaved changes" indicator (no behavioural effect)
-  const hasUnsavedChanges = rows.some((r) => (initialMarks[r.student.id] ?? '') !== r.raw.trim())
+  // changed cells — drives the emerald indicator, the guard and the Save count
+  const dirtyCount = rows.filter((r) => r.dirty).length
+
+  // unsaved-changes guard: warn before the tab closes or another route loads.
+  // hashchange covers unit switches / sidebar navigation (hash router); when
+  // declined we restore this sheet's hash, which cancels the route change.
+  useEffect(() => {
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (dirtyCount === 0) return
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    const onHashChange = () => {
+      if (dirtyCount === 0) return
+      if (window.location.hash.includes(`/lecturer/results/${unitId}`)) return
+      const leave = window.confirm(
+        `You have ${dirtyCount} unsaved mark${dirtyCount === 1 ? '' : 's'} for this unit. Leave without saving?`,
+      )
+      if (!leave) window.location.hash = `#/lecturer/results/${unitId}`
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    window.addEventListener('hashchange', onHashChange)
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload)
+      window.removeEventListener('hashchange', onHashChange)
+    }
+  }, [unitId, dirtyCount])
+
+  /** Focus the marks input of the student `index` rows away (Enter / ↓ / ↑). */
+  const focusRow = (index: number) => {
+    if (index < 0 || index >= rows.length) return
+    const desktop = desktopInputs.current[index]
+    const mobile = mobileInputs.current[index]
+    const target = desktop && desktop.offsetParent !== null ? desktop : mobile
+    target?.focus()
+    target?.select()
+  }
+
+  const handleMarksKey = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === 'Enter' || e.key === 'ArrowDown') {
+      e.preventDefault()
+      focusRow(index + 1)
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      focusRow(index - 1)
+    }
+  }
+
+  /** Clamp a typed mark into 0–100 when its cell is left; unparsable text stays flagged. */
+  const clampOnBlur = (studentId: string) => {
+    setMarks((m) => {
+      const raw = (m[studentId] ?? '').trim()
+      if (raw === '') return m
+      const num = Number(raw)
+      if (Number.isNaN(num)) return m
+      const clamped = Math.min(100, Math.max(0, num))
+      return clamped === num ? m : { ...m, [studentId]: String(clamped) }
+    })
+  }
 
   const collectEntries = (): { studentId: string; marks: number }[] | null => {
     const entries: { studentId: string; marks: number }[] = []
@@ -361,16 +435,16 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                       <Badge variant="secondary" className="text-[10px]">
                         {data.students.length} student{data.students.length === 1 ? '' : 's'}
                       </Badge>
-                      {hasUnsavedChanges && (
+                      {dirtyCount > 0 && (
                         <span
                           role="status"
-                          className="inline-flex items-center gap-1.5 rounded-full border border-gold-400/40 bg-gold-400/15 px-2.5 py-0.5 text-[10px] font-semibold text-gold-700 dark:text-gold-300"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 text-[10px] font-semibold text-success"
                         >
                           <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-500 opacity-75" />
-                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-gold-500" />
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
                           </span>
-                          Unsaved marks
+                          {dirtyCount} unsaved change{dirtyCount === 1 ? '' : 's'}
                         </span>
                       )}
                     </CardTitle>
@@ -396,18 +470,18 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                         variant="outline"
                         onClick={() => {
                           const entries = collectEntries()
-                          if (entries) save.mutate({ entries, publish: false })
+                          if (entries) save.mutate({ entries, publish: false, snapshot: marks })
                         }}
                         disabled={save.isPending}
                         className="min-h-11"
                       >
                         <Save className="mr-2 h-4 w-4" aria-hidden="true" />
-                        Save draft
+                        {dirtyCount > 0 ? `Save draft · ${dirtyCount}` : 'Save draft'}
                       </Button>
                       <Button
                         onClick={() => {
                           const entries = collectEntries()
-                          if (entries) save.mutate({ entries, publish: true })
+                          if (entries) save.mutate({ entries, publish: true, snapshot: marks })
                         }}
                         disabled={save.isPending}
                         className="btn-gold min-h-11"
@@ -490,6 +564,9 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                               </TableCell>
                               <TableCell className="text-center">
                                 <Input
+                                  ref={(el) => {
+                                    desktopInputs.current[i] = el
+                                  }}
                                   type="number"
                                   min={0}
                                   max={100}
@@ -499,11 +576,16 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                                     setMarks((m) => ({ ...m, [r.student.id]: e.target.value }))
                                     setSaveError(null)
                                   }}
+                                  onBlur={() => clampOnBlur(r.student.id)}
+                                  onKeyDown={(e) => handleMarksKey(e, i)}
                                   aria-label={`Marks for ${r.student.name}`}
                                   aria-invalid={r.invalid}
                                   className={cn(
-                                    'mx-auto h-10 w-24 text-center font-semibold tabular-nums focus-visible:border-gold-500 focus-visible:ring-gold-400/40',
-                                    r.invalid && 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/30',
+                                    // borderless-in-cell spreadsheet feel
+                                    'mx-auto h-10 w-24 rounded-md border-0 bg-transparent text-center font-semibold tabular-nums shadow-none focus-visible:ring-2 focus-visible:ring-primary/40',
+                                    r.dirty && 'bg-emerald-500/15',
+                                    r.invalid &&
+                                      'border border-destructive bg-destructive/5 focus-visible:ring-destructive/30',
                                   )}
                                 />
                               </TableCell>
@@ -525,10 +607,13 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
 
                     {/* Mobile stacked rows */}
                     <ul className="space-y-3 md:hidden">
-                      {rows.map((r) => (
+                      {rows.map((r, i) => (
                         <li
                           key={r.student.id}
-                          className="rounded-xl border border-border/70 bg-card p-4"
+                          className={cn(
+                            'rounded-xl border border-border/70 bg-card p-4',
+                            r.dirty && 'border-success/30',
+                          )}
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
@@ -548,6 +633,9 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                             </Label>
                             <Input
                               id={`marks-${r.student.id}`}
+                              ref={(el) => {
+                                mobileInputs.current[i] = el
+                              }}
                               type="number"
                               min={0}
                               max={100}
@@ -557,11 +645,15 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                                 setMarks((m) => ({ ...m, [r.student.id]: e.target.value }))
                                 setSaveError(null)
                               }}
+                              onBlur={() => clampOnBlur(r.student.id)}
+                              onKeyDown={(e) => handleMarksKey(e, i)}
                               aria-label={`Marks for ${r.student.name}`}
                               aria-invalid={r.invalid}
                               className={cn(
-                                'h-10 w-24 text-center font-semibold tabular-nums focus-visible:border-gold-500 focus-visible:ring-gold-400/40',
-                                r.invalid && 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/30',
+                                'h-11 w-24 rounded-md border-0 bg-transparent text-center font-semibold tabular-nums shadow-none focus-visible:ring-2 focus-visible:ring-primary/40',
+                                r.dirty && 'bg-emerald-500/15',
+                                r.invalid &&
+                                  'border border-destructive bg-destructive/5 focus-visible:ring-destructive/30',
                               )}
                             />
                             {r.student.result && (
@@ -588,10 +680,13 @@ function EntrySheet({ unitId, data }: { unitId: string; data: LecturerClassDetai
                     )}
 
                     <p className="mt-4 text-xs text-muted-foreground">
-                      Leave a row blank to skip that student. <strong>Save draft</strong> keeps marks
-                      hidden from students; <strong>Save &amp; publish</strong> makes them visible
-                      immediately (auto-graded on the KIP scale: A ≥ 80, B 65–79, C 50–64, D 40–49,
-                      E &lt; 40).
+                      Leave a row blank to skip that student. Press <kbd className="rounded border bg-muted px-1 py-0.5 font-mono text-[10px]">Enter</kbd> or{' '}
+                      <kbd className="rounded border bg-muted px-1 py-0.5 font-mono text-[10px]">↑</kbd>
+                      <kbd className="rounded border bg-muted px-1 py-0.5 font-mono text-[10px]">↓</kbd> to
+                      move between students — marks snap into 0–100 when you leave a cell.{' '}
+                      <strong>Save draft</strong> keeps marks hidden from students;{' '}
+                      <strong>Save &amp; publish</strong> makes them visible immediately (auto-graded
+                      on the KIP scale: A ≥ 80, B 65–79, C 50–64, D 40–49, E &lt; 40).
                     </p>
                     {draftCount > 0 && (
                       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gold-500/40 bg-gold-400/10 p-4">

@@ -9,7 +9,9 @@
  *      cannot double-provision).
  *   2. Creates the full schema (DDL generated from prisma/schema.prisma via
  *      `prisma migrate diff --from-empty`) if the tables are missing.
- *   3. Seeds the complete KIP College demo dataset if the User table is empty.
+ *   3. Seeds the complete KIP College demo dataset if the User table is empty
+ *      AND demo seeding is enabled (DEMO_MODE=1 or NODE_ENV !== 'production' —
+ *      production databases start EMPTY for real student data).
  *
  * Everything runs inside ONE transaction, so a crash mid-way rolls back
  * cleanly and the next request simply tries again.
@@ -888,8 +890,22 @@ export async function ensureProvisioned(db: PrismaClient): Promise<void> {
         'SELECT COUNT(*)::int AS n FROM "User"',
       )) as Array<{ n: number }>
       if ((count[0]?.n ?? 0) === 0) {
-        await seedDatabase(tx)
-        console.log('[kip-college] demo dataset seeded')
+        // SECURITY: demo seeding is dev/demo-only. Auto-seeding a production
+        // database would publish widely-known login credentials (README demo
+        // accounts) against real student data. The DDL above always runs; the
+        // seed step additionally requires DEMO_MODE=1 OR a non-production
+        // NODE_ENV (local dev / preview deployments).
+        const demoSeedingEnabled =
+          process.env.DEMO_MODE === '1' || process.env.NODE_ENV !== 'production'
+        if (demoSeedingEnabled) {
+          await seedDatabase(tx)
+          console.log('[kip-college] demo dataset seeded')
+        } else {
+          console.log(
+            '[kip-college] production database is empty — demo seeding SKIPPED ' +
+              '(set DEMO_MODE=1 to force-enable demo data)',
+          )
+        }
       }
     },
     { timeout: 120_000, maxWait: 60_000 },

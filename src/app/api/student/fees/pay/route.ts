@@ -1,9 +1,11 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError } from '@/lib/auth'
+import { assertSameOrigin, HttpError } from '@/lib/auth'
 import { handle, ok, readJson, uniqueReference } from '@/lib/api-helpers'
 import { computeBalance } from '@/lib/fees'
 import { currentStudent } from '@/lib/roles'
+import { logAudit } from '@/lib/audit'
+import { clientIp } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,10 +22,18 @@ const paySchema = z.object({
     .optional(),
 })
 
-/** Student self-service payment (simulated M-Pesa / bank confirmation). */
+/**
+ * Student self-service payment INTENT (simulated M-Pesa / bank submission).
+ *
+ * SECURITY: students can no longer self-confirm payments. The record is
+ * created with status PENDING and only counts toward the fee balance after
+ * the finance office confirms it via PATCH /api/admin/payments/[id].
+ * (`computeBalance` sums CONFIRMED payments only.)
+ */
 export async function POST(req: Request) {
   return handle(async () => {
-    const { profile } = await currentStudent()
+    assertSameOrigin(req, { requireOrigin: true })
+    const { user, profile } = await currentStudent()
     const body = paySchema.parse(await readJson(req))
 
     if (body.method === 'MPESA' && !body.phone) {
@@ -37,13 +47,32 @@ export async function POST(req: Request) {
         amount: body.amount,
         method: body.method,
         reference,
-        paidAt: new Date(),
-        status: 'CONFIRMED',
-        note: 'Self-service payment via portal',
+        // paidAt keeps its schema default (submission timestamp); it is
+        // refreshed to the confirmation time when finance confirms.
+        status: 'PENDING',
+        note: 'Submitted via student portal — awaiting finance confirmation',
         recordedBy: 'Student Portal',
       },
     })
 
+    await logAudit({
+      actorId: user.id,
+      actorEmail: user.email,
+      action: 'PAYMENT_INTENT_CREATED',
+      entity: 'payment',
+      entityId: payment.id,
+      meta: {
+        studentId: profile.id,
+        admissionNo: profile.admissionNo,
+        amount: body.amount,
+        method: body.method,
+        reference,
+      },
+      ip: clientIp(req),
+    })
+
+    // balance summary reflects CONFIRMED payments only — the new PENDING
+    // intent intentionally does not reduce it yet
     const summary = await computeBalance(profile.id)
     return ok({ payment, ...summary }, 201)
   })

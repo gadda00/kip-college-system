@@ -1,15 +1,22 @@
 'use client'
 
 import { ArrowRight, Clock3, Layers } from 'lucide-react'
-import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { KipLink } from '@/components/kip/components/link'
 import { categoryMeta, fmtDuration, fmtKES } from '@/components/kip/lib/format'
 import type { PublicCourse } from '@/components/kip/lib/types'
-import { navigate } from '@/components/kip/lib/router'
 import { cn } from '@/lib/utils'
 
-/** Public catalogue course card. */
+/**
+ * Public catalogue course card.
+ *
+ * The whole card is a REAL link (KipLink → #/course/{id}) so keyboard focus,
+ * middle-click and screen-reader link lists all behave natively. Hover polish
+ * is CSS-only (`card-lift`, quiet 2px lift); card titles are Inter — the serif
+ * display face is reserved for page/section headings.
+ */
 export function CourseCard({
   course,
   className,
@@ -20,30 +27,22 @@ export function CourseCard({
   const meta = categoryMeta(course.category)
 
   return (
-    <motion.div
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
-      className={cn('h-full', className)}
+    <KipLink
+      to={`/course/${course.id}`}
+      aria-label={`${course.title} — view programme details`}
+      className={cn(
+        'group block h-full rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        className,
+      )}
     >
-      <Card
-        role="button"
-        tabIndex={0}
-        aria-label={`View ${course.title} details`}
-        onClick={() => navigate(`/course/${course.id}`)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            navigate(`/course/${course.id}`)
-          }
-        }}
-        className="group card-lift focus-glow cursor-pointer overflow-hidden py-0 transition-shadow hover:shadow-xl"
-      >
+      <Card className="card-lift h-full overflow-hidden py-0 transition-shadow">
         <div className="relative aspect-[16/9] overflow-hidden bg-muted">
-          <img
+          <Image
             src={course.image || meta.image}
-            alt={course.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
+            alt={`${course.title} — illustrative cover image`}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover transition-transform duration-200 group-hover:scale-[1.03]"
           />
           {/* readability vignette under badges */}
           <div
@@ -55,17 +54,17 @@ export function CourseCard({
               {course.category}
             </Badge>
             {course.isFeatured && (
-              <Badge className="border-gold-500/60 bg-gold-400/95 text-[#0f2e22] shadow-sm">
-                ★ Featured
+              <Badge className="border-transparent bg-success text-success-foreground shadow-sm">
+                Featured
               </Badge>
             )}
           </div>
-          <span className="absolute bottom-3 right-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-brand-700 shadow-md dark:bg-brand-950/90 dark:text-gold-300">
+          <span className="tnum absolute bottom-3 right-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-brand-700 shadow-md dark:bg-brand-950/90 dark:text-brand-100">
             {fmtKES(course.tuitionPerTerm)}/term
           </span>
         </div>
         <CardContent className="p-4 sm:p-5">
-          <h3 className="line-clamp-2 min-h-11 font-display text-base font-semibold leading-snug tracking-tight">
+          <h3 className="line-clamp-2 min-h-11 text-base font-semibold leading-snug tracking-tight">
             {course.title}
           </h3>
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
@@ -84,7 +83,7 @@ export function CourseCard({
             </Badge>
             {course.unitsCount > 0 && (
               <Badge variant="outline" className="text-muted-foreground">
-                {course.unitsCount} units
+                <span className="tnum">{course.unitsCount}</span> units
               </Badge>
             )}
           </div>
@@ -97,6 +96,6 @@ export function CourseCard({
           />
         </CardFooter>
       </Card>
-    </motion.div>
+    </KipLink>
   )
 }

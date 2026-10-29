@@ -1,7 +1,7 @@
 /**
  * KIP COLLEGE — Seed DATA (pure, side-effect-free)
  *
- * Realistic Kenyan tertiary college data: 3 campuses, 21 courses with full
+ * Realistic Kenyan tertiary college data: 3 campuses, 28 courses with full
  * unit curricula, staff, students (with fees/payments/results/timetables),
  * applications, announcements, news, events, gallery, testimonials,
  * contact messages and study materials.
@@ -41,7 +41,7 @@ export const campuses: CampusSeed[] = [
     name: 'Main Campus',
     location: '100m from Wikililye, Mulango Road, Kitui',
     description:
-      "KIP College's flagship campus set in the quiet Wikililye neighbourhood along Mulango Road, minutes from Kitui Town. Home to our engineering workshops, modern ICT laboratories, library and hostels — the centre of student life.",
+      "KIP College's flagship campus on Mulango Road, 100 metres from Wikililye centre and minutes from Kitui Town. It specialises in full-time technical training — engineering workshops, ICT laboratories, the training kitchen and the Learning Resource Centre — and is the only campus with student hostels. Open Monday–Friday 8.00 am–5.00 pm and Saturday 8.00 am–1.00 pm.",
     image: '/images/campus-main.png',
     phone: '0703 710 879',
     email: 'main@kipskitui.com',
@@ -54,7 +54,7 @@ export const campuses: CampusSeed[] = [
     name: 'Town Campus',
     location: 'Muli Mall Building, Kitui CBD',
     description:
-      'Conveniently located at the Muli Mall building in the heart of Kitui Central Business District, the Town Campus offers day, evening and weekend classes ideal for working professionals pursuing KASNEB and business programmes.',
+      'Located at the Muli Mall building in the heart of Kitui CBD, Town Campus specialises in KASNEB professional studies (CPA, ATD, CAMS, CS, CIFA) and business programmes, with morning, evening (5.30–8.30 pm) and Saturday classes built around students who work in town. Open Monday–Friday 8.00 am–8.30 pm and Saturday 8.00 am–4.00 pm.',
     image: '/images/campus-town.png',
     phone: '0703 710 879',
     email: 'town@kipskitui.com',
@@ -66,7 +66,7 @@ export const campuses: CampusSeed[] = [
     name: 'Mwingi Campus',
     location: 'Sunrise Building, Mwingi Town',
     description:
-      'Bringing quality tertiary education closer to the people of Mwingi and the greater Mwingi region. The campus offers business, ICT, KASNEB and hospitality programmes in a modern, friendly learning environment.',
+      'Our Mwingi Campus at the Sunrise Building brings tertiary training closer to home for Mwingi town and the greater Mwingi region — business and ICT certificates and diplomas, KASNEB evening classes, and the hairdressing, beauty and catering studios, so learners from Mwingi North and Central need not travel to Kitui daily. Open Monday–Friday 8.00 am–5.00 pm and Saturday 8.00 am–1.00 pm.',
     image: '/images/campus-mwingi.png',
     phone: '0703 710 879',
     email: 'mwingi@kipskitui.com',
@@ -76,7 +76,7 @@ export const campuses: CampusSeed[] = [
 ]
 
 // ============================================================
-// COURSES + UNITS (21 courses, real Kenyan curricula)
+// COURSES + UNITS (28 courses, real Kenyan curricula)
 // ============================================================
 export type UnitSeed = { name: string; weekHours?: number }
 export type CourseSeed = {
@@ -114,7 +114,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 6600,
     description:
-      'The CPA qualification is the gold standard for professional accountants in Kenya and beyond, examined by KASNEB. The programme covers financial accounting, taxation, auditing, financial management and governance across three levels, preparing candidates for careers as accountants, auditors, tax consultants and finance managers. Our CPA classes are taught by qualified accountants with consistently excellent KASNEB pass rates.',
+      'Graduates qualify as accountants, auditors, tax practitioners and finance officers, eligible for ICPAK membership — and for the jobs that demand it in practice firms, banks, SACCOs, county treasuries and NGOs. You sit the KASNEB CPA examinations at Levels I, II and III in the May and November/December sittings until you earn the full certificate. Classes run in the evening (5.30–8.30 pm) and on Saturdays at Town Campus so you can keep working, and every candidate sits weekly mock papers and past-paper revision with our CPA (K) lecturers before each sitting.',
     requirements:
       'KCSE mean grade C+ (or equivalent) with C+ in Mathematics and English/Kiswahili; OR two A-Level principal passes; OR KASNEB CAMS certificate (bridging route); OR a relevant university degree. Duration: 24–36 months across three levels, examined by KASNEB every May and November/December.',
     isFeatured: true,
@@ -158,7 +158,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 5500,
     description:
-      'The KASNEB Certificate in Accounting and Management Skills is the ideal foundation for careers in accounting, finance, office administration and management. Learners gain practical bookkeeping, business mathematics, business law and communication skills — and a direct bridging route into the CPA programme.',
+      'CAMS gets you office-ready as an accounts assistant, bookkeeper or office administrator — able to keep a full set of books, handle payroll records and draft basic business correspondence. You earn the KASNEB Certificate in Accounting and Management Skills over two examined levels (May and November/December sittings), and it is the recognised bridging route into CPA for learners below the direct C+ entry grade. Day classes run at Town and Mwingi campuses with an evening track for working students, at KES 9,000 tuition per term.',
     requirements:
       'KCSE mean grade D+ (or equivalent). CAMS also serves as the bridging qualification for learners who wish to pursue CPA but do not meet the direct entry requirements.',
     isFeatured: true,
@@ -190,7 +190,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 6600,
     description:
-      'The KASNEB Certified Secretaries qualification prepares governance, compliance and corporate administration professionals. The programme covers company law, corporate secretarial practice, corporate governance and insolvency across three levels, opening careers as company secretaries, governance officers and board administrators in both private and public sectors.',
+      'Graduates advise boards and keep organisations compliant as company secretaries, governance officers and registry administrators — roles every registered company, SACCO and county corporation in Kenya is required by law to fill. You earn the KASNEB Certified Secretaries qualification across three examined levels, with sittings every May and November/December. Because most CS students study alongside work, the programme runs in evening and Saturday classes at Town Campus, with governance case studies marked to KASNEB standards throughout.',
     requirements:
       'KCSE mean grade C+ (or equivalent) with C+ in Mathematics and English/Kiswahili; OR KASNEB CAMS/CPA Level I; OR a relevant degree or diploma. Duration: 36 months across three levels.',
     sortOrder: 3,
@@ -227,7 +227,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 6600,
     description:
-      'The KASNEB CIFA programme is the specialist qualification for investment, treasury and financial analysis careers. Learners cover economics, quantitative analysis, portfolio management, corporate finance, derivatives and financial modelling — preparing for roles in asset management, stockbroking, banking, insurance and treasury.',
+      'CIFA prepares you for analyst and treasury roles in banks, stockbrokers, SACCOs, insurers and asset managers — valuing portfolios, drafting investment reports and pricing risk. You earn the KASNEB Certified Investment and Financial Analysts qualification across three examined levels (May and November/December sittings), with exemptions available for CPA holders. Teaching leans on live Nairobi Securities Exchange data and spreadsheet modelling labs, so you graduate with a portfolio of worked valuations rather than notes alone.',
     requirements:
       'KCSE mean grade C+ (or equivalent) with C+ in Mathematics and English/Kiswahili; OR KASNEB CAMS certificate; OR a relevant degree. Duration: 36 months across three levels.',
     sortOrder: 4,
@@ -270,7 +270,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 5500,
     description:
-      'The KASNEB Diploma in ICT blends technical computing with business skills. Learners progress through programming, databases, computer networks, systems analysis and design, and e-business — and may proceed to professional qualifications or related degree programmes with exemptions.',
+      'Graduates come out able to code, build and query databases, configure computer networks and support business systems — ready for ICT support, systems administration and developer-trainee roles, or progression into related degrees with exemptions. You earn the KASNEB Diploma in ICT after two examined levels, sat in the May and November/December sittings. Weekly programming and networking practicals run in the computer labs at Town and Mwingi, and an evening track is available for working students.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 24 months over two levels, examined by KASNEB.',
     sortOrder: 5,
@@ -303,7 +303,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3500,
     description:
-      "This KNEC diploma develops all-round business managers for Kenya's growing economy. Modules cover business communication, accounting, human resource management, marketing and company law, with practical projects and industrial attachment that prepare learners for supervisory and management roles in private firms, SACCOs and county governments.",
+      'This diploma prepares you for supervisory and management roles in private firms, SACCOs, NGOs and county offices — planning work, managing people, keeping proper books and marketing what you sell. You earn the KNEC Diploma in Business Management after three examined modules, a qualification that also earns university degree exemptions. A three-month industrial attachment in a real Kitui organisation is arranged in Module II/III, and the programme runs in day, evening and weekend modes.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 36 months (three KNEC modules). Graduates may progress to degree programmes with exemptions.',
     isFeatured: true,
@@ -341,7 +341,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3500,
     description:
-      'The KNEC Diploma in Human Resource Management prepares professionals who can recruit, develop and manage talent. Learners study labour law, industrial relations, compensation and reward management and organisational behaviour, with attachment placements in HR departments across Kitui and beyond.',
+      'Graduates recruit, onboard and manage staff as HR assistants and personnel officers in firms, SACCOs, schools and county departments — with labour law and industrial relations at the core, which is exactly what employers test at HR interviews. You earn the KNEC Diploma in Human Resource Management after three examined modules. The college arranges your attachment in an HR or personnel department around Kitui, and lecturers review your logbook every month while you are out on placement.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 36 months (three KNEC modules).',
     sortOrder: 7,
@@ -378,7 +378,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3500,
     description:
-      "Supply chain professionals keep Kenya's goods moving. This KNEC diploma covers procurement principles, warehousing and inventory management, logistics and transport, contract management and negotiation skills — preparing learners for careers in procurement and supplies in government, NGOs, SACCOs and the private sector.",
+      'Graduates run stores, procurement and distribution as supplies officers, storekeepers and procurement assistants — positions every government office, school, NGO and manufacturer must fill. You earn the KNEC Diploma in Supply Chain Management after three examined modules, ending in an assessed industrial attachment. Stock-control and procurement practicals in our computer labs follow the same records and software routines used by county stores offices.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 36 months (three KNEC modules).',
     sortOrder: 8,
@@ -415,7 +415,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3500,
     description:
-      "The KNEC Diploma in Sales & Marketing develops persuasive, customer-focused professionals. Modules include personal selling, consumer behaviour, marketing research, advertising and strategic marketing — with hands-on field projects in Kitui's vibrant trading environment.",
+      'This programme produces sales executives, marketing assistants and customer-relations officers for FMCG, banking, insurance and retail employers. You earn the KNEC Diploma in Sales & Marketing Management after three examined modules, including a supervised attachment. Every term includes live field-selling projects with Kitui town businesses — you pitch, close and report on real orders, not classroom simulations.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 36 months (three KNEC modules).',
     sortOrder: 9,
@@ -452,7 +452,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3800,
     description:
-      'This TVET-CDACC competence-based diploma equips learners to plan, execute and close projects on time and on budget. Units cover project planning and scheduling, cost estimation and budgeting, risk management, procurement and monitoring & evaluation — skills in high demand across devolved government, NGOs and construction.',
+      'Graduates plan and deliver projects on time and on budget as project assistants and M&E officers — the exact skills county governments, NGOs and contractors hire for. Assessment is competence-based through TVET-CDACC: you are graded on real deliverables such as project charters, budgets and M&E plans rather than a single final exam. Your final research project can be attached to a live community or county initiative with lecturer supervision.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 24 months, assessed by TVET-CDACC through competence-based evaluation.',
     sortOrder: 10,
@@ -489,7 +489,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2000,
     examFee: 2800,
     description:
-      'The KNEC Certificate in Business Management is a solid foundation in business operations — bookkeeping, business law, commerce and office administration. Graduates proceed to the diploma level or take up clerical and supervisory roles in businesses and county offices.',
+      'This certificate makes you office-ready for clerical, bookkeeping and shop-supervision roles in businesses and county offices — and it is the standard stepping stone into the Diploma in Business Management. You earn the KNEC certificate after two examined modules. At KES 8,000 tuition per term with instalment plans available, it is the most affordable full office-skills route we offer.',
     requirements:
       'KCSE mean grade D (or equivalent). Duration: 18 months (two KNEC modules).',
     sortOrder: 11,
@@ -520,7 +520,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2000,
     examFee: 2800,
     description:
-      'The KNEC Certificate in Human Resource Management introduces personnel management, labour law, human relations and office administration — preparing learners for HR clerk and office administration roles, with progression to the diploma level.',
+      'Graduates take up HR clerk, personnel assistant and front-office administration roles, or progress directly into the Diploma in Human Resource Management. The KNEC certificate is earned over two examined modules covering personnel management, labour law, human relations and office practice. Evening classes are available for students who work during the day, and lecturers remain reachable after class hours for coursework support.',
     requirements:
       'KCSE mean grade D (or equivalent). Duration: 18 months (two KNEC modules).',
     sortOrder: 12,
@@ -553,7 +553,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3500,
     description:
-      'The KNEC Diploma in ICT is our most popular technical programme. Across six terms and three modules, learners master structured and object-oriented programming, database design, networking, operating systems, web development, e-commerce and a final research project with industrial attachment — producing job-ready IT professionals for Kenya’s digital economy.',
+      'Across six terms you learn to code, design databases, wire and administer networks and deploy working web applications — graduating into ICT support, network administration and developer roles, or into university degrees with exemptions. The KNEC Diploma in ICT is examined module by module, and the final two terms include industrial attachment and a supervised research project. Computer-lab practicals start in week one, and attachments are placed through our partner firms in Kitui — banks, county offices, schools and IT service providers.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 36 months (three KNEC modules). Industrial attachment is undertaken in Term 5–6.',
     isFeatured: true,
@@ -609,7 +609,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2000,
     examFee: 3000,
     description:
-      'The KNEC Certificate in ICT builds practical computing skills — computer applications, structured programming, operating systems and web design. It is ideal for learners upgrading to the diploma level or seeking ICT support and data-entry roles in offices and businesses.',
+      'Graduates install and support computer systems, produce professional documents and build basic websites — skills in steady demand in offices, schools and cyber cafés across the county. The KNEC Certificate in ICT is earned over two examined modules and leads directly into the Diploma in ICT. Hands-on computer time is guaranteed from the first week; no prior computer experience is required.',
     requirements:
       'KCSE mean grade D (or equivalent). Duration: 18 months (two KNEC modules).',
     sortOrder: 14,
@@ -640,7 +640,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 4000,
     description:
-      'The KNEC Diploma in Electrical & Electronic Engineering (Power Option) trains power engineering technologists. Learners cover electrical principles, machines, electronics, power transmission and distribution, protection and control — with extensive workshop practice that leads to careers with Kenya Power, contractors and manufacturing firms.',
+      'Graduates qualify as electrical technologists for Kenya Power and its contractors, manufacturing plants, solar installers and building-services firms — installing, testing and maintaining power systems. You earn the KNEC Diploma in Electrical & Electronic Engineering (Power Option) across three examined modules. Workshop practice is central to every module — real installation boards, motor-control panels and fault-finding rigs — and Module III attachment is arranged with electrical contractors in the region.',
     requirements:
       'KCSE mean grade C- (or equivalent) with at least C- in Mathematics and Physics/Physical Sciences. Duration: 36 months (three KNEC modules).',
     isFeatured: true,
@@ -681,7 +681,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2500,
     examFee: 3200,
     description:
-      'The KNEC Certificate in Electrical & Electronic Engineering builds foundational skills in electrical installation, basic electronics, measurement and electrical machines, with progression to the diploma level for learners who attain the entry requirements.',
+      'This certificate trains installation electricians who can wire domestic and small commercial premises safely, test their work and find faults under supervision. It is examined by KNEC over two modules and leads directly into the engineering diploma. Most of your week is spent in the wiring workshop on actual installation circuits, and graduates commonly move into wireman jobs — or self-employment — before upgrading to the diploma.',
     requirements:
       'KCSE mean grade D (or equivalent) with at least D in Mathematics and Physics/Physical Sciences. Duration: 24 months (two KNEC modules).',
     sortOrder: 16,
@@ -714,7 +714,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3800,
     description:
-      'The KNEC Diploma in Building Construction Technology prepares site technicians and quantity surveying assistants. Learners study construction materials and methods, strength of materials, building services, estimating and costing, contracts and site management — with site visits and attachment on live construction projects.',
+      'Graduates supervise work on site as construction technicians, clerk-of-works assistants and estimating officers — keeping buildings measured, correctly costed and properly built. You earn the KNEC Diploma in Building Construction Technology across three examined modules. Site visits to live construction projects around Kitui are built into every year, together with an attachment with a building contractor in Module III.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 36 months (three KNEC modules).',
     sortOrder: 17,
@@ -754,7 +754,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3500,
     description:
-      'The KNEC Diploma in Catering & Accommodation Management blends culinary artistry with hospitality management. Learners train in food production, food and beverage service and control, housekeeping and front office operations in our modern training kitchen — ready for hotels, lodges and the region’s growing hospitality sector.',
+      'Graduates go out kitchen-ready and service-ready for hotels, lodges, restaurants and institutional catering — cooking, running food and beverage service, controlling costs and supervising housekeeping. You earn the KNEC Diploma in Catering & Accommodation Management across three modules, including a supervised industrial attachment. Practical sessions in the training kitchen use real ingredients and real service at college functions, so hygiene and cost control are learned by doing.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 30 months including industrial attachment, examined by KNEC.',
     sortOrder: 18,
@@ -793,7 +793,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2000,
     examFee: 2500,
     description:
-      'This NITA-graded certificate develops professional hairdressers and beauty therapists. Training covers hairdressing techniques, facials and skin care, manicure and pedicure, salon management and client care — with hands-on practice on real clients in our campus salon studios.',
+      'Graduates work as hairdressers and beauty therapists in established salons or open their own — plaiting and treatment work, facials, manicure and pedicure, plus salon bookkeeping and client care. Certification is through NITA trade tests (Grade III to I), which we register you for and prepare you for with graded practical mock assessments. Training happens on real clients at the campus salon studios at Mwingi and Main.',
     requirements:
       'KCSE mean grade D- (or equivalent). Duration: 12 months, assessed through NITA trade tests (Grades I–III).',
     sortOrder: 19,
@@ -819,7 +819,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3500,
     description:
-      'The TVET-CDACC Diploma in Fashion Design & Garment Making nurtures creative fashion entrepreneurs. Learners master pattern making and grading, garment construction, textile science, fashion illustration and merchandising — culminating in a personal portfolio collection presented at our annual fashion show.',
+      'Graduates cut, construct and finish garments to client specification — running tailoring businesses, working in production rooms or dressing clients for events. Assessment is competence-based through TVET-CDACC, graded on the garments and portfolios you actually produce. The programme climaxes with a personal collection presented at our annual fashion show, attended by Kitui tailoring and design businesses that hire and subcontract from it.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 30 months, assessed by TVET-CDACC.',
     sortOrder: 20,
@@ -859,7 +859,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 1500,
     examFee: 2200,
     description:
-      'The NITA Artisan Certificate in Electrical Installation equips learners with practical wiring and installation skills — safety, basic electrical theory, wiring systems, testing and fault finding. Graduates are ready for employment as installation artisans or self-employment in the booming construction sector.',
+      'In six months you become a working installation wireman: safe wiring of domestic installations, correct testing and basic fault-finding. Certification is by NITA trade test (Grades III to I), prepared for with the exact practical tasks the examiners set. Over sixty per cent of contact time is spent in the wiring workshop, and graduates typically move straight into jobs with local electricians and contractors — or into self-employment.',
     requirements:
       'KCSE mean grade D- (or equivalent). Duration: 6 months, assessed through NITA trade tests (Grades III–I).',
     sortOrder: 21,
@@ -884,7 +884,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 6200,
     description:
-      'The KASNEB Accounting Technician Diploma equips learners with competencies in accounting, taxation, auditing and management information. It is a respected stand-alone qualification for accounts assistants and credit officers, and also provides a pathway into the CPA programme — ATD graduates progress directly into CPA Level II.',
+      'Graduates work as accounts assistants, credit officers and payroll clerks — and those who continue their studies join CPA directly at Level II. You earn the KASNEB Accounting Technician Diploma across three examined levels, sat every May and November/December. Classes run at Town Campus in the day with an evening track for working students, and the exams office walks every candidate through KASNEB registration, fee computation and exam entry at each sitting.',
     requirements:
       'KCSE mean grade C (or equivalent) with C- in Mathematics and English/Kiswahili; OR KASNEB CAMS certificate. Duration: 24 months across three levels, examined by KASNEB.',
     sortOrder: 22,
@@ -921,7 +921,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 3000,
     examFee: 3500,
     description:
-      'The KNEC Diploma in Water Engineering trains water resource technicians for Kenya\'s vital water sector. Learners cover water supply systems, hydrology, water quality analysis, waste water treatment, irrigation technology and project management — with extensive fieldwork and laboratory practice. Graduates work with water companies, county governments, NGOs and borehole contractors.',
+      'Graduates keep water flowing: designing small reticulation schemes, testing water quality, and maintaining pumps and boreholes for water companies, county water offices, NGOs and drilling contractors. You earn the KNEC Diploma in Water Engineering across three examined modules, with a sector attachment arranged in the final year. Fieldwork at local boreholes, treatment works and sand dams is built into every module — this course is learned as much in the field as in the laboratory.',
     requirements:
       'KCSE mean grade C- (or equivalent) with C- in Mathematics and Physics/Chemistry. Duration: 36 months (3 years) plus industrial attachment, examined by KNEC.',
     sortOrder: 23,
@@ -961,7 +961,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2000,
     examFee: 2500,
     description:
-      'The Certificate in Plumbing Technology delivers hands-on skills in pipe fitting, water systems installation, drainage, sanitation fixtures, gas piping and basic sheet-metal work. With Kenya\'s construction boom and county water projects, qualified plumbers are in constant demand — most of our graduates move straight into jobs or profitable self-employment.',
+      'Graduates install and maintain cold and hot water systems, drainage and sanitary fixtures — a trade in near-permanent demand from builders and county water projects across the region. Certification is by NITA trade tests, which you sit after graded workshop practice on real pipe runs, fittings and fixtures. Tools and materials are provided, and most contact hours are spent in the plumbing workshop rather than the classroom.',
     requirements:
       'KCSE mean grade D (or equivalent). Duration: 12 months including workshop practice, assessed through NITA trade tests.',
     sortOrder: 24,
@@ -992,7 +992,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2000,
     examFee: 2500,
     description:
-      'The KNEC Certificate in Storekeeping & Warehouse Operations prepares store clerks, warehouse assistants and stock controllers. Learners gain skills in stock records management, storekeeping procedures, receiving and issuing, stock taking, warehousing safety and basic supply chain software — the backbone of every manufacturing, retail and government store.',
+      'Graduates run a stores section: receiving, recording, issuing, stock-taking and warehouse safety — with practical work on the stock-records software employers actually use. The KNEC certificate is examined over two modules and leads directly into the Diploma in Supply Chain Management. It is one of the fastest routes into stores and supply jobs with county governments, schools, hospitals and NGOs.',
     requirements:
       'KCSE mean grade D+ (or equivalent). Duration: 12 months, examined by KNEC; also a direct entry route into the Diploma in Supply Chain Management.',
     sortOrder: 25,
@@ -1023,7 +1023,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2000,
     examFee: 2500,
     description:
-      'The Certificate in Salesmanship develops persuasive, professional sellers for retail, wholesale, pharmaceuticals, insurance and FMCG sectors. Learners master selling techniques, customer psychology, customer relationship management, merchandising and sales documentation — with role-play practice in our simulated sales lab.',
+      'Graduates sell professionally as sales representatives, shop supervisors and counter staff for FMCG, pharmaceutical, insurance and retail employers. The KNEC certificate covers two examined modules, from selling skills and customer psychology to sales records and merchandising. Role-play selling sessions and field visits to Kitui town businesses mean you face a real customer before your first job interview.',
     requirements:
       'KCSE mean grade D+ (or equivalent). Duration: 12 months, examined by KNEC. Progression: Diploma in Sales & Marketing Management.',
     sortOrder: 26,
@@ -1054,7 +1054,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2500,
     examFee: 3000,
     description:
-      'The KNEC Diploma in Community & Social Development trains development workers, social officers and community mobilisers. Learners study sociology, community development methods, project planning, gender and development, social research and counselling — then apply them in real community field projects. Graduates serve with county governments, NGOs, churches and CBOs across Kenya.',
+      'Graduates facilitate groups, plan community projects and write the reports funders require — working as community development assistants and social officers with county governments, NGOs, churches and CBOs. The KNEC diploma runs over three examined modules, including a supervised community attachment. Field projects are conducted in real Kitui communities, and the final research report often becomes a graduate\'s strongest portfolio at interviews.',
     requirements:
       'KCSE mean grade C- (or equivalent). Duration: 30 months (including attachment), examined by KNEC.',
     sortOrder: 27,
@@ -1091,7 +1091,7 @@ export const courses: CourseSeed[] = [
     registrationFee: 2000,
     examFee: 2500,
     description:
-      'The KNEC Certificate in Secretarial Studies prepares modern office administrators and personal assistants. Training blends office practice, business communication, shorthand, typing and ICT applications (word processing, spreadsheets, presentations) with professional etiquette — graduates are office-ready from day one, with a progression path to the KASNEB CS qualification.',
+      'Graduates are office-ready from day one: typing and formatting documents at speed, managing records and front-desk communication, and supporting executives as office administrators and personal assistants. The KNEC certificate is examined over two modules, with keyboarding speed and document formatting drilled weekly in the computer labs. It is also the natural first step toward the KASNEB Certified Secretaries (CS) governance qualification.',
     requirements:
       'KCSE mean grade D+ (or equivalent). Duration: 12 months, examined by KNEC.',
     sortOrder: 28,
@@ -1427,6 +1427,7 @@ export const students: StudentSeed[] = [
     fees: [
       { term: '2026/2027 T1', description: 'Registration Fee (One-time)', amount: 3000, type: 'REGISTRATION', dueDate: '2026-09-15' },
       { term: '2026/2027 T1', description: 'Tuition Fee', amount: 15000, type: 'TUITION', dueDate: '2026-10-15' },
+      { term: '2026/2027 T1', description: 'KNEC Module I Examination Fee', amount: 4000, type: 'EXAM', dueDate: '2026-11-20' },
     ],
     payments: [
       { amount: 5000, method: 'MPESA', reference: 'MPESA5N8V2L6Q', paidAt: '2026-09-14T08:45:00', note: 'Part payment — 2026/2027 T1 fees' },
@@ -1523,6 +1524,7 @@ export const students: StudentSeed[] = [
       { term: '2025/2026 T3', description: 'Registration Fee (One-time)', amount: 2000, type: 'REGISTRATION', dueDate: '2026-05-20' },
       { term: '2025/2026 T3', description: 'Tuition Fee', amount: 8500, type: 'TUITION', dueDate: '2026-06-20' },
       { term: '2026/2027 T1', description: 'Tuition Fee', amount: 8500, type: 'TUITION', dueDate: '2026-10-15' },
+      { term: '2026/2027 T1', description: 'NITA Trade Test Grade III Examination Fee', amount: 2500, type: 'EXAM', dueDate: '2026-11-15' },
     ],
     payments: [
       { amount: 3000, method: 'MPESA', reference: 'MPESA7G5J1K9M', paidAt: '2026-05-25T11:50:00', note: 'Part payment — 2025/2026 T3 fees' },
@@ -1614,6 +1616,7 @@ export const students: StudentSeed[] = [
     fees: [
       { term: '2026/2027 T1', description: 'Registration Fee (One-time)', amount: 2000, type: 'REGISTRATION', dueDate: '2026-09-15' },
       { term: '2026/2027 T1', description: 'Tuition Fee', amount: 9000, type: 'TUITION', dueDate: '2026-10-15' },
+      { term: '2026/2027 T1', description: 'KNEC Module I Examination Fee', amount: 3000, type: 'EXAM', dueDate: '2026-11-20' },
     ],
     payments: [
       { amount: 4000, method: 'MPESA', reference: 'MPESA5H8S3J7N', paidAt: '2026-09-25T10:55:00', note: 'Part payment — 2026/2027 T1 fees' },
@@ -1695,6 +1698,7 @@ export const applications: ApplicationSeed[] = [
     guardianName: 'Annastacia Mwende',
     guardianPhone: '+254 726 884 700',
     message: 'I want to join the January intake for CPA Level 1. Kindly send me the fee structure and class timetable.',
+    adminNote: 'Ref: KIP/APP/2026/7QK4M',
     createdAt: '2026-10-19T09:24:00',
   },
   {
@@ -1710,6 +1714,7 @@ export const applications: ApplicationSeed[] = [
     guardianName: 'Mutinda Kilui',
     guardianPhone: '+254 735 909 800',
     message: 'I am interested in the electrical engineering diploma (power option). When does the January intake begin, and are there hostel facilities?',
+    adminNote: 'Ref: KIP/APP/2026/3XB9T',
     createdAt: '2026-10-16T14:02:00',
   },
   {
@@ -1725,6 +1730,7 @@ export const applications: ApplicationSeed[] = [
     guardianName: 'Kavutha Nguli',
     guardianPhone: '+254 718 226 100',
     message: 'I want to join hairdressing and beauty therapy at Mwingi Campus in January. Do you offer evening classes?',
+    adminNote: 'Ref: KIP/APP/2026/9JN2W',
     createdAt: '2026-10-12T11:47:00',
   },
   {
@@ -1740,6 +1746,7 @@ export const applications: ApplicationSeed[] = [
     guardianName: 'Mwova Nzuki',
     guardianPhone: '+254 704 337 900',
     message: 'Please send me the admission requirements and fee structure for the catering diploma. I would like to join the January intake.',
+    adminNote: 'Ref: KIP/APP/2026/5TD8K',
     createdAt: '2026-10-08T16:31:00',
   },
   {
@@ -1755,6 +1762,7 @@ export const applications: ApplicationSeed[] = [
     guardianName: 'Musenya David',
     guardianPhone: '+254 743 550 001',
     message: 'I want to join the January intake for supply chain management at the Town Campus. I work during the day — are there evening classes?',
+    adminNote: 'Ref: KIP/APP/2026/2VM7C',
     createdAt: '2026-10-04T08:55:00',
   },
   {
@@ -1770,6 +1778,7 @@ export const applications: ApplicationSeed[] = [
     guardianName: 'Kasyoka Munywoki',
     guardianPhone: '+254 791 642 000',
     message: 'I would like to bridge to CPA through CAMS. Is the January intake available, and what are the KASNEB examination dates?',
+    adminNote: 'Ref: KIP/APP/2026/8HJ5R',
     createdAt: '2026-09-29T13:18:00',
   },
   {
@@ -1787,7 +1796,7 @@ export const applications: ApplicationSeed[] = [
     message: 'I applied online for the Diploma in ICT and I am ready to join in January. Thank you for the quick response.',
     status: 'ACCEPTED',
     adminNote:
-      'Admitted to the January 2027 intake — Diploma in ICT, Main Campus. Registration fee paid via M-Pesa. Admission letter issued and login credentials sent by SMS.',
+      'Admitted to the January 2027 intake — Diploma in ICT, Main Campus (Ref: KIP/APP/2026/4W2KQ). Registration fee paid via M-Pesa; admission letter issued and portal login credentials sent by SMS.',
     createdAt: '2026-09-21T10:12:00',
     reviewedAt: '2026-09-24T09:30:00',
   },
@@ -1805,7 +1814,8 @@ export const applications: ApplicationSeed[] = [
     guardianPhone: '+254 705 774 100',
     message: 'I want to study business management. Please consider my application.',
     status: 'REJECTED',
-    adminNote: 'Below minimum entry requirements — advised to apply for certificate level.',
+    adminNote:
+      'Below minimum entry requirements for diploma entry — KCSE D- (2023). Advised to apply for the Certificate in Business Management (minimum D plain) before the 15th December 2026 deadline. Ref: KIP/APP/2026/6RF3N.',
     createdAt: '2026-09-15T12:40:00',
     reviewedAt: '2026-09-18T10:15:00',
   },
@@ -1816,8 +1826,8 @@ export const applications: ApplicationSeed[] = [
 // ============================================================
 export const announcements = [
   {
-    title: 'January 2027 Intake Ongoing — Apply Now',
-    body: "Applications are open for the January 2027 intake across all our campuses (Main, Town and Mwingi). Programmes are available in KASNEB professional studies, business and technical courses. Apply online through the Admissions page or visit any campus for guidance and on-the-spot admission. Limited hostel space at Main Campus is allocated on a first-come basis.",
+    title: 'January 2027 Intake Ongoing — Apply by 15th December',
+    body: "Applications are open for the January 2027 intake (classes begin Monday, 11th January 2027) across all three campuses — Main (Wikililye, Mulango Road), Town (Muli Mall) and Mwingi (Sunrise Building). Applications close on 15th December 2026: apply online through the Admissions page or visit any campus for on-the-spot admission. KASNEB, business and technical programmes are all available, and hostel space at Main Campus is limited and allocated on a first-come basis.",
     audience: 'ALL',
     pinned: true,
     active: true,
@@ -1825,17 +1835,26 @@ export const announcements = [
     createdAt: '2026-10-20T08:00:00',
   },
   {
-    title: 'KASNEB May 2027 Examination Registration Deadline',
-    body: 'All CPA, CAMS, CS, CIFA and DICT students intending to sit the May 2027 KASNEB examinations must complete registration and pay examination fees by 28th February 2027. Late registration attracts KASNEB penalty charges. Visit the Examinations Office or consult your class lecturer for guidance on the registration portal.',
+    title: 'End-of-Term Examination Timetable Released',
+    body: 'The September–December 2026 end-of-term examination timetable has been released and posted on campus notice boards and the student portal. KNEC module examinations run from Monday, 23rd November to Friday, 4th December 2026. Exam cards will be issued at the Examinations Office from 16th to 20th November to students who have cleared their fee balances — check your personal timetable and report any clashes immediately.',
     audience: 'STUDENTS',
     pinned: false,
     active: true,
     authorName: 'Registrar',
-    createdAt: '2026-10-16T09:00:00',
+    createdAt: '2026-10-18T09:00:00',
   },
   {
-    title: 'Tuition Fee Payment Deadline for 2026/2027 T1',
-    body: 'This is a reminder that tuition fees for the September–December 2026 term fall due on 30th November 2026. Kindly settle your balance via M-Pesa Paybill 522533 (Account: Admission Number) or by direct bank deposit at any Equity Bank branch. Students with outstanding balances will not be admitted to end-of-term examinations.',
+    title: 'Fee Clearance Deadline for End-of-Term Examinations',
+    body: 'All fee balances for the September–December 2026 term must be cleared by Friday, 13th November 2026 for students to be admitted to the end-of-term examinations beginning 23rd November. Pay via M-Pesa Paybill 522 890 (Account: your Admission Number), by direct deposit at any Equity Bank branch, or at the finance office on any campus. Students facing genuine difficulties should see the Finance Officer before the deadline to agree a written instalment plan.',
+    audience: 'STUDENTS',
+    pinned: false,
+    active: true,
+    authorName: 'Registrar',
+    createdAt: '2026-10-15T09:00:00',
+  },
+  {
+    title: 'KASNEB May 2027 Examination Registration — Register Early',
+    body: 'CPA, CAMS, ATD, CS, CIFA and DICT students intending to sit the May 2027 KASNEB examinations should complete registration by 28th February 2027; late registration attracts KASNEB penalty charges. The Examinations Office runs registration clinics every Friday afternoon this term — bring your student ID, KCSE certificate and previous result slips. Confirm your examination fees with your class lecturer before making payment.',
     audience: 'STUDENTS',
     pinned: false,
     active: true,
@@ -1843,17 +1862,17 @@ export const announcements = [
     createdAt: '2026-10-10T09:00:00',
   },
   {
-    title: 'Industrial Attachment Reports Due',
-    body: 'All Diploma students currently on industrial attachment (Stage 5 and 6) must submit their attachment reports, logbooks and supervisor assessment forms to their course coordinators by 20th November 2026. Late submission will affect your Research Project grading. Attachment letters for the next placement are available at the Registrar\u2019s office.',
+    title: 'Student ID Cards Ready for Collection — September 2026 Intake',
+    body: 'Student ID cards for the September 2026 intake are ready for collection at the Registrar\u2019s office on each campus, Monday to Saturday. Bring your fee receipt and a copy of your national ID or birth certificate. You will need the ID card for end-of-term examinations, the library and attachment letters, so collect yours before 30th November 2026.',
     audience: 'STUDENTS',
     pinned: false,
     active: true,
     authorName: 'Registrar',
-    createdAt: '2026-10-05T10:30:00',
+    createdAt: '2026-10-08T10:00:00',
   },
   {
-    title: 'Campus Closed for Public Holiday',
-    body: 'All campuses and offices will be closed on Friday, 12th December 2026, to mark Jamhuri Day. Normal classes resume on Monday, 15th December 2026. We wish all our students and staff a happy holiday.',
+    title: 'Campus Closed for Jamhuri Day',
+    body: 'All campuses and offices will be closed on Saturday, 12th December 2026, to mark Jamhuri Day — there will be no Saturday classes that weekend. Normal classes resume on Monday, 14th December 2026. We wish all our students and staff a restful holiday.',
     audience: 'ALL',
     pinned: false,
     active: true,
@@ -1867,46 +1886,70 @@ export const announcements = [
 // ============================================================
 export const newsPosts = [
   {
-    title: 'KIP College Celebrates 100% CPA Level 1 Pass Rate',
+    title: 'May 2026 Intake Opens Monday 11th May — Apply by 24th April',
     excerpt:
-      'All 24 candidates who sat the May 2026 KASNEB CPA Level I examinations at KIP College passed, with six scoring distinctions.',
-    body: "KIP College is celebrating a historic milestone after all 24 candidates who sat the May 2026 KASNEB CPA Level I examinations passed, recording a 100% pass rate. Six candidates scored distinctions, led by Faith Mutune of our Town Campus with 85 marks in Financial Accounting.\n\nThe Head of the KASNEB Professional Studies Department, CPA Joseph Kimani, attributed the results to a disciplined revision programme, weekly mock examinations and personalised coaching for every candidate ahead of each KASNEB sitting. \u201CWe treat every candidate as our own child \u2014 nobody is left behind,\u201D he said.\n\nThe Principal congratulated the CPA class, their lecturers and parents, and encouraged candidates registering for the May 2027 Level II examinations to maintain the same momentum. Registration for the next sitting is ongoing at all campuses.",
-    image: '/images/gallery-graduation.png',
-    category: 'Academics',
+      'Applications for the May 2026 intake close on Friday 24th April. Day, evening and weekend classes are available across all three campuses.',
+    body: "Applications are now open for the May 2026 intake, which begins on Monday, 11th May 2026 and closes on Friday, 24th April 2026. Places in KASNEB classes and the engineering workshops are allocated on a first-come basis.\n\nThe May intake suits KCSE candidates who received their results in January: certificate and artisan programmes run alongside diploma and KASNEB Level I classes at all three campuses — Main (Wikililye, Mulango Road), Town (Muli Mall) and Mwingi (Sunrise Building).\n\nApply online through the Admissions page or visit any campus with your KCSE result slip and ID. Fees are payable in two or three instalments per term, and county bursary letters are accepted at the finance office.",
+    image: '/images/campus-main.png',
+    category: 'Admissions',
     author: 'Communications Office',
     published: true,
-    publishedAt: '2026-10-09T09:00:00',
+    publishedAt: '2026-02-16T09:00:00',
   },
   {
-    title: 'New Mwingi Campus Wing Officially Opened',
+    title: 'College Commissions New Workshop Equipment Worth KES 2.8 Million',
     excerpt:
-      'A newly completed two-storey wing at Mwingi Campus adds modern classrooms, a computer laboratory and a beauty therapy studio.',
-    body: "The new wing at our Mwingi Campus (Sunrise Building) was officially opened on Friday, adding six modern classrooms, a 40-station computer laboratory and a fully equipped beauty therapy and hairdressing studio.\n\nSpeaking during the opening, the Principal noted that the expansion responds to growing demand for tertiary education in the greater Mwingi region, allowing more programmes to be offered closer to home. The campus now offers business, ICT, KASNEB and hospitality programmes.\n\nEnrolment for the January 2027 intake at Mwingi Campus is ongoing, with limited scholarship slots available for top KCSE performers from Mwingi North and Mwingi Central sub-counties.",
+      'New electrical installation boards, motor-control panels and plumbing rigs have been installed in the Main Campus workshops.',
+    body: "KIP College has commissioned new training equipment worth KES 2.8 million for its technical workshops. The consignment includes fifteen electrical installation training boards, three three-phase motor-control panels, plumbing pipe-running rigs and upgraded catering kitchen equipment.\n\nThe investment follows what employers ask for: graduates who have already done the work with their own hands. Every wiring board added is one more student who practices on real circuits before touching a client installation.\n\nElectrical, plumbing and catering students began using the new equipment at the start of the May term, and evening workshop hours have been extended so students on attachment during the day can still complete their practical hours.",
+    image: '/images/gallery-workshop.png',
+    category: 'Facilities',
+    author: 'Communications Office',
+    published: true,
+    publishedAt: '2026-06-12T09:00:00',
+  },
+  {
+    title: 'Mwingi Campus Opens New Wing Ahead of September Intake',
+    excerpt:
+      'Six new classrooms, a 40-station computer laboratory and an expanded beauty therapy studio open at Mwingi Campus for the September intake.',
+    body: "A newly completed expansion at our Mwingi Campus (Sunrise Building) opens its doors this September: six additional classrooms, a 40-station computer laboratory and an expanded beauty therapy and hairdressing studio.\n\nThe expansion responds to growing demand from Mwingi North and Mwingi Central, allowing more learners to train close to home instead of commuting daily to Kitui town. The campus now runs business and ICT certificates and diplomas, KASNEB evening classes and the full hospitality and beauty programmes.\n\nSeptember 2026 intake classes begin on Monday, 7th September 2026, with applications closing on 21st August. A limited number of scholarship slots remain for top KCSE performers from the Mwingi sub-counties.",
     image: '/images/campus-mwingi.png',
     category: 'Campus',
     author: 'Communications Office',
     published: true,
-    publishedAt: '2026-09-25T09:00:00',
+    publishedAt: '2026-08-14T09:00:00',
   },
   {
-    title: 'State-of-the-Art Computer Lab Launched at Main Campus',
-    excerpt: 'A new 60-station computer laboratory with fibre internet has been commissioned at the Main Campus ICT block.',
-    body: "KIP College has commissioned a new 60-station computer laboratory at the Main Campus ICT block, complete with fibre-optic internet, interactive smart boards and modern ergonomic workstations.\n\nThe laboratory serves the growing number of ICT students across the Diploma in ICT, Certificate in ICT and DICT programmes, supporting programming, networking and web development practicals — including evening sessions for working students.\n\nThe project is part of the college\u2019s wider ICT infrastructure upgrade that includes campus-wide Wi-Fi, a new learning management portal and digital library resources.",
-    image: '/images/gallery-computer-lab.png',
-    category: 'Facilities',
-    author: 'Communications Office',
-    published: true,
-    publishedAt: '2026-09-11T09:00:00',
-  },
-  {
-    title: 'KIP College Partners with Kitui Industries for Student Attachment',
-    excerpt: 'A new MoU with Kitui Industries and 12 other firms guarantees industrial attachment places for diploma students.',
-    body: "KIP College has signed a memorandum of understanding with Kitui Industries and twelve other leading employers in the region, guaranteeing industrial attachment opportunities for diploma students in engineering, business and ICT programmes.\n\nUnder the partnership, students will be placed in structured three-month attachment programmes with mentorship, supervision and assessment linked to their course curricula. Outstanding attachees will be considered for internships and employment after graduation.\n\nThe Principal thanked the partner firms for opening their doors, noting that practical exposure remains the strongest bridge between college and employment for Eastern Kenya\u2019s youth.",
+    title: 'KASNEB November 2026 Examinations: Registration Closes 30th September',
+    excerpt:
+      'Candidates for the November/December 2026 KASNEB sittings must complete registration and pay examination fees by 30th September.',
+    body: "All CPA, CAMS, ATD, CS, CIFA and DICT candidates intending to sit the November/December 2026 KASNEB examinations must complete registration and pay their examination fees by Wednesday, 30th September 2026. KASNEB charges penalties for late entries, and the portal closes firmly thereafter.\n\nThe Examinations Office at each campus is open Monday to Saturday to verify documents, compute fees and submit portal entries. Bring your student ID, KCSE certificate and previous result slips; first-time candidates also need one passport photograph.\n\nCandidates who miss this window should register early for the May 2027 sitting instead — registration is already open, and evening revision classes continue through the term.",
     image: '/images/cat-kasneb.png',
-    category: 'Partnerships',
+    category: 'Exams',
+    author: 'Examinations Office',
+    published: true,
+    publishedAt: '2026-09-04T09:00:00',
+  },
+  {
+    title: 'January 2027 Intake Open — Applications Close 15th December',
+    excerpt:
+      'Classes for the January 2027 intake begin Monday, 11th January 2027. Applications close on 15th December across all three campuses.',
+    body: "Applications are open for the January 2027 intake, the largest of our three annual intakes. Classes begin on Monday, 11th January 2027, and applications close on Tuesday, 15th December 2026.\n\nThe intake covers all programmes: KASNEB professional courses (CPA, ATD, CAMS, CS, CIFA), business diplomas and certificates, and technical programmes in the workshops, kitchens and studios. KCSE 2026 candidates may apply with their result slips as soon as results are released.\n\nComing off a 100% CPA Level I pass rate in the May 2026 KASNEB sitting, the college has expanded evening and Saturday classes at Town Campus for working applicants. Apply online or visit any campus — Main (Wikililye), Town (Muli Mall) or Mwingi (Sunrise Building). Hostel space at Main Campus is limited and allocated on a first-come basis.",
+    image: '/images/about-campus.png',
+    category: 'Admissions',
     author: 'Communications Office',
     published: true,
-    publishedAt: '2026-08-28T09:00:00',
+    publishedAt: '2026-10-14T09:00:00',
+  },
+  {
+    title: 'Class of 2026 Graduation Ceremony — Friday, 11th December',
+    excerpt:
+      'Graduation for the Class of 2026 takes place on Friday, 11th December 2026 at the Main Campus graduation square. Gown collection runs 7th to 10th December.',
+    body: "The Class of 2026 graduates on Friday, 11th December 2026, at the Main Campus graduation square. The ceremony covers all diploma, certificate, artisan and KASNEB graduands across the three campuses.\n\nGraduands should collect gowns and confirm their names on the graduation list at the Registrar\u2019s office between Monday, 7th and Thursday, 10th December. Guest entry is by ticket — two guests per graduand — issued together with the gown. Rehearsal takes place on Thursday, 10th December at 2.00 pm.\n\nThis notice is still in draft pending confirmation of the guest speaker and the final graduand list from the Registrar.",
+    image: '/images/gallery-graduation.png',
+    category: 'Community',
+    author: 'Communications Office',
+    published: false,
+    publishedAt: '2026-10-22T09:00:00',
   },
 ]
 
@@ -1915,25 +1958,25 @@ export const newsPosts = [
 // ============================================================
 export const events = [
   {
-    title: '2026 Graduation Ceremony',
+    title: 'Graduation Ceremony — Class of 2026',
     description:
-      "KIP College's annual graduation ceremony for the Class of 2026 across all diploma, certificate, artisan and KASNEB programmes. Graduands and guests should be seated by 8:00 AM; gowns are collected from the Registrar's office from 7th December.",
+      "KIP College's graduation ceremony for the Class of 2026 across all diploma, certificate, artisan and KASNEB programmes. Graduands and guests should be seated by 8.00 am; gowns and two guest tickets per graduand are collected from the Registrar's office between 7th and 10th December. Rehearsal on Thursday, 10th December at 2.00 pm.",
     date: '2026-12-11T09:00:00',
     venue: 'Main Campus Graduation Square, Wikililye',
     image: '/images/gallery-graduation.png',
   },
   {
-    title: 'Career & Entrepreneurship Week',
+    title: 'Career & Entrepreneurship Week 2026',
     description:
-      'A week of career talks, CV clinics, employer exhibitions and business-plan competitions featuring guest speakers from banking, engineering, ICT and county government. Open to students and the public.',
+      'Five days of career talks, CV clinics, mock interviews and employer exhibitions, with guest speakers from banking, engineering, ICT, hospitality and county government. Final-year students pitch business plans for seed capital on the Friday afternoon. Open to students, alumni and the public — bring your CV.',
     date: '2026-11-16T08:30:00',
     venue: 'Main Campus Grounds, Wikililye',
     image: null,
   },
   {
-    title: 'KASNEB Registration Clinic',
+    title: 'KASNEB Registration Clinic — May 2027 Sitting',
     description:
-      'One-on-one support for CPA, CAMS, CS, CIFA and DICT students registering for the May 2027 KASNEB examinations — portal walk-through, fee computation and document verification. Bring your student ID and previous result slips.',
+      'One-on-one support for CPA, CAMS, ATD, CS, CIFA and DICT students registering for the May 2027 KASNEB examinations: portal walk-through, fee computation and document verification. Bring your student ID, KCSE certificate, previous result slips and one passport photo. Runs 10.00 am to 3.00 pm — no appointment needed.',
     date: '2026-11-07T10:00:00',
     venue: 'Town Campus, Room 4 (Muli Mall)',
     image: null,
@@ -1941,10 +1984,18 @@ export const events = [
   {
     title: 'Open Day — All Campuses',
     description:
-      'Prospective students and parents tour facilities, meet lecturers, view course demonstrations and receive on-the-spot admission guidance at all three campuses. Entry is free; parking is available at all campuses.',
+      'Prospective students and parents tour the workshops, computer labs, training kitchen and salon studios, meet lecturers, watch course demonstrations and receive on-the-spot admission ahead of the January 2027 intake (applications close 15th December). Running 9.00 am to 3.00 pm at Main (Wikililye), Town (Muli Mall) and Mwingi (Sunrise Building) — entry is free and no booking is required.',
     date: '2026-11-28T09:00:00',
     venue: 'All Campuses (Main, Town & Mwingi)',
     image: '/images/about-campus.png',
+  },
+  {
+    title: 'Fee Clearance & Exam Card Collection Deadline',
+    description:
+      'All fee balances for the September–December 2026 term must be cleared by Friday, 13th November for students to sit the end-of-term KNEC examinations beginning Monday, 23rd November. Pay via M-Pesa Paybill 522 890 (Account: Admission Number), Equity Bank or the campus finance office. Exam cards are issued to cleared students from 16th to 20th November.',
+    date: '2026-11-13T08:00:00',
+    venue: 'Finance & Examinations Offices — All Campuses',
+    image: null,
   },
 ]
 
@@ -1952,15 +2003,15 @@ export const events = [
 // GALLERY
 // ============================================================
 export const galleryItems = [
-  { title: 'Graduation Ceremony 2025', image: '/images/gallery-graduation.png', caption: 'Graduands celebrate with family and friends during the 2025 graduation ceremony at Main Campus.' },
-  { title: 'Modern Computer Laboratory', image: '/images/gallery-computer-lab.png', caption: 'Students undertaking practical programming exercises in one of our ICT laboratories.' },
-  { title: 'The Learning Resource Centre', image: '/images/gallery-library.png', caption: 'Our well-stocked library offers quiet study space, course texts and past examination papers.' },
-  { title: 'Engineering Workshops', image: '/images/gallery-workshop.png', caption: 'Electrical engineering students on practical wiring and machines lessons in the Main Campus workshop.' },
-  { title: 'Catering Practical Sessions', image: '/images/gallery-catering.png', caption: 'Hospitality students perfecting culinary techniques in the training kitchen.' },
-  { title: 'Beauty & Hairdressing Studio', image: '/images/gallery-beauty.png', caption: 'Hairdressing and beauty therapy students during client practice sessions at Mwingi Campus.' },
-  { title: 'Main Campus — Wikililye', image: '/images/campus-main.png', caption: 'The flagship Main Campus along Mulango Road, Wikililye.' },
-  { title: 'Town Campus — Kitui CBD', image: '/images/campus-town.png', caption: 'The Town Campus at the Muli Mall building, ideal for evening and weekend learners.' },
-  { title: 'Mwingi Campus', image: '/images/campus-mwingi.png', caption: 'The Sunrise Building campus serving the greater Mwingi region.' },
+  { title: 'Graduation Ceremony 2025', image: '/images/gallery-graduation.png', caption: 'The Class of 2025 — 214 graduands across diploma, certificate, artisan and KASNEB programmes — celebrates with family at Main Campus.' },
+  { title: 'Modern Computer Laboratory', image: '/images/gallery-computer-lab.png', caption: 'Diploma in ICT students on structured programming practicals in Lab 1, Main Campus — programming labs run weekly from the first term.' },
+  { title: 'The Learning Resource Centre', image: '/images/gallery-library.png', caption: 'The library stocks course texts, KASNEB past papers and KNEC revision material, with quiet study space open on weekdays until 8.00 pm.' },
+  { title: 'Engineering Workshops', image: '/images/gallery-workshop.png', caption: 'Electrical engineering students wire three-phase motor-control panels in the Main Campus workshop — real boards, real circuits.' },
+  { title: 'Catering Practical Sessions', image: '/images/gallery-catering.png', caption: 'Catering students plate for a lunch service in the training kitchen — real menus, real costings, real guests.' },
+  { title: 'Beauty & Hairdressing Studio', image: '/images/gallery-beauty.png', caption: 'Beauty therapy students on client practice at the Mwingi Campus salon studio, preparing for NITA trade tests.' },
+  { title: 'Main Campus — Wikililye', image: '/images/campus-main.png', caption: 'The flagship Main Campus on Mulango Road, Wikililye — workshops, ICT labs, training kitchen, library and hostels.' },
+  { title: 'Town Campus — Kitui CBD', image: '/images/campus-town.png', caption: 'Town Campus at the Muli Mall building — home of the 5.30–8.30 pm evening and Saturday classes for working learners.' },
+  { title: 'Mwingi Campus', image: '/images/campus-mwingi.png', caption: 'Mwingi Campus at the Sunrise Building — business, ICT, KASNEB and beauty programmes for the greater Mwingi region.' },
 ]
 
 // ============================================================
@@ -1969,50 +2020,50 @@ export const galleryItems = [
 export const testimonials = [
   {
     name: 'Mercy Ngima',
-    role: 'CPA Graduate — Accountant, Kitui County Government',
+    role: 'CPA Graduate (2023) — Accountant, Kitui County Government',
     course: 'Certified Public Accountant (CPA)',
     quote:
-      'The CPA classes at KIP College were thorough and practical. Our lecturer took us through every past paper until the concepts clicked. I completed Level III in record time and got my job at the County even before graduation.',
+      'I studied CPA in evening classes at Town Campus while working as a shop attendant in Kitui town — the 5.30 to 8.30 pm timetable is the only reason I could afford to qualify. Our lecturer took us through every past paper until the concepts clicked. I finished Level III in two years and reported to my county job a month later.',
     rating: 5,
   },
   {
     name: 'Daniel Maingi',
-    role: 'Diploma in ICT Graduate — IT Officer, Muli Mall Kitui',
+    role: 'Diploma in ICT Graduate (2024) — IT Officer, Muli Mall, Kitui',
     course: 'Diploma in Information Communication Technology',
     quote:
-      'From wiring networks in the lab to deploying my first web application, the training was hands-on from day one. The industrial attachment organised by the college became my first employer.',
+      'The computer labs stayed open in the evenings, and my lecturer reviewed my final project code line by line. The attachment the college arranged became my first employer — I was retained after three months.',
     rating: 5,
   },
   {
     name: 'Winnie Kalekye',
-    role: 'Diploma in HRM Graduate — HR Assistant, Kitui Teachers SACCO',
+    role: 'Diploma in HRM Graduate (2023) — HR Assistant, Kitui Teachers SACCO',
     course: 'Diploma in Human Resource Management',
     quote:
-      'The lecturers knew every student by name and pushed us to finish. I also liked that fees could be paid in flexible instalments — that is what kept me in class.',
+      'Paying fees in small instalments is what kept me in class — I paid from my kiosk earnings without ever being sent home. And the lecturers knew every student by name; they called when you missed a class.',
     rating: 4,
   },
   {
     name: 'Erastus Munywoki',
-    role: 'Diploma in EEE Graduate — Technician, Kenya Power',
+    role: 'Diploma in EEE Graduate (2022) — Technician, Kenya Power',
     course: 'Diploma in Electrical & Electronic Engineering (Power Option)',
     quote:
-      'The workshop practice at KIP is the real deal — motors, panels, installation. I walked into my Kenya Power interview confident because I had done it all with my own hands.',
+      'The workshop practice is the real deal — motors, panels, real installation boards. I walked into my Kenya Power interview confident because I had wired everything they asked about with my own hands.',
     rating: 5,
   },
   {
     name: 'Faith Mwikali',
-    role: 'Certificate in Hairdressing Graduate — Founder, Mwikali Beauty Spot, Kitui Town',
+    role: 'Certificate in Hairdressing Graduate (2024) — Founder, Mwikali Beauty Spot, Kitui Town',
     course: 'Certificate in Hairdressing & Beauty Therapy',
     quote:
-      'I opened my own salon six months after graduating. The training covered technique, client care and salon money management. It was the best decision I ever made.',
+      'I opened my own salon six months after passing my NITA trade test. They taught technique, client care and salon bookkeeping — my shop has never run at a loss.',
     rating: 5,
   },
   {
     name: 'Job Kilonzo',
-    role: 'Diploma in Catering Graduate — Chef, Kanzalu Lodge, Machakos',
+    role: 'Diploma in Catering Graduate (2023) — Chef, Kanzalu Lodge, Machakos',
     course: 'Diploma in Catering & Accommodation Management',
     quote:
-      'Great kitchens, patient chef-instructors and real guests to cook for during college functions. The attachment placement support was excellent.',
+      'We cooked for real guests at college functions, so speed and cost control were learned by doing. The attachment placement office got me into Kanzalu Lodge, and I was retained after three months.',
     rating: 4,
   },
 ]
@@ -2146,74 +2197,60 @@ export const materials: MaterialSeed[] = [
 // ============================================================
 export const faqs = [
   {
-    question: 'How do I apply for admission at KIP College?',
+    question: 'How do I apply, and when do intakes open?',
     answer:
-      'You can apply online through this website (Apply Now — takes about 10 minutes) or visit any of our three campuses — Main Campus (100m from Wikililye, Mulango Road), Town Campus (Muli Mall) or Mwingi Campus (Sunrise Building). Online applications are reviewed within 48 hours.',
+      'We have three intakes a year — January, May and September — and applications close about two weeks before classes begin (for example, 15th December for the January intake). Apply online via the Apply page (it takes about 10 minutes) or visit any campus: Main (100m from Wikililye, Mulango Road), Town (Muli Mall) or Mwingi (Sunrise Building). Online applications are reviewed within 48 hours and you receive an application reference immediately.',
     category: 'Admissions',
     sortOrder: 1,
   },
   {
-    question: 'What are the entry requirements?',
+    question: 'What KCSE grade do I need for each level?',
     answer:
-      'Requirements vary by programme: Diploma courses require KCSE mean grade C- or above; Certificate courses require D+ / D; Artisan courses (e.g. Electrical Installation) accept D-; KASNEB professional courses (CPA, CS, CIFA) require C+ with C+ in Mathematics and English, with bridging routes via CAMS/ATD. Bring your KCSE certificate and a copy of your ID when reporting.',
+      'Artisan courses (e.g. Electrical Installation) take D- and above; certificate courses take D plain or D+; diplomas require C- (with C- in Mathematics and Physics/Physical Sciences for the engineering diplomas); KASNEB professional courses (CPA, CS, CIFA) require C+ with C+ in Mathematics and English/Kiswahili. If your grade is below the course you want, CAMS and ATD are recognised bridging routes into CPA. Bring your KCSE certificate and a copy of your ID when reporting.',
     category: 'Admissions',
     sortOrder: 2,
   },
   {
-    question: 'When are the intakes?',
+    question: 'What is the difference between KASNEB and KNEC programmes?',
     answer:
-      'KIP College has three intakes every year — January, May and September. KASNEB examination classes also align with the May and November/December examination sittings. Late applications are considered where spaces remain.',
-    category: 'Admissions',
+      'KASNEB courses (CPA, ATD, CAMS, CS, CIFA, DICT) are professional qualifications examined in May and November/December, level by level, with fees paid per sitting — ideal if you want to qualify while working. KNEC courses are modular certificates and diplomas (ICT, business, engineering, catering) examined at the end of each module, usually with attachment in the final module. NITA trade tests certify artisan courses such as electrical installation, plumbing and hairdressing, while TVET-CDACC courses are graded on practical competencies. All are nationally recognised; our admissions team will advise which route fits your grade and career.',
+    category: 'Courses',
     sortOrder: 3,
   },
   {
     question: 'How much are the fees, and can I pay in instalments?',
     answer:
-      'Fees vary by course (from about KES 6,500 per term for artisan programmes to KES 16,000 for engineering diplomas). We offer flexible instalment plans — most students pay fees in two or three instalments per term. Pay by M-Pesa Paybill 522 890 (Account: your Admission Number), at the finance office, or via bank.',
+      'Tuition runs from about KES 6,500 per term for artisan courses, KES 8,000–10,000 for certificates (including CAMS), to KES 11,000–16,000 for diplomas and the higher KASNEB professional levels. Registration is a one-time KES 1,500–3,000, and examination fees are charged separately by the exam body (KNEC per module, KASNEB per sitting, NITA per trade test). Yes — most students pay tuition in two or three instalments within the term, via M-Pesa Paybill 522 890 (Account: your Admission Number), at the finance office, or through Equity Bank.',
     category: 'Fees',
     sortOrder: 4,
   },
   {
     question: 'Do you offer bursaries or scholarships?',
     answer:
-      'Yes. We support students through county government bursaries (Kitui & Mwingi), the national government affirmative action funds, church sponsorships and our own internal merit bursaries for top performers. Visit the admissions office with your bursary letter or call 0703 710 879 for guidance.',
+      'Yes. Students use county government bursaries (Kitui and neighbouring counties), the national government affirmative action funds, church sponsorships and our internal merit bursaries for top performers each term. Bring your bursary letter to the finance office or call 0703 710 879 for guidance — bursary students follow the same instalment deadlines while letters are being processed.',
     category: 'Fees',
     sortOrder: 5,
   },
   {
-    question: 'Which examination bodies certify your courses?',
+    question: 'When are student ID cards and examination cards issued?',
     answer:
-      'KIP College programmes are examined by KNEC (technical & business diplomas/certificates), KASNEB (CPA, ATD, CAMS, CS, CIFA), TVET-CDACC (competency-based courses) and NITA (artisan trade tests). All our programmes are fully accredited.',
-    category: 'Courses',
+      'Student ID cards are issued within the first four weeks of your first term — collect yours at the Registrar\u2019s office with your fee receipt and a copy of your ID. End-of-term examination cards are issued about a week before exams, and only to students who have cleared their fee balances; KNEC, KASNEB and NITA candidates must also be registered with the exam body by the published deadline. Carry your ID card to every examination — lost cards are replaced at a small fee.',
+    category: 'Exams',
     sortOrder: 6,
   },
   {
-    question: 'Do you offer evening and weekend classes?',
+    question: 'Do you offer evening, weekend or holiday classes?',
     answer:
-      'Yes — our Town Campus at Muli Mall specialises in evening, weekend and holiday classes for working professionals, especially KASNEB (CPA/ATD/CAMS) and business programmes. Main and Mwingi campuses run full-time day programmes.',
+      'Yes. Town Campus (Muli Mall) specialises in evening classes from 5.30 to 8.30 pm on weekdays plus Saturday classes — the standard mode for KASNEB (CPA/ATD/CAMS) and most business programmes. Main and Mwingi campuses run full-time day classes, with Saturday options for some technical practicals. School leavers can also join full-time classes during the long holidays where spaces remain.',
     category: 'Courses',
     sortOrder: 7,
   },
   {
-    question: 'Is there accommodation/hostel available?',
+    question: 'Does the college help with attachment placement?',
     answer:
-      'Main Campus has hostels for both male and female students, with 24/7 security. We also assist Town and Mwingi campus students to find safe, affordable private hostels near the campuses. Contact the student affairs office for current rates and availability.',
+      'Yes. The Industrial Attachment Office places students with vetted organisations across Kitui County and beyond — banks, county offices, water companies, hotels, salons, schools and engineering contractors. Attachment normally comes in your final year (Module II/III for KNEC diplomas), and your logbook and supervisor assessment count toward your final grading. Apply through the office at least one term before you hope to be placed; final-year students should also attend the annual Career & Entrepreneurship Week, where employers recruit on campus.',
     category: 'General',
     sortOrder: 8,
-  },
-  {
-    question: 'How do I get my KASNEB examination registration done?',
-    answer:
-      'Our Examinations Office handles KASNEB registration for all candidates — we verify documents, submit the portal entries and follow up until your exam card is issued. Bring your KCSE certificate, ID and one passport photo. We also run a free KASNEB Registration Clinic every term (check Events).',
-    category: 'Exams',
-    sortOrder: 9,
-  },
-  {
-    question: 'Does the college assist with attachment and job placement?',
-    answer:
-      'Yes. The Industrial Attachment Office places students in vetted organisations across Kitui County and beyond — banks, county offices, water companies, hotels, salons and engineering firms. We also run an annual Career & Entrepreneurship Week and maintain an active alumni network that advertises job openings.',
-    category: 'General',
-    sortOrder: 10,
   },
 ]
 

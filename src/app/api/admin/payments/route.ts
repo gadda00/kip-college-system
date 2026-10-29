@@ -1,12 +1,17 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { handle, ok, readJson, uniqueReference } from '@/lib/api-helpers'
 import { computeBalance } from '@/lib/fees'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
-/** Payments ledger with student context: ?studentId=&q= filters (both optional). */
+/**
+ * Payments ledger with student context: ?studentId=&q= filters (both optional).
+ * Includes PENDING student-submitted intents awaiting finance review
+ * (confirm/reject them via PATCH /api/admin/payments/[id]).
+ */
 export async function GET(req: Request) {
   return handle(async () => {
     await requireRole('ADMIN')
@@ -67,6 +72,7 @@ const recordPaymentSchema = z.object({
 /** Record a confirmed payment on behalf of a student. */
 export async function POST(req: Request) {
   return handle(async () => {
+    assertSameOrigin(req, { requireOrigin: true })
     const admin = await requireRole('ADMIN')
     const body = recordPaymentSchema.parse(await readJson(req))
 
@@ -108,6 +114,21 @@ export async function POST(req: Request) {
     })
 
     const summary = await computeBalance(body.studentId)
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'PAYMENT_RECORDED',
+      entity: 'payment',
+      entityId: payment.id,
+      meta: {
+        studentId: body.studentId,
+        admissionNo: student.admissionNo,
+        amount: body.amount,
+        method: body.method,
+        reference,
+        recordedBy: admin.name,
+      },
+    })
     return ok(
       {
         id: payment.id,

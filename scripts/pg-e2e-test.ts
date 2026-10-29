@@ -53,9 +53,9 @@ async function main() {
       console.log('  one-line fix upstream: use $executeRawUnsafe for that statement (or pg_try_advisory_xact_lock, which returns boolean)')
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const anyDb = db as any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     let target: any = db
     if (bugPresent) {
       // Shim: emulate the upstream one-line fix. Identical server-side effect —
@@ -63,7 +63,7 @@ async function main() {
       const origTx = anyDb.$transaction.bind(anyDb)
       const wrapTx = (tx: unknown) =>
         new Proxy(tx, {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           
           get(t: any, prop: string | symbol) {
             if (prop === '$queryRawUnsafe') {
               return async (sql: string) => {
@@ -85,13 +85,13 @@ async function main() {
           },
         })
       target = new Proxy(db, {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         get(t: any, prop: string | symbol) {
           if (prop === '$transaction') {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+             
             return (arg: any, opts?: any) => {
               if (typeof arg !== 'function') return origTx(arg, opts)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+               
               return origTx(async (tx: any) => arg(wrapTx(tx)), opts)
             }
           }
@@ -114,7 +114,7 @@ async function main() {
       event: 4, galleryItem: 9, testimonial: 6, contactMessage: 3,
       studyMaterial: 8, fAQ: 10, downloadResource: 2,
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const d = db as any
     for (const [model, expected] of Object.entries(expectedCounts)) {
       check(`count ${model}`, expected, await d[model].count())

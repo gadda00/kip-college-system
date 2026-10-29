@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { boolish, handle, ok, readJson } from '@/lib/api-helpers'
+import { logAudit } from '@/lib/audit'
 import type { Prisma } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
@@ -19,7 +20,8 @@ const updateSchema = z.object({
 /** Edit / publish / unpublish a news post. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const { id } = await params
     const body = updateSchema.parse(await readJson(req))
 
@@ -40,18 +42,34 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     }
 
     const newsPost = await db.newsPost.update({ where: { id }, data })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'NEWS_POST_UPDATED',
+      entity: 'newsPost',
+      entityId: id,
+      meta: { title: newsPost.title, fields: Object.keys(data) },
+    })
     return ok(newsPost)
   })
 }
 
 /** Delete a news post. */
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const { id } = await params
     const existing = await db.newsPost.findUnique({ where: { id }, select: { id: true } })
     if (!existing) throw new HttpError(404, 'News post not found')
     await db.newsPost.delete({ where: { id } })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'NEWS_POST_DELETED',
+      entity: 'newsPost',
+      entityId: id,
+    })
     return ok({ deleted: true, id })
   })
 }

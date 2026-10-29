@@ -101,7 +101,7 @@ const publishSchema = z.object({
  */
 export async function POST(req: Request) {
   return handle(async () => {
-    assertSameOrigin(req)
+    assertSameOrigin(req, { requireOrigin: true })
     const user = await requireRole('ADMIN')
     const raw = await readJson(req)
 

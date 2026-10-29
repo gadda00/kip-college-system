@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { assertSameOrigin, HttpError, requireUser, SESSION_COOKIE } from '@/lib/auth'
+import { assertSameOrigin, hashSessionToken, HttpError, requireUser, SESSION_COOKIE } from '@/lib/auth'
 import { handle, ok, readJson } from '@/lib/api-helpers'
 import { clientIp, rateLimited, RATE_LIMITS } from '@/lib/rate-limit'
 import { logAudit } from '@/lib/audit'
@@ -20,7 +20,7 @@ const passwordSchema = z.object({
 
 export async function POST(req: Request) {
   return handle(async () => {
-    assertSameOrigin(req)
+    assertSameOrigin(req, { requireOrigin: true })
     const user = await requireUser()
     const ip = clientIp(req)
     if (rateLimited(`password:${user.id}`, RATE_LIMITS.password.limit, RATE_LIMITS.password.windowMs)) {
@@ -38,11 +38,15 @@ export async function POST(req: Request) {
     const passwordHash = await bcrypt.hash(body.newPassword, 10)
     await db.user.update({ where: { id: user.id }, data: { passwordHash } })
 
-    // invalidate every session except the current one
+    // invalidate every session except the current one (compare hashed tokens —
+    // the Session table only ever stores sha256 of the raw cookie value)
     const jar = await cookies()
     const currentToken = jar.get(SESSION_COOKIE)?.value
     await db.session.deleteMany({
-      where: { userId: user.id, ...(currentToken ? { NOT: { token: currentToken } } : {}) },
+      where: {
+        userId: user.id,
+        ...(currentToken ? { NOT: { token: hashSessionToken(currentToken) } } : {}),
+      },
     })
 
     await logAudit({

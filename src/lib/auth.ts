@@ -1,19 +1,38 @@
 import { db } from '@/lib/db'
 import type { Prisma, Role } from '@prisma/client'
-import { randomBytes } from 'crypto'
+import { createHash, randomBytes } from 'node:crypto'
 import { cookies } from 'next/headers'
 
 export const SESSION_COOKIE = 'kip_session'
 const SESSION_DAYS = 30
 
 /**
+ * Sessions store only sha256(token) in the database, so a leaked DB dump
+ * cannot be replayed as valid cookies. The cookie carries the raw token;
+ * lookups always hash it first.
+ */
+export function hashSessionToken(raw: string): string {
+  return createHash('sha256').update(raw).digest('hex')
+}
+
+/**
  * CSRF-lite: for cookie-authenticated state changes, require that the
  * request's Origin (or Referer fallback) matches the serving Host.
  * Applied by route handlers via `assertSameOrigin(req)` before mutations.
+ *
+ * @param opts.requireOrigin — when true (mutations), a request with NO
+ *   Origin/Referer at all is rejected too, so cross-site scripts and
+ *   smuggled non-browser clients cannot bypass the check by omitting it.
+ *   Omit it for GET handlers so direct links / curl inspections keep working.
  */
-export function assertSameOrigin(req: Request): void {
+export function assertSameOrigin(req: Request, opts?: { requireOrigin?: boolean }): void {
   const origin = req.headers.get('origin') || req.headers.get('referer')
-  if (!origin) return // non-browser clients (curl/tests) — auth still required
+  if (!origin) {
+    if (opts?.requireOrigin) {
+      throw new HttpError(403, 'Missing Origin header — this request was rejected as a possible cross-site attempt')
+    }
+    return // non-browser clients (curl/tests) — auth still required
+  }
   let originHost: string | null = null
   let host: string | null = null
   try {
@@ -29,8 +48,9 @@ export function assertSameOrigin(req: Request): void {
 
 export async function createSession(userId: string) {
   const token = randomBytes(32).toString('hex')
+  const tokenHash = hashSessionToken(token) // only the hash is persisted
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 3600 * 1000)
-  await db.session.create({ data: { token, userId, expiresAt } })
+  await db.session.create({ data: { token: tokenHash, userId, expiresAt } })
   // opportunistic cleanup of this user's expired sessions
   await db.session.deleteMany({ where: { userId, expiresAt: { lt: new Date() } } }).catch(() => {})
   const jar = await cookies()
@@ -50,7 +70,7 @@ export async function destroySession() {
   const jar = await cookies()
   const token = jar.get(SESSION_COOKIE)?.value
   if (token) {
-    await db.session.deleteMany({ where: { token } })
+    await db.session.deleteMany({ where: { token: hashSessionToken(token) } })
   }
   jar.delete(SESSION_COOKIE)
 }
@@ -155,7 +175,7 @@ export async function getCurrentUser(): Promise<SafeUser | null> {
   const token = jar.get(SESSION_COOKIE)?.value
   if (!token) return null
   const session = await db.session.findUnique({
-    where: { token },
+    where: { token: hashSessionToken(token) },
     select: { userId: true, expiresAt: true, user: { select: { id: true, role: true } } },
   })
   if (!session || session.expiresAt < new Date()) return null

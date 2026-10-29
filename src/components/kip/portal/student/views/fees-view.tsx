@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import {
   BadgeCheck,
   Banknote,
-  CheckCircle2,
+  Clock,
   Landmark,
   Printer,
   Receipt,
@@ -41,14 +41,20 @@ import {
 import { EmptyState } from '@/components/kip/components/empty-state'
 import { QueryBoundary } from '@/components/kip/components/loading'
 import { api, post } from '@/components/kip/lib/api'
-import { fmtDate, fmtKES } from '@/components/kip/lib/format'
+import { fmtDate, fmtDateTime, fmtKES } from '@/components/kip/lib/format'
 import { usePrintDoc } from '@/components/kip/portal/print-doc'
 import {
   FeeStatementDoc,
   buildStatementRows,
   type StatementRow,
 } from '@/components/kip/portal/student/views/print-docs'
-import { KpiGridSkeleton, TableSkeleton, ViewHeading } from '@/components/kip/portal/shared'
+import {
+  KpiGridSkeleton,
+  LoadErrorCard,
+  PaymentStatusBadge,
+  TableSkeleton,
+  ViewHeading,
+} from '@/components/kip/portal/shared'
 import type {
   FeeStatement,
   PayFeeResponse,
@@ -88,7 +94,21 @@ export function FeesView() {
         </div>
       }
     >
-      {data && <FeesBody data={data} onPrint={print} printDoc={printDoc} />}
+      {data && (
+        <>
+          {/* profile feeds the printable statement — surface failures instead
+              of silently printing nothing */}
+          {profile.isError && (
+            <LoadErrorCard
+              compact
+              what="your profile for the printable statement"
+              error={profile.error}
+              onRetry={() => void profile.refetch()}
+            />
+          )}
+          <FeesBody data={data} onPrint={print} printDoc={printDoc} />
+        </>
+      )}
     </QueryBoundary>
   )
 }
@@ -104,6 +124,11 @@ function FeesBody({
 }) {
   const balanceColor =
     data.balance > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
+
+  // confirmation split: only CONFIRMED payments count toward the balance;
+  // PENDING submissions await the finance office, REJECTED never count
+  const confirmedCount = data.payments.filter((p) => p.status === 'CONFIRMED').length
+  const pendingCount = data.payments.filter((p) => p.status === 'PENDING').length
 
   return (
     <div className="space-y-6">
@@ -138,7 +163,9 @@ function FeesBody({
           icon={BadgeCheck}
           label="Total paid"
           value={fmtKES(data.totalPaid)}
-          hint={`${data.payments.length} payment${data.payments.length === 1 ? '' : 's'} received`}
+          hint={`${confirmedCount} confirmed payment${confirmedCount === 1 ? '' : 's'}${
+            pendingCount > 0 ? ` · ${pendingCount} pending` : ''
+          }`}
         />
         <Card className={cn('relative rule-top-gold', data.balance > 0 && 'border-red-200 dark:border-red-900/50')}>
           <CardContent className="p-4 sm:p-5">
@@ -150,7 +177,7 @@ function FeesBody({
             </div>
             <p
               className={cn(
-                'font-display mt-2 text-2xl font-bold tracking-tight tabular-nums sm:text-3xl',
+                'font-display tnum mt-2 text-2xl font-bold tracking-tight sm:text-3xl',
                 balanceColor,
               )}
             >
@@ -170,9 +197,40 @@ function FeesBody({
         </Card>
       </motion.section>
 
+      {/* PENDING explainer — only when submissions await the finance office */}
+      {pendingCount > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, delay: 0.08 }}
+          aria-live="polite"
+        >
+          <Card className="border-warning/30 bg-warning/10">
+            <CardContent className="flex items-start gap-3 p-4">
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-warning/15 text-warning-foreground"
+                aria-hidden="true"
+              >
+                <Clock className="h-4 w-4" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-warning-foreground">
+                  {pendingCount} payment{pendingCount === 1 ? '' : 's'} awaiting confirmation
+                </p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  These payments await finance confirmation and don&rsquo;t yet reduce your balance.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.section>
+      )}
+
       <PayFeesCard balance={data.balance} />
 
-      <StatementTable data={data} />
+      <PaymentsCard data={data} />
+
+      <StatementTable data={data} confirmedCount={confirmedCount} />
 
       {printDoc}
     </div>
@@ -244,8 +302,11 @@ function PayFeesCard({ balance }: { balance: number }) {
       }),
     onSuccess: (res) => {
       setReceipt(res)
-      toast.success('Payment received', {
-        description: `${fmtKES(res.payment.amount)} confirmed · Ref ${res.payment.reference}`,
+      // PENDING intent: the balance only drops once finance confirms
+      toast.success('Payment submitted — the finance office will confirm shortly', {
+        description: `${fmtKES(res.payment.amount)} via ${
+          res.payment.method === 'MPESA' ? 'M-Pesa' : 'bank transfer'
+        } · Ref ${res.payment.reference}`,
       })
       void queryClient.invalidateQueries({ queryKey: ['student-fees'] })
       void queryClient.invalidateQueries({ queryKey: ['student-dashboard'] })
@@ -297,8 +358,8 @@ function PayFeesCard({ balance }: { balance: number }) {
                 Make a payment
               </h2>
               <p className="mt-1 max-w-md text-sm text-muted-foreground">
-                Pay via M-Pesa or bank transfer directly from the portal. Payments are confirmed
-                instantly and reflect on your statement.
+                Pay via M-Pesa or bank transfer directly from the portal. The finance office confirms
+                each payment before it reflects on your balance.
               </p>
               <p className="mt-2.5">
                 <span className="inline-flex flex-wrap items-center gap-1.5 rounded-lg border border-gold-400/40 bg-gold-400/10 px-2.5 py-1.5 text-[11px] font-medium text-gold-700 dark:text-gold-300">
@@ -306,6 +367,9 @@ function PayFeesCard({ balance }: { balance: number }) {
                   M-Pesa Paybill <strong className="font-mono font-bold">522 890</strong> · Account:
                   your admission number
                 </span>
+              </p>
+              <p className="mt-1.5 text-[11px] text-muted-foreground">
+                Confirm current paybill with the finance office — 0703 710 879.
               </p>
             </div>
           </div>
@@ -319,14 +383,15 @@ function PayFeesCard({ balance }: { balance: number }) {
             <DialogContent className="sm:max-w-md">
               {receipt ? (
                 <div className="flex flex-col items-center gap-4 py-4 text-center">
-                  <span className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/15 text-green-600 dark:text-green-400">
-                    <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
+                  <span className="flex h-16 w-16 items-center justify-center rounded-full bg-warning/15 text-warning">
+                    <Clock className="h-8 w-8" aria-hidden="true" />
                   </span>
                   <div>
-                    <h3 className="text-lg font-semibold">Payment received</h3>
+                    <h3 className="text-lg font-semibold">Payment submitted</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
                       {fmtKES(receipt.payment.amount)} via{' '}
-                      {receipt.payment.method === 'MPESA' ? 'M-Pesa' : 'Bank transfer'}
+                      {receipt.payment.method === 'MPESA' ? 'M-Pesa' : 'Bank transfer'} — awaiting
+                      finance confirmation
                     </p>
                   </div>
                   <div className="w-full rounded-lg border bg-muted/40 p-4">
@@ -338,10 +403,12 @@ function PayFeesCard({ balance }: { balance: number }) {
                     </p>
                   </div>
                   <div className="flex w-full items-center justify-between gap-4 rounded-lg border p-4">
-                    <span className="text-sm font-medium text-muted-foreground">New balance</span>
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Balance (until confirmed)
+                    </span>
                     <span
                       className={cn(
-                        'text-lg font-bold',
+                        'tnum text-lg font-bold',
                         receipt.balance > 0
                           ? 'text-red-600 dark:text-red-400'
                           : 'text-green-600 dark:text-green-400',
@@ -350,6 +417,10 @@ function PayFeesCard({ balance }: { balance: number }) {
                       {fmtKES(receipt.balance)}
                     </span>
                   </div>
+                  <p className="text-left text-xs leading-relaxed text-muted-foreground">
+                    The finance office verifies submitted payments before they count. Watch the
+                    payments table below — the status shows <strong>Pending</strong> until confirmed.
+                  </p>
                   <Button onClick={closeDialog} className="min-h-11 w-full">
                     Done
                   </Button>
@@ -446,7 +517,8 @@ function PayFeesCard({ balance }: { balance: number }) {
                           aria-invalid={Boolean(formError)}
                         />
                         <p className="text-xs text-muted-foreground">
-                          You will receive an STK push prompt on this number.
+                          Match the number you&rsquo;ll pay from — the finance office confirms it
+                          against the M-Pesa receipt.
                         </p>
                       </div>
                     )}
@@ -457,7 +529,10 @@ function PayFeesCard({ balance }: { balance: number }) {
                         <p className="mt-1">
                           Equity Bank · Kitui Branch · Acc 0123 4567 8901 · KIP COLLEGE
                         </p>
-                        <p>Use your admission number as the reference, then confirm below.</p>
+                        <p>
+                          Use your admission number as the reference, then submit below so the
+                          finance office can confirm it.
+                        </p>
                       </div>
                     )}
 
@@ -482,12 +557,12 @@ function PayFeesCard({ balance }: { balance: number }) {
                             className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground"
                             aria-hidden="true"
                           />
-                          Confirming…
+                          Submitting…
                         </>
                       ) : (
                         <>
                           <Banknote className="mr-2 h-4 w-4" aria-hidden="true" />
-                          Pay {amount ? fmtKES(Number(amount) || 0) : ''}
+                          Submit {amount ? fmtKES(Number(amount) || 0) : ''}
                         </>
                       )}
                     </Button>
@@ -496,6 +571,156 @@ function PayFeesCard({ balance }: { balance: number }) {
               )}
             </DialogContent>
           </Dialog>
+        </CardContent>
+      </Card>
+    </motion.section>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Payments table (all payments with their confirmation status)
+// ---------------------------------------------------------------------------
+
+/** Method label chip shared by the payments table rows. */
+function methodLabel(method: string): string {
+  if (method === 'MPESA') return 'M-Pesa'
+  if (method === 'BANK') return 'Bank'
+  if (method === 'CASH') return 'Cash'
+  return method
+}
+
+/**
+ * Every payment on the account with its status — the PENDING submissions
+ * the finance office still needs to confirm appear here with a warning
+ * badge and do NOT reduce the balance.
+ */
+function PaymentsCard({ data }: { data: FeeStatement }) {
+  // API returns payments newest first (orderBy paidAt desc)
+  const payments = data.payments
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, delay: 0.12 }}
+      aria-labelledby="payments-table"
+    >
+      <Card>
+        <CardHeader className="pb-4">
+          <CardTitle id="payments-table" className="flex items-center gap-2 text-base">
+            <Wallet className="h-4 w-4 text-gold-600 dark:text-gold-400" aria-hidden="true" />
+            Payments
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">
+            All {payments.length} payment{payments.length === 1 ? '' : 's'} on your account —
+            pending ones don&rsquo;t reduce your balance until finance confirms them.
+          </p>
+        </CardHeader>
+        <CardContent>
+          {payments.length === 0 ? (
+            <EmptyState
+              icon={Wallet}
+              title="No payments yet"
+              hint="M-Pesa and bank payments you submit will appear here with their status."
+              className="py-10"
+            />
+          ) : (
+            <div className="max-h-96 overflow-y-auto custom-scrollbar">
+              {/* Desktop / print table */}
+              <div className="hidden overflow-x-auto md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Date
+                      </TableHead>
+                      <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Method
+                      </TableHead>
+                      <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Reference
+                      </TableHead>
+                      <TableHead className="bg-brand-50 text-right text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Amount
+                      </TableHead>
+                      <TableHead className="bg-brand-50 text-[11px] uppercase tracking-[0.14em] text-brand-800 dark:bg-brand-100 dark:text-brand-100">
+                        Status
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {payments.map((p) => (
+                      <TableRow
+                        key={p.id}
+                        className={cn(
+                          'transition-colors hover:bg-brand-50/60 dark:hover:bg-brand-100/15',
+                          p.status === 'PENDING'
+                            ? 'bg-warning/5'
+                            : p.status === 'REJECTED'
+                              ? 'bg-destructive/5'
+                              : 'odd:bg-muted/40',
+                        )}
+                      >
+                        <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                          {fmtDateTime(p.paidAt)}
+                        </TableCell>
+                        <TableCell className="text-sm font-medium">{methodLabel(p.method)}</TableCell>
+                        <TableCell className="font-mono text-xs text-muted-foreground">
+                          {p.reference}
+                        </TableCell>
+                        <TableCell className="tnum whitespace-nowrap text-right text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                          {fmtKES(p.amount)}
+                        </TableCell>
+                        <TableCell>
+                          <PaymentStatusBadge status={p.status} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile stacked cards */}
+              <ul className="space-y-3 md:hidden">
+                {payments.map((p) => (
+                  <li
+                    key={p.id}
+                    className={cn(
+                      'rounded-xl border p-4',
+                      p.status === 'PENDING'
+                        ? 'border-warning/30 bg-warning/10'
+                        : p.status === 'REJECTED'
+                          ? 'border-destructive/30 bg-destructive/5'
+                          : 'border-emerald-600/25 bg-emerald-500/5',
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold">{methodLabel(p.method)} payment</p>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {fmtDateTime(p.paidAt)}
+                        </p>
+                      </div>
+                      <p className="tnum shrink-0 text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                        {fmtKES(p.amount)}
+                      </p>
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <PaymentStatusBadge status={p.status} />
+                      <Badge variant="outline" className="font-mono text-[10px]">
+                        {p.reference}
+                      </Badge>
+                      {p.note && (
+                        <span className="max-w-full truncate text-[11px] text-muted-foreground">
+                          {p.note}
+                        </span>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </CardContent>
       </Card>
     </motion.section>
@@ -550,9 +775,9 @@ function fmtRunningBalance(value: number): string {
   return value < 0 ? `${fmtKES(Math.abs(value))} CR` : fmtKES(value)
 }
 
-function StatementTable({ data }: { data: FeeStatement }) {
-  // buildStatementRows (print-docs.tsx) returns chronological order; the
-  // on-screen table shows newest transactions first
+function StatementTable({ data, confirmedCount }: { data: FeeStatement; confirmedCount: number }) {
+  // buildStatementRows (print-docs.tsx) returns chronological order with
+  // CONFIRMED payments only; the on-screen table shows newest first
   const rows = useMemo<StatementRow[]>(() => buildStatementRows(data).reverse(), [data])
 
   const empty = rows.length === 0
@@ -658,7 +883,8 @@ function StatementTable({ data }: { data: FeeStatement }) {
                   <TableFooter>
                     <TableRow className="bg-brand-50/70 hover:bg-brand-50/70 dark:bg-brand-100/25 dark:hover:bg-brand-100/25">
                       <TableCell colSpan={4} className="text-sm font-semibold">
-                        Totals · {data.feeItems.length} charges, {data.payments.length} payments
+                        Totals · {data.feeItems.length} charges, {confirmedCount} confirmed payment
+                        {confirmedCount === 1 ? '' : 's'}
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-right text-sm">
                         <span className="text-foreground/70">Charged {fmtKES(data.totalCharged)}</span>

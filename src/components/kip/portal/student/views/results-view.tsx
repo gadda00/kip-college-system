@@ -22,7 +22,7 @@ import { api } from '@/components/kip/lib/api'
 import { gradeColor } from '@/components/kip/lib/format'
 import { usePrintDoc } from '@/components/kip/portal/print-doc'
 import { TranscriptDoc } from '@/components/kip/portal/student/views/print-docs'
-import { KpiGridSkeleton, RowsSkeleton, ViewHeading, GradeBadge, gradeForClient } from '@/components/kip/portal/shared'
+import { KpiGridSkeleton, LoadErrorCard, RowsSkeleton, ViewHeading, GradeBadge, gradeForClient } from '@/components/kip/portal/shared'
 import type {
   ResultEntryDTO,
   StudentProfileFull,
@@ -62,7 +62,21 @@ export function ResultsView() {
         </div>
       }
     >
-      {data && <ResultsBody data={data} onPrint={print} printDoc={printDoc} />}
+      {data && (
+        <>
+          {/* profile feeds the printable transcript — surface failures instead
+              of silently printing nothing */}
+          {profile.isError && (
+            <LoadErrorCard
+              compact
+              what="your profile for the printable transcript"
+              error={profile.error}
+              onRetry={() => void profile.refetch()}
+            />
+          )}
+          <ResultsBody data={data} onPrint={print} printDoc={printDoc} />
+        </>
+      )}
     </QueryBoundary>
   )
 }

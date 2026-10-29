@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { boolish, handle, ok, readJson } from '@/lib/api-helpers'
+import { logAudit } from '@/lib/audit'
 import type { Prisma } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
@@ -28,7 +29,8 @@ const updateSchema = z.object({
 /** Update course fields. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const { id } = await params
     const body = updateSchema.parse(await readJson(req))
 
@@ -59,14 +61,23 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     if (body.sortOrder !== undefined) data.sortOrder = body.sortOrder
 
     const course = await db.course.update({ where: { id }, data })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'COURSE_UPDATED',
+      entity: 'course',
+      entityId: id,
+      meta: { code: course.code, fields: Object.keys(data) },
+    })
     return ok(course)
   })
 }
 
 /** Delete a course (blocked while students are enrolled). */
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const { id } = await params
 
     const existing = await db.course.findUnique({ where: { id } })
@@ -76,6 +87,14 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     if (studentsCount > 0) throw new HttpError(400, 'Cannot delete a course with enrolled students')
 
     await db.course.delete({ where: { id } })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'COURSE_DELETED',
+      entity: 'course',
+      entityId: id,
+      meta: { code: existing.code, title: existing.title },
+    })
     return ok({ deleted: true, id })
   })
 }

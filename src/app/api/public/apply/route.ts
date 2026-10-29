@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
+import { assertSameOrigin, HttpError } from '@/lib/auth'
 import { handle, ok, readJson } from '@/lib/api-helpers'
-import { HttpError } from '@/lib/auth'
 import { clientIp, rateLimited, RATE_LIMITS } from '@/lib/rate-limit'
 import { logAudit } from '@/lib/audit'
 
@@ -42,6 +42,7 @@ function applicationReference(): string {
 /** Public admission application submission. */
 export async function POST(req: Request) {
   return handle(async () => {
+    assertSameOrigin(req, { requireOrigin: true })
     const ip = clientIp(req)
     if (rateLimited(`apply:${ip}`, RATE_LIMITS.application.limit, RATE_LIMITS.application.windowMs)) {
       throw new HttpError(429, 'Too many applications from this connection — please contact admissions@kipskitui.com')
@@ -61,6 +62,7 @@ export async function POST(req: Request) {
     if (!campus) throw new HttpError(400, 'Selected campus was not found')
     if (duplicate) throw new HttpError(409, 'You already have a pending application')
 
+    const reference = applicationReference()
     const application = await db.application.create({
       data: {
         applicantName: body.applicantName,
@@ -75,7 +77,9 @@ export async function POST(req: Request) {
         guardianName: body.guardianName || null,
         guardianPhone: body.guardianPhone || null,
         message: body.message || null,
-        adminNote: applicationReference(), // reference shown to the applicant
+        // Structured so later admin review notes APPEND after the reference
+        // (see mergeAdminNote) instead of overwriting it.
+        adminNote: `Ref: ${reference}`,
       },
       include: { course: { select: { title: true, code: true } }, campus: { select: { name: true } } },
     })
@@ -85,17 +89,17 @@ export async function POST(req: Request) {
       entity: 'application',
       entityId: application.id,
       actorEmail: body.email,
-      meta: { course: course.title, campus: campus.name, reference: application.adminNote },
+      meta: { course: course.title, campus: campus.name, reference },
       ip,
     })
 
     return ok(
       {
         ...application,
-        reference: application.adminNote,
+        reference, // clean reference (adminNote holds `Ref: <reference>`)
         nextSteps: [
           'Our admissions team reviews applications within 48 hours (Mon–Fri).',
-          `Keep your reference ${application.adminNote} for any follow-up.`,
+          `Keep your reference ${reference} for any follow-up.`,
           'Watch your email and phone — we may request your KCSE certificate scan.',
           'Accepted applicants receive login credentials for the student portal by email.',
         ],

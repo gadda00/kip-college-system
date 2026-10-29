@@ -1,9 +1,14 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type UseMutationResult,
+} from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { CheckCircle2, Clock, Receipt, Search, Wallet } from 'lucide-react'
+import { Check, CheckCircle2, Clock, Receipt, Search, Wallet, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -30,9 +35,15 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { EmptyState } from '@/components/kip/components/empty-state'
 import { QueryBoundary } from '@/components/kip/components/loading'
-import { api, post } from '@/components/kip/lib/api'
-import { fmtDate, fmtKES } from '@/components/kip/lib/format'
-import { RowsSkeleton, TableSkeleton, ViewHeading } from '@/components/kip/portal/shared'
+import { api, patch, post } from '@/components/kip/lib/api'
+import { fmtDate, fmtDateTime, fmtKES } from '@/components/kip/lib/format'
+import {
+  LoadErrorCard,
+  PaymentStatusBadge,
+  RowsSkeleton,
+  TableSkeleton,
+  ViewHeading,
+} from '@/components/kip/portal/shared'
 import { Field, FieldGrid, SubmitButton } from '@/components/kip/admin/form-bits'
 import type {
   AdminCourse,
@@ -56,6 +67,109 @@ function methodTone(method: string): string {
     default:
       return 'border-transparent bg-muted text-muted-foreground'
   }
+}
+
+// ---------------------------------------------------------------------------
+// Finance review of student-submitted payments (shared with overview queue)
+// ---------------------------------------------------------------------------
+
+/** PATCH /api/admin/payments/[id] — updated row + refreshed balance on confirm. */
+export type ReviewedPaymentResult = AdminPaymentRow & {
+  totalCharged?: number
+  totalPaid?: number
+  balance?: number
+}
+
+export type ReviewPaymentVars = { id: string; action: 'confirm' | 'reject' }
+
+/**
+ * Confirm / reject a PENDING payment submitted by a student. On success it
+ * invalidates the payments ledger, overview stats and student balances, and
+ * toasts the outcome. Shared by this view's "Pending confirmations" section
+ * and the overview "Needs your attention" queue.
+ */
+export function usePaymentReview() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, action }: ReviewPaymentVars) =>
+      patch<ReviewedPaymentResult>(`/api/admin/payments/${id}`, { action }),
+    onSuccess: (res, vars) => {
+      if (vars.action === 'confirm') {
+        toast.success('Payment confirmed — balance updated', {
+          description: `${res.studentName} (${res.admissionNo}) · ${fmtKES(res.amount)} via ${res.method} · ref ${res.reference}. New balance ${fmtKES(res.balance ?? 0)}.`,
+        })
+      } else {
+        toast.warning('Payment rejected', {
+          description: `${res.studentName} (${res.admissionNo}) · ${fmtKES(res.amount)} via ${res.method} · ref ${res.reference}. It stays on the student's statement marked as rejected.`,
+        })
+      }
+      void queryClient.invalidateQueries({ queryKey: ['admin-payments'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-overview'] })
+      void queryClient.invalidateQueries({ queryKey: ['admin-students'] })
+    },
+    onError: (err) => {
+      toast.error('Could not review the payment', {
+        description: err instanceof Error ? err.message : 'Please try again.',
+      })
+    },
+  })
+}
+
+/**
+ * One PENDING payment awaiting finance confirmation — student + admission no,
+ * amount (tnum), method, submitted time, reference and the Confirm / Reject
+ * actions (PATCH /api/admin/payments/[id]).
+ */
+export function PendingPaymentRow({
+  payment,
+  review,
+}: {
+  payment: AdminPaymentRow
+  review: UseMutationResult<ReviewedPaymentResult, Error, ReviewPaymentVars>
+}) {
+  const busy = review.isPending && review.variables?.id === payment.id
+  return (
+    <li className="flex flex-col gap-3 rounded-xl border border-warning/30 bg-warning/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="min-w-0 sm:w-48 lg:w-56">
+        <p className="truncate text-sm font-semibold">{payment.studentName}</p>
+        <p className="font-mono text-[11px] text-muted-foreground">{payment.admissionNo}</p>
+      </div>
+      <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+        <span className="tnum text-sm font-bold text-foreground">{fmtKES(payment.amount)}</span>
+        <Badge className={`text-[10px] ${methodTone(payment.method)}`}>{payment.method}</Badge>
+        <span className="font-mono text-[11px]">{payment.reference}</span>
+        <span className="whitespace-nowrap">submitted {fmtDateTime(payment.paidAt)}</span>
+      </div>
+      <div className="flex shrink-0 items-center gap-2 print:hidden">
+        <Button
+          size="sm"
+          disabled={review.isPending}
+          onClick={() => review.mutate({ id: payment.id, action: 'confirm' })}
+          className="min-h-11 bg-success px-3 text-success-foreground hover:bg-success/90 focus-visible:ring-success/40"
+        >
+          {busy ? (
+            <span
+              className="mr-1 h-4 w-4 animate-spin rounded-full border-2 border-success-foreground/40 border-t-success-foreground"
+              aria-hidden="true"
+            />
+          ) : (
+            <Check className="h-4 w-4" aria-hidden="true" />
+          )}
+          Confirm
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={review.isPending}
+          onClick={() => review.mutate({ id: payment.id, action: 'reject' })}
+          className="min-h-11 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+        >
+          <X className="h-4 w-4" aria-hidden="true" />
+          Reject
+        </Button>
+      </div>
+    </li>
+  )
 }
 
 /**
@@ -172,12 +286,56 @@ export function FeesView() {
     queryFn: () => api<AdminPaymentRow[]>('/api/admin/payments'),
   })
 
+  const review = usePaymentReview()
+  const pendingPayments = payments.data?.filter((p) => p.status === 'PENDING') ?? []
+
   return (
     <div className="space-y-6">
       <ViewHeading
         title="Fees & payments"
         description="Post fee items to students or whole courses, and confirm payments received."
       />
+
+      {/* Pending confirmations — student-submitted payments awaiting finance */}
+      {pendingPayments.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          aria-labelledby="pending-confirmations"
+          aria-live="polite"
+        >
+          <Card className="border-warning/40">
+            <CardHeader className="pb-3">
+              <CardTitle
+                id="pending-confirmations"
+                className="flex flex-wrap items-center gap-2 font-display text-base"
+              >
+                <span
+                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/15 text-warning-foreground"
+                  aria-hidden="true"
+                >
+                  <Clock className="h-4 w-4" />
+                </span>
+                Pending confirmations
+                <Badge className="text-[10px] border-warning/30 bg-warning/15 text-warning-foreground">
+                  {pendingPayments.length} awaiting
+                </Badge>
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">
+                Payments students submitted from their portal — confirming one updates their fee
+                balance immediately.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <ul className="max-h-96 space-y-2 overflow-y-auto custom-scrollbar pr-1">
+                {pendingPayments.map((p) => (
+                  <PendingPaymentRow key={p.id} payment={p} review={review} />
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </motion.section>
+      )}
 
       <QueryBoundary
         status={students.status}
@@ -204,11 +362,20 @@ export function FeesView() {
           </TabsList>
 
           <TabsContent value="post" className="mt-4">
-            {courses.data && students.data && (
-              <PostFeeForm
-                students={students.data.filter((s) => s.status === 'ACTIVE')}
-                courses={courses.data}
+            {courses.isError ? (
+              <LoadErrorCard
+                what="courses"
+                error={courses.error}
+                onRetry={() => void courses.refetch()}
               />
+            ) : (
+              courses.data &&
+              students.data && (
+                <PostFeeForm
+                  students={students.data.filter((s) => s.status === 'ACTIVE')}
+                  courses={courses.data}
+                />
+              )
             )}
           </TabsContent>
 
@@ -228,7 +395,8 @@ export function FeesView() {
             Payments ledger
           </CardTitle>
           <p className="text-xs text-muted-foreground">
-            All confirmed payments, newest first ({payments.data?.length ?? 0} total).
+            All payments, newest first ({payments.data?.length ?? 0} total) — student submissions
+            show as pending until confirmed.
           </p>
         </CardHeader>
         <CardContent>
@@ -257,6 +425,7 @@ export function FeesView() {
                         <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Amount</TableHead>
                         <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Method</TableHead>
                         <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Reference</TableHead>
+                        <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Status</TableHead>
                         <TableHead className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Note</TableHead>
                         <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-800 dark:text-brand-500">Paid</TableHead>
                       </TableRow>
@@ -282,6 +451,9 @@ export function FeesView() {
                             </Badge>
                           </TableCell>
                           <TableCell className="font-mono text-[11px]">{p.reference}</TableCell>
+                          <TableCell>
+                            <PaymentStatusBadge status={p.status} />
+                          </TableCell>
                           <TableCell className="max-w-40 truncate text-xs text-muted-foreground">
                             {p.note ?? '—'}
                           </TableCell>
@@ -310,6 +482,7 @@ export function FeesView() {
                       </div>
                       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <Badge className={`text-[10px] ${methodTone(p.method)}`}>{p.method}</Badge>
+                        <PaymentStatusBadge status={p.status} />
                         <span className="font-mono text-[11px]">{p.reference}</span>
                         <span>· {fmtDate(p.paidAt)}</span>
                       </div>

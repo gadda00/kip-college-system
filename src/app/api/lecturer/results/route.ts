@@ -46,7 +46,7 @@ async function assertTeaches(unitId: string, lecturerProfileId: string) {
  */
 export async function POST(req: Request) {
   return handle(async () => {
-    assertSameOrigin(req)
+    assertSameOrigin(req, { requireOrigin: true })
     const { user, profile } = await currentLecturer()
     const raw = await readJson(req)
 

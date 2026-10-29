@@ -65,9 +65,13 @@ async function api(
   init: RequestInit & { cookie?: string } = {},
 ): Promise<{ status: number; body: any; res: Response }> {
   const { cookie, headers, ...rest } = init
+  // mutating endpoints require a same-origin Origin header (CSRF guard);
+  // bun's fetch omits it by default, so send one like a browser would
+  const mutating = !['GET', 'HEAD', 'OPTIONS'].includes((rest.method ?? 'GET').toUpperCase())
   const res = await fetch(`${BASE}${path}`, {
     ...rest,
     headers: {
+      ...(mutating ? { Origin: BASE } : {}),
       ...(rest.body ? { 'Content-Type': 'application/json' } : {}),
       ...(cookie ? { Cookie: cookie } : {}),
       ...(headers as Record<string, string>),

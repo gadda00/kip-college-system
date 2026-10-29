@@ -1,7 +1,17 @@
 'use client'
 
 import { useEffect, useState, type ReactNode } from 'react'
-import { Globe, LogOut, ShieldAlert, type LucideIcon } from 'lucide-react'
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Globe,
+  LogOut,
+  RotateCw,
+  ShieldAlert,
+  XCircle,
+  type LucideIcon,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -282,6 +292,95 @@ export function PortalShell({
         {/* Content */}
         <div className="min-w-0 flex-1 space-y-6">{children}</div>
       </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Payment status + load errors
+// ---------------------------------------------------------------------------
+
+/**
+ * Payment confirmation-status badge (student statement + admin ledger).
+ * CONFIRMED = success · PENDING = warning (not yet in the balance) ·
+ * REJECTED = destructive. Uses the semantic status tokens from globals.css.
+ */
+export function PaymentStatusBadge({ status, className }: { status: string; className?: string }) {
+  const base =
+    'inline-flex w-fit items-center justify-center whitespace-nowrap shrink-0 gap-1 rounded-md border px-2 py-0.5 text-[10px] font-semibold'
+  switch (status) {
+    case 'CONFIRMED':
+      return (
+        <span className={cn(base, 'border-success/30 bg-success/10 text-success', className)}>
+          <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
+          Confirmed
+        </span>
+      )
+    case 'PENDING':
+      return (
+        <span
+          className={cn(base, 'border-warning/30 bg-warning/15 text-warning-foreground', className)}
+        >
+          <Clock className="h-3 w-3" aria-hidden="true" />
+          Pending
+        </span>
+      )
+    case 'REJECTED':
+      return (
+        <span className={cn(base, 'border-destructive/30 bg-destructive/10 text-destructive', className)}>
+          <XCircle className="h-3 w-3" aria-hidden="true" />
+          Rejected
+        </span>
+      )
+    default:
+      return (
+        <span className={cn(base, 'bg-muted text-muted-foreground', className)}>{status || '—'}</span>
+      )
+  }
+}
+
+/**
+ * Friendly "Couldn't load X" error card with a Retry button — used where a
+ * React Query hook has no QueryBoundary of its own (secondary queries,
+ * queue sections). Main data views keep using QueryBoundary/ErrorPanel.
+ */
+export function LoadErrorCard({
+  what,
+  error,
+  onRetry,
+  compact = false,
+  className,
+}: {
+  what: string
+  error?: unknown
+  onRetry?: () => void
+  compact?: boolean
+  className?: string
+}) {
+  const message =
+    error instanceof Error && error.message
+      ? error.message
+      : 'Something went wrong while loading this section.'
+  return (
+    <div
+      role="alert"
+      className={cn(
+        'flex flex-col items-center justify-center rounded-xl border border-dashed bg-destructive/5 text-center',
+        compact ? 'gap-2 px-4 py-6' : 'gap-3 px-6 py-10',
+        className,
+      )}
+    >
+      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+        <AlertTriangle className="h-5 w-5" aria-hidden="true" />
+      </span>
+      <h3 className="text-sm font-semibold">Couldn&rsquo;t load {what}</h3>
+      <p className="max-w-sm text-xs text-muted-foreground">{message}</p>
+      {onRetry && (
+        <Button onClick={onRetry} variant="outline" size="sm" className="min-h-11">
+          <RotateCw className="mr-2 h-4 w-4" aria-hidden="true" />
+          Retry
+        </Button>
+      )}
     </div>
   )
 }

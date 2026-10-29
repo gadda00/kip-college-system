@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import {
   Area,
   AreaChart,
@@ -19,9 +19,11 @@ import {
 import {
   ArrowUpRight,
   Award,
+  BellRing,
   Building2,
   CalendarDays,
   CheckCircle2,
+  Clock,
   Inbox,
   Landmark,
   TrendingUp,
@@ -42,11 +44,21 @@ import {
 } from '@/components/ui/table'
 import { KpiCard } from '@/components/kip/components/stat-card'
 import { QueryBoundary } from '@/components/kip/components/loading'
+import { KipLink } from '@/components/kip/components/link'
 import { api } from '@/components/kip/lib/api'
 import { navigate } from '@/components/kip/lib/router'
 import { fmtKES, fmtDate } from '@/components/kip/lib/format'
-import { KpiGridSkeleton, TableSkeleton, ViewHeading } from '@/components/kip/portal/shared'
-import type { AdminOverview } from '@/components/kip/admin/types'
+import {
+  KpiGridSkeleton,
+  LoadErrorCard,
+  TableSkeleton,
+  ViewHeading,
+} from '@/components/kip/portal/shared'
+import {
+  PendingPaymentRow,
+  usePaymentReview,
+} from '@/components/kip/admin/views/fees-view'
+import type { AdminOverview, AdminPaymentRow } from '@/components/kip/admin/types'
 
 /** Brand chart palette — emerald / gold / bronze / sage via CSS vars. */
 const EMERALD = 'var(--chart-1)'
@@ -277,6 +289,118 @@ function methodBadgeVariant(method: string): string {
   }
 }
 
+// ---------------------------------------------------------------------------
+// "Needs your attention" queue (Task 5-c)
+// ---------------------------------------------------------------------------
+
+/**
+ * Prominent action queue at the top of the overview — renders ONLY when
+ * something actually needs the registrar: PENDING student payments awaiting
+ * finance confirmation (Confirm / Reject inline) and new PENDING applications
+ * (single link into the applications view). When both queries succeed and
+ * nothing awaits, a quiet success chip shows instead; while either query is
+ * still loading it renders nothing (no layout flash).
+ */
+function NeedsAttentionSection({
+  applicationsPending,
+  payments,
+}: {
+  applicationsPending: number | null
+  payments: UseQueryResult<AdminPaymentRow[]>
+}) {
+  const review = usePaymentReview()
+
+  if (payments.isError) {
+    return (
+      <LoadErrorCard
+        compact
+        what="payments awaiting confirmation"
+        error={payments.error}
+        onRetry={() => void payments.refetch()}
+      />
+    )
+  }
+  if (applicationsPending == null || !payments.data) return null
+
+  const pendingPayments = payments.data.filter((p) => p.status === 'PENDING')
+  const total = pendingPayments.length + applicationsPending
+  if (total === 0) {
+    return (
+      <p className="inline-flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-3.5 py-1.5 text-xs font-medium text-success">
+        <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+        All caught up — nothing needs your attention.
+      </p>
+    )
+  }
+
+  return (
+    <Card className="border-warning/40" aria-labelledby="needs-attention-title">
+      <CardHeader className="pb-3">
+        <CardTitle
+          id="needs-attention-title"
+          className="flex flex-wrap items-center gap-2 font-display text-base"
+        >
+          <span
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/15 text-warning-foreground"
+            aria-hidden="true"
+          >
+            <BellRing className="h-4 w-4" />
+          </span>
+          Needs your attention
+          <Badge className="border-warning/30 bg-warning/15 text-[10px] font-semibold text-warning-foreground">
+            {total} item{total === 1 ? '' : 's'}
+          </Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        {pendingPayments.length > 0 && (
+          <section aria-labelledby="na-payments">
+            <h3
+              id="na-payments"
+              className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+            >
+              <Clock className="h-3.5 w-3.5 text-warning" aria-hidden="true" />
+              Payments awaiting confirmation ({pendingPayments.length})
+            </h3>
+            <ul className="mt-2 max-h-80 space-y-2 overflow-y-auto custom-scrollbar pr-1">
+              {pendingPayments.map((p) => (
+                <PendingPaymentRow key={p.id} payment={p} review={review} />
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {applicationsPending > 0 && (
+          <section
+            aria-labelledby="na-applications"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-200/70 bg-brand-50/60 p-4 dark:border-white/10 dark:bg-brand-100/40"
+          >
+            <p
+              id="na-applications"
+              className="flex flex-wrap items-center gap-2 text-sm font-medium"
+            >
+              <Inbox className="h-4 w-4 text-primary" aria-hidden="true" />
+              New applications
+              <Badge variant="secondary" className="text-[10px]">
+                {applicationsPending} pending
+              </Badge>
+            </p>
+            <KipLink
+              to="/admin/applications"
+              className="focus-glow inline-flex min-h-11 items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold text-primary underline-offset-4 hover:underline"
+            >
+              {`Review ${applicationsPending} pending application${
+                applicationsPending === 1 ? '' : 's'
+              }`}
+              <span aria-hidden="true">→</span>
+            </KipLink>
+          </section>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
 function ChartTooltipStyle() {
   return {
     backgroundColor: 'var(--popover)',
@@ -298,11 +422,23 @@ export function OverviewView() {
     queryFn: () => api<AdminOverview>('/api/admin/overview'),
   })
 
+  // payments ledger feeds the "Needs your attention" queue (PENDING intents)
+  const payments = useQuery<AdminPaymentRow[]>({
+    queryKey: ['admin-payments'],
+    queryFn: () => api<AdminPaymentRow[]>('/api/admin/payments'),
+  })
+
   return (
     <div className="space-y-6">
       <ViewHeading
         title="Overview"
         description="Registrar's snapshot of enrolment, applications and finances across all campuses."
+      />
+
+      {/* Needs-your-attention queue — pending payments + applications */}
+      <NeedsAttentionSection
+        applicationsPending={data?.applicationsPending ?? null}
+        payments={payments}
       />
 
       <QueryBoundary

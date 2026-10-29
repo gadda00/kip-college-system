@@ -139,7 +139,8 @@ export function DocFooter({
           {showPaybill && (
             <p className="mt-1">
               Pay fees via M-Pesa Paybill <strong>522 890</strong> (Account: your admission number),
-              Equity Bank Kitui Branch (A/C 1234567890) or cash at any campus finance office.
+              Equity Bank Kitui Branch (A/C 1234567890) or cash at any campus finance office. Confirm
+              the current paybill with the finance office — 0703 710 879.
             </p>
           )}
           <p className="mt-1">
@@ -182,6 +183,12 @@ export type StatementRow = {
 /**
  * Merge fee charges + payments into chronological statement rows with a
  * running balance (negative = credit paid ahead). Oldest first.
+ *
+ * Only CONFIRMED payments enter the statement — PENDING submissions await
+ * finance confirmation and REJECTED payments never count, so the final
+ * running balance always equals the API's `balance` (which sums CONFIRMED
+ * payments only). PENDING/REJECTED payments are surfaced separately in the
+ * portal payments table with their status badges.
  */
 export function buildStatementRows(data: FeeStatement): StatementRow[] {
   const charges: StatementRow[] = data.feeItems.map((f) => ({
@@ -196,21 +203,23 @@ export function buildStatementRows(data: FeeStatement): StatementRow[] {
     runningBalance: 0,
     reference: null,
   }))
-  const payments: StatementRow[] = data.payments.map((p) => ({
-    key: `pay-${p.id}`,
-    date: p.paidAt,
-    description:
-      p.method === 'MPESA'
-        ? `M-Pesa payment${p.note ? ` — ${p.note}` : ''}`
-        : p.method === 'BANK'
-          ? `Bank transfer${p.note ? ` — ${p.note}` : ''}`
-          : `Cash payment${p.note ? ` — ${p.note}` : ''}`,
-    type: 'PAYMENT',
-    due: null,
-    amount: -p.amount,
-    runningBalance: 0,
-    reference: p.reference,
-  }))
+  const payments: StatementRow[] = data.payments
+    .filter((p) => p.status === 'CONFIRMED')
+    .map((p) => ({
+      key: `pay-${p.id}`,
+      date: p.paidAt,
+      description:
+        p.method === 'MPESA'
+          ? `M-Pesa payment${p.note ? ` — ${p.note}` : ''}`
+          : p.method === 'BANK'
+            ? `Bank transfer${p.note ? ` — ${p.note}` : ''}`
+            : `Cash payment${p.note ? ` — ${p.note}` : ''}`,
+      type: 'PAYMENT',
+      due: null,
+      amount: -p.amount,
+      runningBalance: 0,
+      reference: p.reference,
+    }))
   const merged = [...charges, ...payments].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   )
@@ -241,6 +250,8 @@ export function FeeStatementDoc({
 }) {
   const rows = buildStatementRows(statement)
   const printedAt = new Date()
+  const confirmedPayments = statement.payments.filter((p) => p.status === 'CONFIRMED')
+  const pendingPayments = statement.payments.filter((p) => p.status === 'PENDING')
 
   return (
     <PrintSheet>
@@ -295,7 +306,8 @@ export function FeeStatementDoc({
             <tfoot>
               <tr className="border-y-2 border-double border-[#0f2e22]/40 bg-[#e8f3ed] font-bold">
                 <td colSpan={3} className="px-2 py-2 text-[10px] uppercase tracking-wide">
-                  Totals — {statement.feeItems.length} charges, {statement.payments.length} payments
+                  Totals — {statement.feeItems.length} charges, {confirmedPayments.length} confirmed
+                  payment{confirmedPayments.length === 1 ? '' : 's'}
                 </td>
                 <td className="whitespace-nowrap px-2 py-2 text-right font-mono">
                   <span className="block text-[9px] font-semibold text-[#0f2e22]/60">
@@ -316,6 +328,14 @@ export function FeeStatementDoc({
           </table>
         )}
       </section>
+
+      {pendingPayments.length > 0 && (
+        <p className="mt-4 rounded-md border border-[#92600a]/30 bg-[#fdf6e3] px-3 py-2 text-[10px] font-medium text-[#92600a]">
+          {pendingPayments.length} payment{pendingPayments.length === 1 ? '' : 's'} submitted from the
+          portal await finance confirmation and are not yet included in this statement or the balance
+          above.
+        </p>
+      )}
 
       {statement.balance > 0 && (
         <p className="mt-4 rounded-md border border-[#b91c1c]/30 bg-[#fef2f2] px-3 py-2 text-[10px] font-medium text-[#b91c1c]">

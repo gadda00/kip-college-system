@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
-import { currentTermLabel, handle, ok, nextAdmissionNo, readJson } from '@/lib/api-helpers'
+import { currentTermLabel, handle, mergeAdminNote, ok, nextAdmissionNo, readJson } from '@/lib/api-helpers'
 import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
@@ -15,7 +15,7 @@ const actionSchema = z.object({
 /** Review an application: accept (enrol student + post fees) or reject. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    assertSameOrigin(req)
+    assertSameOrigin(req, { requireOrigin: true })
     const admin = await requireRole('ADMIN')
     const { id } = await params
     const body = actionSchema.parse(await readJson(req))
@@ -35,7 +35,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         where: { id },
         data: {
           status: 'REJECTED',
-          adminNote: body.adminNote || null,
+          // preserve the applicant's reference (Ref: KIP/APP/…) — the admin's
+          // note is appended after it instead of overwriting it
+          adminNote: mergeAdminNote(application.adminNote, body.adminNote),
           reviewedAt: new Date(),
         },
         include: {
@@ -129,7 +131,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         where: { id: application.id },
         data: {
           status: 'ACCEPTED',
-          adminNote: body.adminNote || null,
+          // preserve the applicant's reference (Ref: KIP/APP/…) — the admin's
+          // note is appended after it instead of overwriting it
+          adminNote: mergeAdminNote(application.adminNote, body.adminNote),
           reviewedAt: new Date(),
         },
         include: {

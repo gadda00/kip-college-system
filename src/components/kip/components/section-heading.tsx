@@ -36,7 +36,7 @@ export function SectionHeading({
           <span className="h-px w-8 bg-gold-500/70" aria-hidden="true" />
         </div>
       )}
-      <h2 className="text-balance text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>
+      <h2 className="font-display text-balance text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>
       {description && (
         <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
           {description}

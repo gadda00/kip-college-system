@@ -13,6 +13,14 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 })
 
+/**
+ * Timing-safe login: compare against this constant hash when the email is
+ * unknown, so a request for a NON-existent account pays the same bcrypt cost
+ * as a real one. Response times no longer reveal which emails are registered.
+ * (Pre-computed bcrypt hash of 'invalid-password-placeholder'.)
+ */
+const DUMMY_HASH = '$2b$10$B8fjIdvVi2RV2/VcRbFo..QFbrWciVVZlb8OdlN/n8dHzhli5CiZ2'
+
 export async function POST(req: Request) {
   return handle(async () => {
     const ip = clientIp(req)
@@ -24,12 +32,11 @@ export async function POST(req: Request) {
     const email = body.email.trim().toLowerCase()
 
     const user = await db.user.findUnique({ where: { email } })
-    // constant-shape response: never reveal whether the email exists
-    if (!user) throw new HttpError(401, 'Invalid email or password')
-
-    const valid = await bcrypt.compare(body.password, user.passwordHash)
-    if (!valid) {
-      await logAudit({ actorId: user.id, actorEmail: email, action: 'AUTH_LOGIN_FAILED', ip })
+    // constant-shape response: never reveal whether the email exists —
+    // bcrypt.compare ALWAYS runs, even without a matching user
+    const valid = await bcrypt.compare(body.password, user?.passwordHash ?? DUMMY_HASH)
+    if (!user || !valid) {
+      await logAudit({ actorId: user?.id ?? null, actorEmail: email, action: 'AUTH_LOGIN_FAILED', ip })
       throw new HttpError(401, 'Invalid email or password')
     }
 

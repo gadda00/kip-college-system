@@ -101,7 +101,9 @@ export async function POST(req: Request) {
     // keep at most the latest 12 client messages; system prompt is always first
     const history = body.messages.slice(-12).map((m) => ({ role: m.role, content: m.content }))
     const { prompt: systemPrompt, context } = await buildSystemPrompt()
-    const messages = [{ role: 'assistant' as const, content: systemPrompt }, ...history]
+    // the SDK accepts a proper system-role message — instructions stay out of
+    // the visible assistant turn and are no longer mistaken for conversation
+    const messages = [{ role: 'system' as const, content: systemPrompt }, ...history]
 
     try {
       const zai = await ZAI.create()

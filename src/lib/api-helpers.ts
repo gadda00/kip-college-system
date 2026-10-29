@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Prisma } from '@prisma/client'
 import { ZodError, z } from 'zod'
-import { db } from '@/lib/db'
+import { db, isPostgres } from '@/lib/db'
 import { HttpError } from '@/lib/auth'
 
 /** Lenient boolean input: true/false, "true"/"false", "1"/"0", "yes"/"no". */
@@ -59,7 +59,12 @@ export async function routeParams<T extends Record<string, string>>(params: Prom
 /** Auto-generate the next admission number: KIP/{yyyy}/{4-digit seq}. */
 export async function nextAdmissionNo(): Promise<string> {
   const year = new Date().getFullYear()
-  const count = await db.studentProfile.count()
+  // Per-year sequence: count only students admitted in THIS calendar year
+  // (KIP/{year}/…) so a new year restarts at 0001 instead of the sequence
+  // inflating forever with total enrolment.
+  const count = await db.studentProfile.count({
+    where: { admissionNo: { startsWith: `KIP/${year}/` } },
+  })
   let seq = count + 1
   for (;;) {
     const candidate = `KIP/${year}/${String(seq).padStart(4, '0')}`
@@ -148,16 +153,38 @@ export function timeToMinutes(time: string): number | null {
   return h * 60 + m
 }
 
-/** ISO day-of-week for "today": 1 Mon … 5 Fri, 6 Sat, 7 Sun. */
-export function todayDow(): number {
-  const js = new Date().getDay() // 0 Sun … 6 Sat
-  return js === 0 ? 7 : js
+/**
+ * "Now" in Africa/Nairobi (EAT, UTC+3) — the college's local clock.
+ * Vercel lambdas run on UTC, where the weekday flips at 21:00 EAT; computing
+ * weekday/minutes through this formatter keeps "today" correct for timetables.
+ */
+const NAIROBI_FMT = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Africa/Nairobi',
+  weekday: 'short', // Mon…Sun
+  hour: 'numeric',
+  minute: 'numeric',
+  hour12: false, // 00…23
+})
+
+const ISO_DOW: Record<string, number> = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 }
+
+function nairobiNow(): { dow: number; minutes: number } {
+  const parts = NAIROBI_FMT.formatToParts(new Date())
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? ''
+  const dow = ISO_DOW[get('weekday')] ?? 1
+  const minutes = (Number(get('hour')) % 24) * 60 + Number(get('minute'))
+  return { dow, minutes }
 }
 
-/** Minutes since midnight right now. */
+/** ISO day-of-week for "today" in Kenya: 1 Mon … 5 Fri, 6 Sat, 7 Sun. */
+export function todayDow(): number {
+  return nairobiNow().dow
+}
+
+/** Minutes since midnight right now, Africa/Nairobi time. */
 export function nowMinutes(): number {
-  const now = new Date()
-  return now.getHours() * 60 + now.getMinutes()
+  return nairobiNow().minutes
 }
 
 /** Split a CSV string into a trimmed array (facilities, intakeMonths…). */
@@ -167,4 +194,46 @@ export function csvList(csv: string | null | undefined): string[] {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean)
+}
+
+/**
+ * Portable case-insensitive `contains` filter value.
+ * SQLite's Prisma client rejects `mode: 'insensitive'` (its LIKE is already
+ * ASCII-case-insensitive), while PostgreSQL's LIKE is case-sensitive and
+ * needs the explicit insensitive mode. Use inside `where` objects:
+ *   where: { title: contains(term) }
+ */
+export function contains(term: string): { contains: string; mode?: 'insensitive' } {
+  return isPostgres ? { contains: term, mode: 'insensitive' as const } : { contains: term }
+}
+
+/**
+ * Application references (KIP/APP/{year}/{code}) live inside the Application
+ * adminNote column. Extract one from any adminNote shape — the structured
+ * `Ref: <reference>` prefix (current), or the bare reference (legacy rows).
+ */
+export function applicationRefFromAdminNote(adminNote: string | null | undefined): string | null {
+  if (!adminNote) return null
+  const trimmed = adminNote.trim()
+  const prefixed = /^Ref:\s*(KIP\/APP\/\d{4}\/[A-Z0-9]+)/i.exec(trimmed)
+  if (prefixed) return prefixed[1]!
+  if (/^KIP\/APP\/\d{4}\/[A-Z0-9]+$/.test(trimmed)) return trimmed // legacy bare reference
+  return null
+}
+
+/**
+ * Merge an admin's review note into adminNote WITHOUT losing the applicant's
+ * reference: the `Ref: <reference>` prefix always survives and the admin's
+ * note is appended after it. With no reference present it behaves like a
+ * plain overwrite (null when both are empty).
+ */
+export function mergeAdminNote(
+  existing: string | null | undefined,
+  adminNote: string | null | undefined,
+): string | null {
+  const ref = applicationRefFromAdminNote(existing)
+  const note = adminNote?.trim() ?? ''
+  if (ref && note) return `Ref: ${ref} — ${note}`
+  if (ref) return `Ref: ${ref}`
+  return note || null
 }

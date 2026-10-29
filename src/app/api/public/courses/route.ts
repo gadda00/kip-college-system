@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { handle, ok, csvList } from '@/lib/api-helpers'
+import { contains, handle, ok, csvList } from '@/lib/api-helpers'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,9 +17,9 @@ export async function GET(req: Request) {
         ...(q
           ? {
               OR: [
-                { title: { contains: q } },
-                { code: { contains: q } },
-                { description: { contains: q } },
+                { title: contains(q) },
+                { code: contains(q) },
+                { description: contains(q) },
               ],
             }
           : {}),

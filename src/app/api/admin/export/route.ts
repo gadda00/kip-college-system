@@ -1,7 +1,8 @@
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { HttpError, requireRole, type SafeUser } from '@/lib/auth'
 import { fail } from '@/lib/api-helpers'
 import { computeBalances } from '@/lib/fees'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,11 +25,18 @@ export const dynamic = 'force-dynamic'
 const EXPORT_TYPES = ['students', 'payments', 'applications', 'results', 'fees-outstanding'] as const
 type ExportType = (typeof EXPORT_TYPES)[number]
 
-/** RFC-4180 CSV field escaping. */
+/**
+ * RFC-4180 CSV field escaping WITH formula-injection neutralisation:
+ * when a cell starts with `=`, `+`, `-`, `@`, a tab or CR (the characters
+ * Excel/Sheets treat as formula starters), a single `'` is prefixed so the
+ * value renders as inert text instead of executing as a formula
+ * (OWASP CSV injection mitigation — applies to EVERY cell).
+ */
 function esc(value: unknown): string {
   const s = value == null ? '' : String(value)
-  if (/[",\r\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`
-  return s
+  const guarded = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s
+  if (/[",\r\n]/.test(guarded)) return `"${guarded.replace(/"/g, '""')}"`
+  return guarded
 }
 
 /** Build a CSV document (CRLF line endings per RFC 4180). */
@@ -61,6 +69,24 @@ function csvResponse(type: ExportType, csv: string): Response {
   })
 }
 
+/** Emit the CSV + write an audit entry (kind + row count) for the export. */
+async function auditedCsvResponse(
+  admin: SafeUser,
+  type: ExportType,
+  csv: string,
+  rows: number,
+): Promise<Response> {
+  await logAudit({
+    actorId: admin.id,
+    actorEmail: admin.email,
+    action: 'EXPORT_CSV',
+    entity: 'export',
+    entityId: type,
+    meta: { type, rows },
+  })
+  return csvResponse(type, csv)
+}
+
 /** Parse a YYYY-MM-DD date input into a Date bound (or null when invalid). */
 function dateBound(raw: string, endOfDay: boolean): Date | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null
@@ -72,7 +98,7 @@ function dateBound(raw: string, endOfDay: boolean): Date | null {
 
 export async function GET(req: Request) {
   try {
-    await requireRole('ADMIN')
+    const admin = await requireRole('ADMIN')
 
     const url = new URL(req.url)
     const type = url.searchParams.get('type')?.trim() ?? ''
@@ -118,7 +144,7 @@ export async function GET(req: Request) {
           balances.get(s.id)?.balance ?? 0,
         ]),
       )
-      return csvResponse('students', csv)
+      return await auditedCsvResponse(admin, 'students', csv, students.length)
     }
 
     if (type === 'payments') {
@@ -167,7 +193,7 @@ export async function GET(req: Request) {
           p.note ?? '',
         ]),
       )
-      return csvResponse('payments', csv)
+      return await auditedCsvResponse(admin, 'payments', csv, payments.length)
     }
 
     if (type === 'applications') {
@@ -199,7 +225,7 @@ export async function GET(req: Request) {
           a.reviewedAt ? fmtCsvDateTime(a.reviewedAt) : '',
         ]),
       )
-      return csvResponse('applications', csv)
+      return await auditedCsvResponse(admin, 'applications', csv, applications.length)
     }
 
     if (type === 'results') {
@@ -238,7 +264,7 @@ export async function GET(req: Request) {
           r.examBody ?? '',
         ]),
       )
-      return csvResponse('results', csv)
+      return await auditedCsvResponse(admin, 'results', csv, results.length)
     }
 
     // type === 'fees-outstanding'
@@ -269,7 +295,7 @@ export async function GET(req: Request) {
         bal.balance,
       ]),
     )
-    return csvResponse('fees-outstanding', csv)
+    return await auditedCsvResponse(admin, 'fees-outstanding', csv, rows.length)
   } catch (err) {
     if (err instanceof HttpError) return fail(err.message, err.status)
     console.error('[api] Export error:', err)

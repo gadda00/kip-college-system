@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { requireRole } from '@/lib/auth'
+import { assertSameOrigin, requireRole } from '@/lib/auth'
 import { boolish, handle, ok, readJson } from '@/lib/api-helpers'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,9 +27,18 @@ const createSchema = z.object({
 /** Create an announcement. */
 export async function POST(req: Request) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const body = createSchema.parse(await readJson(req))
     const announcement = await db.announcement.create({ data: body })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'ANNOUNCEMENT_CREATED',
+      entity: 'announcement',
+      entityId: announcement.id,
+      meta: { title: body.title, audience: body.audience },
+    })
     return ok(announcement, 201)
   })
 }

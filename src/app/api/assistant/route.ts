@@ -69,7 +69,8 @@ async function buildSystemPrompt(): Promise<string> {
     'Intakes: January, May, September. Requirements: Diplomas KCSE C- (CPA needs C+ with C+ in Maths & English, or CAMS/ATD bridging), Certificates KCSE D+/D, Artisan KCSE D-. Evening & weekend classes at Town Campus.',
     'Facilities: engineering workshops, ICT labs, library, hostels at Main Campus, training kitchen, beauty studio, radio/audio studio, college transport.',
     "To apply: fill the online application form on the website (#/apply) or visit any campus admissions office; application is free; response within 48 hours. Downloads (application form, fee structure, prospectus) are on the website's Downloads page.",
-    'Fees payable via M-Pesa (Paybill 522 890, Account: student admission number), bank deposit (Equity Bank Kitui Branch, A/C 1234567890) or cash at any campus finance office.',
+    'Fees may be paid in cash at any campus finance office.',
+    'For current fee payment channels (M-Pesa paybill, bank accounts), ask the student to contact the finance office at any campus or call +254 703 710 879 — do not quote specific account numbers.',
     'Contact: info@kipskitui.com / admissions@kipskitui.com / support@kipskitui.com, phone 0703 710 879. Students access the student portal via the Login button.',
     'Answer ONLY topics about KIP College, courses, admissions, fees, campuses, portals, and general education guidance in Kenya; if asked something unrelated, politely steer back.',
     'Keep answers concise (max ~120 words), warm, professional, and format with short paragraphs/bullets. Never invent phone numbers, fees, or policies beyond those given.',
@@ -90,7 +91,9 @@ export async function POST(req: Request) {
     // keep at most the latest 12 client messages; system prompt is always first
     const history = body.messages.slice(-12).map((m) => ({ role: m.role, content: m.content }))
     const systemPrompt = await buildSystemPrompt()
-    const messages = [{ role: 'assistant' as const, content: systemPrompt }, ...history]
+    // the SDK accepts a proper system-role message — instructions stay out of
+    // the visible assistant turn and are no longer mistaken for conversation
+    const messages = [{ role: 'system' as const, content: systemPrompt }, ...history]
 
     try {
       const zai = await ZAI.create()

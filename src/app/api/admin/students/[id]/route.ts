@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { handle, ok, readJson } from '@/lib/api-helpers'
 import { computeBalance } from '@/lib/fees'
+import { logAudit } from '@/lib/audit'
 import type { Prisma } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
@@ -88,7 +89,8 @@ const updateSchema = z.object({
 /** Update a student's profile and/or user contact fields. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const { id } = await params
     const body = updateSchema.parse(await readJson(req))
 
@@ -120,6 +122,15 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       operations.push(db.studentProfile.update({ where: { id }, data: profileData }))
     }
     if (operations.length > 0) await db.$transaction(operations)
+
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'STUDENT_UPDATED',
+      entity: 'student',
+      entityId: id,
+      meta: { fields: [...Object.keys(userData), ...Object.keys(profileData)] },
+    })
 
     const detail = await studentDetail(id)
     return ok(detail)

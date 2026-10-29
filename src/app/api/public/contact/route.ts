@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
+import { assertSameOrigin, HttpError } from '@/lib/auth'
 import { handle, ok, readJson } from '@/lib/api-helpers'
-import { HttpError } from '@/lib/auth'
 import { clientIp, rateLimited, RATE_LIMITS } from '@/lib/rate-limit'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +18,7 @@ const contactSchema = z.object({
 /** Public contact form submission. */
 export async function POST(req: Request) {
   return handle(async () => {
+    assertSameOrigin(req, { requireOrigin: true })
     const ip = clientIp(req)
     if (rateLimited(`contact:${ip}`, RATE_LIMITS.contact.limit, RATE_LIMITS.contact.windowMs)) {
       throw new HttpError(429, 'Too many messages sent — please try again later')
@@ -32,6 +34,15 @@ export async function POST(req: Request) {
         message: body.message,
         status: 'NEW',
       },
+    })
+
+    await logAudit({
+      action: 'CONTACT_MESSAGE_SUBMITTED',
+      entity: 'contactMessage',
+      entityId: created.id,
+      actorEmail: body.email || null,
+      meta: { name: body.name, subject: body.subject },
+      ip,
     })
 
     return ok(created, 201)

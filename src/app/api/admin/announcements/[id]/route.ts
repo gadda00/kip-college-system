@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { boolish, handle, ok, readJson } from '@/lib/api-helpers'
+import { logAudit } from '@/lib/audit'
 import type { Prisma } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
@@ -18,7 +19,8 @@ const updateSchema = z.object({
 /** Update an announcement. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const { id } = await params
     const body = updateSchema.parse(await readJson(req))
 
@@ -34,18 +36,34 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     if (body.authorName !== undefined) data.authorName = body.authorName
 
     const announcement = await db.announcement.update({ where: { id }, data })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'ANNOUNCEMENT_UPDATED',
+      entity: 'announcement',
+      entityId: id,
+      meta: { fields: Object.keys(data) },
+    })
     return ok(announcement)
   })
 }
 
 /** Delete an announcement. */
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const { id } = await params
     const existing = await db.announcement.findUnique({ where: { id }, select: { id: true } })
     if (!existing) throw new HttpError(404, 'Announcement not found')
     await db.announcement.delete({ where: { id } })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'ANNOUNCEMENT_DELETED',
+      entity: 'announcement',
+      entityId: id,
+    })
     return ok({ deleted: true, id })
   })
 }

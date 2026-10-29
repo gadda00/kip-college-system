@@ -1,9 +1,10 @@
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
-import { handle, ok, nextAdmissionNo, readJson } from '@/lib/api-helpers'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
+import { contains, handle, ok, nextAdmissionNo, readJson } from '@/lib/api-helpers'
 import { computeBalances } from '@/lib/fees'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,9 +26,9 @@ export async function GET(req: Request) {
         ...(q
           ? {
               OR: [
-                { admissionNo: { contains: q } },
-                { user: { name: { contains: q } } },
-                { user: { email: { contains: q } } },
+                { admissionNo: contains(q) },
+                { user: { name: contains(q) } },
+                { user: { email: contains(q) } },
               ],
             }
           : {}),
@@ -79,7 +80,8 @@ const createStudentSchema = z.object({
 /** Admin creates a student account (+ profile, auto admission number). */
 export async function POST(req: Request) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const body = createStudentSchema.parse(await readJson(req))
 
     const [course, campus, emailTaken] = await Promise.all([
@@ -123,6 +125,15 @@ export async function POST(req: Request) {
         },
       })
       return { user, profile }
+    })
+
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'STUDENT_CREATED',
+      entity: 'student',
+      entityId: profile.id,
+      meta: { admissionNo, email: body.email, course: course.title, campus: campus.name },
     })
 
     return ok(

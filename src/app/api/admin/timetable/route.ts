@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { handle, ok, readJson, timeToMinutes } from '@/lib/api-helpers'
 import { mapTimetableEntry, timetableInclude } from '@/lib/timetable'
+import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,7 +50,8 @@ const createSchema = z.object({
 /** Create a timetable entry (endTime must be after startTime). */
 export async function POST(req: Request) {
   return handle(async () => {
-    await requireRole('ADMIN')
+    assertSameOrigin(req, { requireOrigin: true })
+    const admin = await requireRole('ADMIN')
     const body = createSchema.parse(await readJson(req))
 
     const start = timeToMinutes(body.startTime)
@@ -90,6 +92,14 @@ export async function POST(req: Request) {
         lecturerId: body.lecturerId || null,
       },
       include: timetableInclude,
+    })
+    await logAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'TIMETABLE_ENTRY_CREATED',
+      entity: 'timetableEntry',
+      entityId: entry.id,
+      meta: { courseId: body.courseId, dayOfWeek: body.dayOfWeek, startTime: body.startTime, endTime: body.endTime, room: body.room },
     })
     return ok(mapTimetableEntry(entry), 201)
   })

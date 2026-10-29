@@ -34,6 +34,14 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+
+  /* ---- Semantic status tokens (success / warning / info) ---- */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -90,6 +98,14 @@
   --border: oklch(0.905 0.014 100);
   --input: oklch(0.905 0.014 100);
   --ring: oklch(0.44 0.102 158);
+
+  /* Semantic status (teal info — no blue in the KIP palette) */
+  --success: oklch(0.52 0.115 152);
+  --success-foreground: oklch(0.985 0.012 150);
+  --warning: oklch(0.72 0.14 75);
+  --warning-foreground: oklch(0.3 0.06 62);
+  --info: oklch(0.5 0.085 195);
+  --info-foreground: oklch(0.985 0.01 195);
 
   /* Chart palette: emerald → gold → teal → sage → bronze */
   --chart-1: oklch(0.52 0.115 156);
@@ -148,6 +164,14 @@
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.74 0.128 156);
 
+  /* Semantic status (dark: lifted for contrast) */
+  --success: oklch(0.7 0.13 152);
+  --success-foreground: oklch(0.2 0.05 152);
+  --warning: oklch(0.8 0.14 80);
+  --warning-foreground: oklch(0.28 0.06 62);
+  --info: oklch(0.7 0.09 195);
+  --info-foreground: oklch(0.2 0.04 195);
+
   --chart-1: oklch(0.74 0.128 156);
   --chart-2: oklch(0.8 0.148 83);
   --chart-3: oklch(0.68 0.09 195);
@@ -189,9 +213,9 @@
     @apply bg-background text-foreground;
   }
 
-  /* Editorial display serif for page/section headings — instant brand voice. */
-  h1,
-  h2 {
+  /* Editorial display serif — PAGE titles only (h1). Section headings opt in
+   * with .font-display; card titles and UI labels stay Inter for a product feel. */
+  h1 {
     font-family: var(--font-fraunces), ui-serif, Georgia, 'Times New Roman', serif;
     font-weight: 650;
     letter-spacing: -0.015em;
@@ -223,6 +247,9 @@
 
   /* Serif display face helper */
   .font-display { font-family: var(--font-fraunces), ui-serif, Georgia, serif; }
+
+  /* Tabular numerals — money, marks, counts and statistics align in columns. */
+  .tnum { font-variant-numeric: tabular-nums; }
 
   /* Eyebrow: small gold uppercase kicker */
   .eyebrow {
@@ -272,14 +299,13 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Card hover lift + emerald shadow */
+  /* Card hover: quiet 2px lift, soft emerald shadow (gold reserved for CTAs) */
   .card-lift {
-    transition: transform 0.28s cubic-bezier(0.21, 1, 0.32, 1), box-shadow 0.28s, border-color 0.28s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   .card-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 18px 40px -18px color-mix(in oklch, var(--brand-700) 38%, transparent);
-    border-color: color-mix(in oklch, var(--gold-400) 45%, var(--border));
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -18px color-mix(in oklch, var(--brand-700) 32%, transparent);
   }
 
   /* Gold top-rule card accent */
