@@ -101,3 +101,69 @@
   background: radial-gradient(circle, rgba(45, 122, 179, 0.16) 0%, rgba(45, 122, 179, 0) 70%);
   pointer-events: none;
 }
+
+/* ---- live-site screenshot frames (tour slides) ---- */
+.shot {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 10px 26px rgba(20, 40, 64, 0.14);
+  overflow: hidden;
+}
+.shot-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #eef3fa;
+  border-bottom: 1px solid var(--border);
+}
+.shot-dot { width: 9px; height: 9px; border-radius: 50%; background: #c0d0e2; flex: none; }
+.shot-dot:nth-child(1) { background: #e08a84; }
+.shot-dot:nth-child(2) { background: #e6c56e; }
+.shot-dot:nth-child(3) { background: #8fd0a0; }
+.shot-url {
+  margin-left: 8px;
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.shot img { display: block; width: 100%; object-fit: cover; }
+.shot-cap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.shot-cap b { color: var(--text); font-weight: 600; }
+.shot-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--card-tint);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  flex: none;
+}
+/* phone frame for mobile screenshots */
+.phone {
+  background: #10233c;
+  border-radius: 26px;
+  padding: 10px;
+  box-shadow: 0 14px 30px rgba(20, 40, 64, 0.22);
+}
+.phone-screen {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+}
+.phone-screen img { display: block; width: 100%; object-fit: cover; }

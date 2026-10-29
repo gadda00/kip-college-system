@@ -9,40 +9,56 @@
 </head>
 <body>
 <div class="slide">
-  <div class="absolute" style="left:80px;top:64px;right:80px;">
-    <div class="kicker" style="font-size:12.5px;">Platform tour &middot; 1 / 2</div>
-    <h1 style="font-family:var(--font-heading);font-size:var(--fs-h1);font-weight:700;color:var(--primary);margin:8px 0 0 0;">Public website and online admissions</h1>
+  <div class="absolute" style="left:80px;top:52px;right:80px;">
+    <div class="kicker" style="font-size:12.5px;">Platform tour &middot; 1 / 5</div>
+    <h1 style="font-family:var(--font-heading);font-size:var(--fs-h1);font-weight:700;color:var(--primary);margin:8px 0 0 0;">The public website</h1>
     <div class="rule-accent" style="margin-top:14px;"></div>
-    <div class="grid grid-cols-2" style="gap:22px;margin-top:26px;">
-      <div class="card" style="padding:20px 22px;">
-        <div class="flex items-center" style="gap:12px;">
-          <span class="icon-badge"><i class="material-icons">public</i></span>
-          <span style="font-size:18px;font-weight:700;color:var(--primary);">Public website</span>
+  </div>
+
+  <div class="absolute flex" style="left:80px;top:168px;right:80px;gap:24px;">
+    <!-- big home screenshot -->
+    <div style="width:664px;flex:none;">
+      <div class="shot">
+        <div class="shot-bar">
+          <span class="shot-dot"></span><span class="shot-dot"></span><span class="shot-dot"></span>
+          <span class="shot-url">kip-college-system.vercel.app</span>
         </div>
-        <ul style="list-style:none;padding:0;margin:14px 0 0 0;display:flex;flex-direction:column;gap:10px;">
-          <li class="flex" style="gap:10px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:14.5px;color:var(--text);">Programme catalogue across all 3 categories</span></li>
-          <li class="flex" style="gap:10px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:14.5px;color:var(--text);">Campus locations and contact details</span></li>
-          <li class="flex" style="gap:10px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:14.5px;color:var(--text);">News and announcements from the admin CMS</span></li>
-          <li class="flex" style="gap:10px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:14.5px;color:var(--text);">Clear apply calls-to-action on every page</span></li>
-        </ul>
+        <img src="shots/home.jpg" style="height:382px;" alt="KIP College homepage">
       </div>
-      <div class="card" style="padding:20px 22px;">
-        <div class="flex items-center" style="gap:12px;">
-          <span class="icon-badge"><i class="material-icons">how_to_reg</i></span>
-          <span style="font-size:18px;font-weight:700;color:var(--primary);">Online admissions</span>
+      <div class="shot-cap"><span class="shot-num">1</span><span><b>Homepage</b> — sapphire &amp; gold identity, live intake countdown, course finder</span></div>
+    </div>
+
+    <!-- right column -->
+    <div class="flex flex-col" style="gap:18px;min-width:0;">
+      <div>
+        <div class="shot">
+          <div class="shot-bar">
+            <span class="shot-dot"></span><span class="shot-dot"></span><span class="shot-dot"></span>
+            <span class="shot-url">/academics</span>
+          </div>
+          <img src="shots/academics.jpg" style="height:168px;" alt="Academic programmes page">
         </div>
-        <ul style="list-style:none;padding:0;margin:14px 0 0 0;display:flex;flex-direction:column;gap:10px;">
-          <li class="flex" style="gap:10px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:14.5px;color:var(--text);">Guided application wizard with validation on every step</span></li>
-          <li class="flex" style="gap:10px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:14.5px;color:var(--text);">Every submission gets a unique application reference number</span></li>
-          <li class="flex" style="gap:10px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:14.5px;color:var(--text);">Duplicate submissions prevented automatically</span></li>
-          <li class="flex" style="gap:10px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:14.5px;color:var(--text);">Accept in the admin console — applicant becomes a student record</span></li>
-        </ul>
+        <div class="shot-cap" style="margin-top:8px;"><span class="shot-num">2</span><span><b>Programme finder</b> — filter by grade, campus, cost</span></div>
+      </div>
+      <div>
+        <div class="shot">
+          <div class="shot-bar">
+            <span class="shot-dot"></span><span class="shot-dot"></span><span class="shot-dot"></span>
+            <span class="shot-url">/course/CPA</span>
+          </div>
+          <img src="shots/course.jpg" style="height:168px;" alt="Course detail page">
+        </div>
+        <div class="shot-cap" style="margin-top:8px;"><span class="shot-num">3</span><span><b>Course pages</b> — fees, duration, exam body, apply CTA</span></div>
       </div>
     </div>
-    <div class="flex items-center" style="margin-top:22px;gap:10px;">
-      <i class="material-icons" style="color:var(--accent);font-size:19px;">touch_app</i>
-      <span style="font-size:14px;color:var(--muted);">Try it: submit a test application and receive your own reference number before logging in.</span>
-    </div>
+  </div>
+
+  <!-- bottom feature strip -->
+  <div class="absolute flex items-center" style="left:80px;right:80px;bottom:44px;gap:28px;">
+    <div class="flex items-center" style="gap:8px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:13.5px;color:var(--text);">28 programmes, 3 categories</span></div>
+    <div class="flex items-center" style="gap:8px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:13.5px;color:var(--text);">News &amp; events from the CMS</span></div>
+    <div class="flex items-center" style="gap:8px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:13.5px;color:var(--text);">Campus pages &amp; directions</span></div>
+    <div class="flex items-center" style="gap:8px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:13.5px;color:var(--text);">Apply CTA on every page</span></div>
   </div>
 </div>
 </body>

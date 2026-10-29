@@ -573,7 +573,7 @@ export function HomeView() {
                 className="absolute inset-0 bg-gradient-to-t from-brand-950/60 to-transparent"
               />
             </div>
-            <p className="mt-12 text-right text-[11px] leading-relaxed text-[#f2efe6]/50">
+            <p className="mt-14 text-right text-[11px] leading-relaxed text-[#f2efe6]/50">
               Illustrative renders — visit any campus to see the real thing.
             </p>
           </motion.div>

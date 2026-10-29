@@ -130,3 +130,23 @@ Work Log:
 
 Stage Summary:
 - Complete green→blue brand conversion across tokens, hexes, print identity, ID cards and categorical colors, with semantic success-green preserved and two latent broken-token bugs fixed.
+
+---
+Task ID: 23
+Agent: main-orchestrator (Z.ai Code)
+Task: Final round — full-system refinement sweep + final proposal & PPTX with live-site screenshots (user request)
+
+Work Log:
+- FOUND & FIXED — EMPTY DEMO DATABASE: /api/public/overview returned all-zero stats (local SQLite had been wiped); regenerated the Prisma client (node scripts/prisma-generate.mjs) and reseeded with `bun run db:seed` → 10 students / 28 courses / 3 campuses / full CMS content live again.
+- END-TO-END VERIFICATION SWEEP (fresh browser sessions; real clicks): all 14 public routes + course/news detail pages, student login → portal (dashboard, fees, results, timetable, announcements, ID card), lecturer login → workspace (dashboard, classes), admin login → console (overview, students, applications, courses, fees, news, reports), dark mode, 390px mobile layouts, apply form end-to-end (POST 201 → reference KIP/APP/2026/•••••), contact form (POST 201 → success state), AI chat assistant (live LLM reply), admin accept-and-enrol flow (student record + 3 fee items + temp password Kip-••••). 0 console/page errors throughout; 0 broken images; test records wiped by a final pristine reseed.
+- Root-caused one suspected login bug to a stale browser-session automation quirk (known: agent-browser clicks silently no-op after many Fast Refreshes); a fresh session clicks cleanly — no site defect.
+- POLISH: hero collage disclaimer margin bumped (mt-12 → mt-14) for extra clearance below the floating photo. VLM review of key captures: sapphire theme confirmed everywhere, contrast OK, no glitches.
+- FINAL DELIVERABLES REGENERATED WITH SCREENSHOTS (both replace the green-era files in public/downloads/):
+  - Captured 35 fresh screenshots of the blue-theme system (1440×900 desktop, 390×844 mobile) into proposal-build/screenshots-final/.
+  - PPTX: deck extended 14 → 17 slides; five new platform-tour slides (07–11) embed 18 optimized live screenshots in browser/phone frames (public site, admissions + split sign-ins, student portal, lecturer & admin, mobile + dark mode); old tour slides replaced, later slides renumbered; global.css gains .shot/.phone frame styles; slides_brief.json updated.
+  - Proposal PDF: new §4.2 "The platform in pictures" with 10 framed screenshot plates (public site, portals, mobile) across pages 7–10 → 14 pages total; §4 intro reworded; security list gains the first-sign-in password-change bullet; build/cover.pdf reused; meta.brand applied.
+  - QA: pdf_qa/toc.check/font.check pass (1 pre-existing cover-asymmetry warning by design); content assertions pass (URL + KES 64,000 + plates); pptx verified programmatically (17 slides, 18 pictures) and visually via LibreOffice render + VLM (8 sampled slides OK); both files served at /downloads with HTTP 200.
+- Gates: tsc 0 errors, eslint clean, 15/15 unit tests.
+
+Stage Summary:
+- Final polish round complete: empty-DB regression fixed, every page and flow browser-verified error-free, and both client deliverables rebuilt around fresh screenshots of the live sapphire-blue system.

@@ -5,8 +5,8 @@ client-facing deliverables lives in this folder. Canonical entrypoints:
 
 | Deliverable | Output path | Regenerate with |
 |---|---|---|
-| Proposal PDF (~11 pages, A4, blue institutional theme) | `/home/z/my-project/public/downloads/KIP-College-System-Proposal.pdf` | `python3 proposal-build/generate_proposal.py` (after re-rendering the cover, below) |
-| Presentation PPTX (14 slides, 16:9, matching blue theme) | `/home/z/my-project/public/downloads/KIP-College-System-Presentation.pptx` | `node skills/pptx/batch_html2pptx.js proposal-build/slides <output.pptx>` (see full command below) |
+| Proposal PDF (~14 pages, A4, blue institutional theme, live-site screenshot plates in §4.2) | `/home/z/my-project/public/downloads/KIP-College-System-Proposal.pdf` | `python3 proposal-build/generate_proposal.py` (after re-rendering the cover, below) |
+| Presentation PPTX (17 slides, 16:9, matching blue theme, 18 live-site screenshots on slides 7–11) | `/home/z/my-project/public/downloads/KIP-College-System-Presentation.pptx` | `node skills/pptx/batch_html2pptx.js proposal-build/slides <output.pptx>` (see full command below) |
 
 ## Layout
 
@@ -14,10 +14,12 @@ client-facing deliverables lives in this folder. Canonical entrypoints:
 proposal-build/
 ├── cover.html                # Proposal cover source (pdf skill Template 07 "Crystal Blue")
 ├── generate_proposal.py      # ReportLab body + cover merge + metadata (single command)
+├── screenshots-final/        # Live-site captures (1440×900 desktop / 390×844 mobile, 2026-10-29)
 ├── slides/                   # PPTX deck sources (pptx skill HTML pipeline)
-│   ├── global.css            # Deck-wide palette + typography tokens (matches PDF palette)
-│   ├── slides_brief.json     # Slide manifest (14 slides, order = array order)
-│   └── slide_01..14.html     # One 1280x720 standalone HTML page per slide
+│   ├── global.css            # Deck-wide palette + typography tokens (+ .shot/.phone frames)
+│   ├── shots/                # Optimized JPEG copies of the screenshots, embedded by slides 7–11
+│   ├── slides_brief.json     # Slide manifest (17 slides, order = array order)
+│   └── slide_01..17.html     # One 1280x720 standalone HTML page per slide
 ├── build/                    # Intermediate artifacts (cover.pdf, body.pdf, previews)
 └── worklog-entry-16.md       # Work record for integration into worklog.md
 ```

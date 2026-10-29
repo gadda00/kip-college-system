@@ -9,55 +9,54 @@
 </head>
 <body>
 <div class="slide">
-  <div class="absolute" style="left:80px;top:60px;right:80px;">
-    <div class="kicker" style="font-size:12.5px;">Platform tour &middot; 2 / 2</div>
-    <h1 style="font-family:var(--font-heading);font-size:var(--fs-h1);font-weight:700;color:var(--primary);margin:8px 0 0 0;">Portals for every role</h1>
+  <div class="absolute" style="left:80px;top:52px;right:80px;">
+    <div class="kicker" style="font-size:12.5px;">Platform tour &middot; 2 / 5</div>
+    <h1 style="font-family:var(--font-heading);font-size:var(--fs-h1);font-weight:700;color:var(--primary);margin:8px 0 0 0;">Online admissions, start to finish</h1>
     <div class="rule-accent" style="margin-top:14px;"></div>
-    <div class="grid grid-cols-3" style="gap:18px;margin-top:24px;">
-      <div class="card" style="padding:18px 20px;">
-        <div class="flex items-center" style="gap:12px;">
-          <span class="icon-badge"><i class="material-icons">school</i></span>
-          <span style="font-size:17px;font-weight:700;color:var(--primary);">Student portal</span>
+  </div>
+
+  <div class="absolute flex" style="left:80px;top:168px;right:80px;gap:24px;">
+    <!-- apply form screenshot -->
+    <div style="width:664px;flex:none;">
+      <div class="shot">
+        <div class="shot-bar">
+          <span class="shot-dot"></span><span class="shot-dot"></span><span class="shot-dot"></span>
+          <span class="shot-url">/apply</span>
         </div>
-        <ul style="list-style:none;padding:0;margin:12px 0 0 0;display:flex;flex-direction:column;gap:8px;">
-          <li style="font-size:14px;color:var(--text);">&#8226; Personal dashboard</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Fee statement and balance</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Published results</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Timetable and learning materials</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; AI study assistant</li>
-        </ul>
+        <img src="shots/apply.jpg" style="height:382px;" alt="Online application form">
       </div>
-      <div class="card" style="padding:18px 20px;">
-        <div class="flex items-center" style="gap:12px;">
-          <span class="icon-badge"><i class="material-icons">co_present</i></span>
-          <span style="font-size:17px;font-weight:700;color:var(--primary);">Lecturer workspace</span>
+      <div class="shot-cap"><span class="shot-num">1</span><span><b>Application wizard</b> — validated step by step, duplicates prevented</span></div>
+    </div>
+
+    <!-- right column -->
+    <div class="flex flex-col" style="gap:18px;min-width:0;">
+      <div>
+        <div class="shot">
+          <div class="shot-bar">
+            <span class="shot-dot"></span><span class="shot-dot"></span><span class="shot-dot"></span>
+            <span class="shot-url">/login &middot; /login/staff</span>
+          </div>
+          <img src="shots/login.jpg" style="height:168px;" alt="Student sign-in page">
         </div>
-        <ul style="list-style:none;padding:0;margin:12px 0 0 0;display:flex;flex-direction:column;gap:8px;">
-          <li style="font-size:14px;color:var(--text);">&#8226; Class rosters, always current</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Marks entry with Save draft</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Publish when checked</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Drafts stay invisible to students</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Publish drafts in one action</li>
-        </ul>
+        <div class="shot-cap" style="margin-top:8px;"><span class="shot-num">2</span><span><b>Split sign-ins</b> — students and staff, each branded</span></div>
       </div>
-      <div class="card" style="padding:18px 20px;">
-        <div class="flex items-center" style="gap:12px;">
-          <span class="icon-badge"><i class="material-icons">admin_panel_settings</i></span>
-          <span style="font-size:17px;font-weight:700;color:var(--primary);">Admin console</span>
+      <div class="card" style="padding:16px 18px;">
+        <div class="flex items-center" style="gap:10px;">
+          <i class="material-icons" style="color:var(--accent);font-size:20px;">confirmation_number</i>
+          <span style="font-size:14.5px;font-weight:700;color:var(--primary);">Every applicant gets a reference number</span>
         </div>
-        <ul style="list-style:none;padding:0;margin:12px 0 0 0;display:flex;flex-direction:column;gap:8px;">
-          <li style="font-size:14px;color:var(--text);">&#8226; Students and applications</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Courses, fees and payments</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Results moderation</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; News and announcements CMS</li>
-          <li style="font-size:14px;color:var(--text);">&#8226; Timetable management</li>
-        </ul>
+        <div style="margin-top:10px;font-family:var(--font-num);font-size:17px;font-weight:700;color:var(--accent);letter-spacing:0.5px;">KIP/APP/2026/SG8JGW</div>
+        <div style="margin-top:6px;font-size:12px;color:var(--muted);">Issued instantly — quote it at any campus to track the application.</div>
       </div>
     </div>
-    <div class="chip" style="margin-top:20px;border-color:var(--accent);color:var(--accent);font-size:13.5px;">
-      <i class="material-icons" style="font-size:17px;">verified</i>
-      <span>Students only ever see published marks.</span>
-    </div>
+  </div>
+
+  <!-- bottom strip -->
+  <div class="absolute flex items-center" style="left:80px;right:80px;bottom:44px;gap:28px;">
+    <div class="flex items-center" style="gap:8px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:13.5px;color:var(--text);">Validation on every field</span></div>
+    <div class="flex items-center" style="gap:8px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:13.5px;color:var(--text);">Duplicate submissions blocked</span></div>
+    <div class="flex items-center" style="gap:8px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:13.5px;color:var(--text);">Accept in admin &rarr; student record + fees posted</span></div>
+    <div class="flex items-center" style="gap:8px;"><i class="material-icons" style="color:var(--accent);font-size:18px;">check_circle</i><span style="font-size:13.5px;color:var(--text);">First sign-in forces a password change</span></div>
   </div>
 </div>
 </body>
