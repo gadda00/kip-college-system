@@ -22,90 +22,24 @@
   "slides_dir": "/home/z/my-project/proposal-build/slides",
   "language": "en",
   "speaker_notes": "none",
+  "screenshots_note": "Slides 07-11 embed live screenshots captured from the running site (proposal-build/slides/shots/*.jpg, captured 2026-10-29 at 1440x900 desktop and 390x844 mobile, sapphire-blue theme).",
   "slides": [
-    {
-      "title": "Title",
-      "layout": "cover (dark)",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_01.html",
-      "task_brief": "Dark cover slide (#0a1628) with luminous blue rectangular frame (class .frame) and one .glow at top-left. Kicker (class kicker--dark): 'DIGITAL PLATFORM PROPOSAL'. Main title in Playfair Display, ~64px, weight 900, color #e8f0f8: 'Kitui Institute of Professionals'. Subtitle ~22px color #7a9bb8 max-width 760px: 'One integrated college management system - public website, online admissions, student and lecturer portals, an administrative console, and an AI study assistant.' Bottom meta row (small, #7a9bb8, letter-spacing): 'October 2026' left and 'Prepared for Kitui Institute of Professionals' right, sitting just above the frame's bottom edge with comfortable gap. Add a small 'LIVE DEMO INSIDE' chip in accent-bright with a material icon 'rocket_launch'."
-    },
-    {
-      "title": "Agenda",
-      "layout": "numbered agenda list",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_02.html",
-      "task_brief": "Light slide. Header: kicker 'AGENDA' + H1 'What we will cover' + accent rule. Body: two-column grid of 8 numbered items, each a row with a number in accent (#2d7ab3, bold, ~22px) and label (~17px): 1 About KIP College; 2 The challenge and the opportunity; 3 The solution at a glance; 4 Live demo - see it running today; 5 Platform tour; 6 Technology and security; 7 Investment, recurring costs and timeline; 8 Why this platform and next steps. Material icon 'menu_book' next to header."
-    },
-    {
-      "title": "About KIP",
-      "layout": "split text + campus cards",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_03.html",
-      "task_brief": "Light slide. Header: kicker 'ABOUT THE INSTITUTION' + H1 'Kitui Institute of Professionals'. Left column bullets: 'Tertiary college serving Kitui County and eastern Kenya'; '21+ programmes across 3 categories: Technical (ICT, engineering, hairdressing and beauty), Business, and KASNEB professional (CPA, CAMS/ATD)'; 'Examined by KASNEB, KNEC, NITA and TVET-CDACC'; 'Three campuses, one college'. Right column: three stacked campus cards (class card, icon-badge with material icons 'location_city'): 'Main Campus - 100 m from Wikililye, Mulango Road, Kitui'; 'Town Campus - Muli Mall Building, Kitui CBD'; 'Mwingi Campus - Sunrise Building, Mwingi Town'. Each card: campus name bold ~17px, address ~14px muted."
-    },
-    {
-      "title": "The challenge and the opportunity",
-      "layout": "quad problem cards + opportunity bar",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_04.html",
-      "task_brief": "Light slide. Header: kicker 'THE CHALLENGE' + H1 'Manual processes slow the college down'. 2x2 grid of cards, each with material icon + bold label + one short line: 'Paper applications - forms travel to campus; no tracking reference' (icon 'description'); 'Manual fee records - balances reconciled by hand across campuses' (icon 'receipt_long'); 'Results on paper - marks copied and re-copied between offices' (icon 'content_paste'); 'Office-hours only - families cannot check progress without travelling' (icon 'schedule'). Bottom full-width accent-tinted bar (card--tint) with icon 'trending_up' and text: 'The opportunity: students and parents live on their phones. A college that answers at midnight and accepts applications on Sunday wins the next intake.'"
-    },
-    {
-      "title": "The solution at a glance",
-      "layout": "bento grid (6 modules)",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_05.html",
-      "task_brief": "Light slide. Header: kicker 'THE SOLUTION' + H1 'One platform, six modules, one database'. Bento grid 3x2 of cards, each with material icon in icon-badge, bold module name, one-line description: 'Public website - programmes, campuses, news, contact' (icon 'public'); 'Online admissions - guided wizard, unique application reference numbers' (icon 'how_to_reg'); 'Student portal - fees, results, timetable, materials' (icon 'school'); 'Lecturer workspace - rosters, marks entry with draft to publish' (icon 'edit_note'); 'Admin console - students, applications, courses, fees, results, news, timetable' (icon 'admin_panel_settings'); 'AI study assistant - on-demand study help inside the portal' (icon 'auto_awesome'). Small footnote line: 'Role-based access: every user sees exactly their own workspace.'"
-    },
-    {
-      "title": "See it live - demo",
-      "layout": "dark hero / demo credentials",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_06.html",
-      "task_brief": "DARK slide (slide--dark) - the highlight of the deck. Kicker--dark: 'SEE IT LIVE'. Headline in Playfair ~40px #e8f0f8: 'The platform is running today'. Huge URL centered in a card--dark box, ~30px bold, color #4da8da, material icon 'open_in_new': 'https://kip-college-system.vercel.app'. Below, three credential cards (card--dark) side by side, each with role name bold (#e8f0f8), email and password in #7a9bb8 mono-ish: 'Administrator - admin@kipskitui.com / Admin@123' (icon 'admin_panel_settings'); 'Lecturer - lecturer@kipskitui.com / Lecturer@123' (icon 'co_present'); 'Student - student@kipskitui.com / Student@123' (icon 'person'). Bottom note small #7a9bb8 with icon 'bolt': 'Live on Vercel with a persistent PostgreSQL (Prisma Postgres) database. Works on any phone, tablet or computer.'"
-    },
-    {
-      "title": "Platform tour - public site and admissions",
-      "layout": "two feature columns",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_07.html",
-      "task_brief": "Light slide. Header: kicker 'PLATFORM TOUR 1 / 2' + H1 'Public website and online admissions'. Two large cards side by side. Card A 'Public website' (icon 'public'): bullets 'Programme catalogue across all 3 categories', 'Campus locations and contact details', 'News and announcements from the admin CMS', 'Clear apply calls-to-action on every page'. Card B 'Online admissions' (icon 'how_to_reg'): bullets 'Guided application wizard with validation on every step', 'Every submission gets a unique application reference number', 'Duplicate submissions prevented automatically', 'Accept in the admin console - applicant becomes a student record'. Bottom strip: small muted line 'Try it: submit a test application and receive your own reference number before logging in.'"
-    },
-    {
-      "title": "Platform tour - portals",
-      "layout": "three columns",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_08.html",
-      "task_brief": "Light slide. Header: kicker 'PLATFORM TOUR 2 / 2' + H1 'Portals for every role'. Three equal cards: 'Student portal' (icon 'school') bullets: 'Personal dashboard', 'Fee statement and balance', 'Published results', 'Timetable and learning materials', 'AI study assistant'. 'Lecturer workspace' (icon 'co_present') bullets: 'Class rosters, always current', 'Marks entry with Save draft', 'Publish when checked - drafts stay invisible to students', 'Publish drafts in one action'. 'Admin console' (icon 'admin_panel_settings') bullets: 'Students and applications', 'Courses and fees, payments', 'Results moderation', 'News and announcements CMS', 'Timetable management'. Emphasize the draft-to-publish safety with a small tinted chip: 'Students only ever see published marks.'"
-    },
-    {
-      "title": "Technology and security",
-      "layout": "split: stack table + security list",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_09.html",
-      "task_brief": "Light slide. Header: kicker 'FOUNDATION' + H1 'Technology and security'. Left card 'Technology stack' with 5 rows (label bold + value, separated by hairlines): 'Framework - Next.js 16', 'Language - TypeScript, strict mode', 'Interface - Tailwind CSS + shadcn/ui', 'Database - PostgreSQL via Prisma Postgres (auto-provisioned, persistent)', 'Hosting - Vercel, continuous deployment'. Right card 'Security by design' with icon bullets: 'Role-based access control enforced server-side' (icon 'lock'); 'Rate limiting on login, passwords and applications' (icon 'speed'); 'Full audit trail of security events' (icon 'receipt_long'); 'Secure hardened session cookies' (icon 'cookie'); 'Strict input validation and security headers' (icon 'verified_user'). Bottom note: 'No server room, no on-site hardware, no dedicated IT staff required.'"
-    },
-    {
-      "title": "Investment",
-      "layout": "big stat + breakdown table",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_10.html",
-      "task_brief": "Light slide. Header: kicker 'INVESTMENT' + H1 'One-off cost to own the platform'. Left: giant stat 'KES 64,000' (~56px bold #1a4a7a) with label 'Total one-off investment - no licences, no per-student charges' and a chip 'full source code and data ownership'. Right: table-like card with 5 rows (item + KES amount right-aligned): 'Design and branding - 15,000'; 'Platform development - 22,000'; 'Content, testing and deployment - 18,000'; 'Training and handover - 9,000'; total row highlighted (tint background, bold): 'Total - 64,000'. Footnote with icon 'info' small muted: 'Fee figures pending verification by the college owner.'"
-    },
-    {
-      "title": "Recurring costs and milestones",
-      "layout": "two panels",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_11.html",
-      "task_brief": "Light slide. Header: kicker 'AFTER GO-LIVE' + H1 'Recurring costs and payment milestones'. Left panel 'Recurring (per year)': two cards: 'Hosting - KES 10,000 / year - Vercel, managed PostgreSQL, domain, SSL' (icon 'dns'); 'Maintenance and support - KES 36,000 / year - KES 3,000 per month - updates, fixes, support channel' (icon 'build'). Total chip: 'Total recurring: KES 46,000 per year'. Right panel 'Payment milestones': vertical 3-step timeline with amounts: '1. Sign-off - 50% - KES 32,000'; '2. Staging delivery - 25% - KES 16,000'; '3. Go-live - 25% - KES 16,000'; each step a row with number badge, bold label, amount in accent."
-    },
-    {
-      "title": "Delivery timeline",
-      "layout": "timeline steps",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_12.html",
-      "task_brief": "Light slide. Header: kicker 'DELIVERY' + H1 'Six phases, six to eight weeks'. Six step cards in 3x2 grid (or horizontal band), each with phase number badge, bold title, small description, week chip: '1 Discovery and sign-off - confirm programmes, fees, branding; first milestone - Week 1'; '2 Branding and design - KIP identity across site and portals - Weeks 1-2'; '3 Configuration and data - real programmes, staff accounts, fee structures - Weeks 2-4'; '4 Content, testing, staging - end-to-end tests, review site; second milestone - Weeks 5-6'; '5 Training and handover - staff training, docs, credentials - Week 7'; '6 Go-live and support - production domain, monitoring; final milestone - Week 8'. Bottom note: 'The platform already exists - delivery is branding, content, verification and training, not risky software construction.'"
-    },
-    {
-      "title": "Why this platform and next steps",
-      "layout": "split reasons + numbered next steps",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_13.html",
-      "task_brief": "Light slide. Header: kicker 'DECISION' + H1 'Why this platform, and what happens next'. Left card 'Why' with icon bullets: 'Already live - evaluate the real thing before paying' (icon 'visibility'); 'One-off KES 64,000 - no licences, no per-student fees' (icon 'payments'); 'Modern maintainable stack any developer can take over' (icon 'code'); 'Secure by design - RBAC, rate limits, audit trail' (icon 'security'). Right card 'Next steps' numbered 1-5: '1 Review the live demo with senior staff'; '2 Verify contacts, fee figures and programme list'; '3 Sign off and pay the first milestone (KES 32,000)'; '4 Supply branding assets and nominate staff for training'; '5 Approve staging and schedule go-live'."
-    },
-    {
-      "title": "Thank you and contact",
-      "layout": "closing (dark)",
-      "output_path": "/home/z/my-project/proposal-build/slides/slide_14.html",
-      "task_brief": "DARK closing slide (slide--dark) with .frame and one .glow bottom-right. Big Playfair headline ~54px #e8f0f8: 'Thank you.' Sub-line ~20px #7a9bb8: 'Kitui Institute of Professionals - Integrated College Management System'. Centered contact card (card--dark) with three rows, each material icon + text: 'info@kipskitui.com' (icon 'mail'); '+254 703 710 879 - to be verified by owner' (icon 'call'); 'https://kip-college-system.vercel.app' in #4da8da bold (icon 'open_in_new'). Bottom small note #7a9bb8: 'October 2026 - Phone numbers and fee figures pending owner verification.'"
-    }
+    { "title": "Title", "output_path": "/home/z/my-project/proposal-build/slides/slide_01.html" },
+    { "title": "Agenda", "output_path": "/home/z/my-project/proposal-build/slides/slide_02.html" },
+    { "title": "About KIP", "output_path": "/home/z/my-project/proposal-build/slides/slide_03.html" },
+    { "title": "The challenge and the opportunity", "output_path": "/home/z/my-project/proposal-build/slides/slide_04.html" },
+    { "title": "The solution at a glance", "output_path": "/home/z/my-project/proposal-build/slides/slide_05.html" },
+    { "title": "See it live - demo", "output_path": "/home/z/my-project/proposal-build/slides/slide_06.html" },
+    { "title": "Platform tour 1/5 - public website (screenshots)", "output_path": "/home/z/my-project/proposal-build/slides/slide_07.html" },
+    { "title": "Platform tour 2/5 - online admissions (screenshots)", "output_path": "/home/z/my-project/proposal-build/slides/slide_08.html" },
+    { "title": "Platform tour 3/5 - student portal (screenshots)", "output_path": "/home/z/my-project/proposal-build/slides/slide_09.html" },
+    { "title": "Platform tour 4/5 - lecturer and admin (screenshots)", "output_path": "/home/z/my-project/proposal-build/slides/slide_10.html" },
+    { "title": "Platform tour 5/5 - mobile and dark mode (screenshots)", "output_path": "/home/z/my-project/proposal-build/slides/slide_11.html" },
+    { "title": "Technology and security", "output_path": "/home/z/my-project/proposal-build/slides/slide_12.html" },
+    { "title": "Investment", "output_path": "/home/z/my-project/proposal-build/slides/slide_13.html" },
+    { "title": "Recurring costs and milestones", "output_path": "/home/z/my-project/proposal-build/slides/slide_14.html" },
+    { "title": "Delivery timeline", "output_path": "/home/z/my-project/proposal-build/slides/slide_15.html" },
+    { "title": "Why this platform and next steps", "output_path": "/home/z/my-project/proposal-build/slides/slide_16.html" },
+    { "title": "Thank you and contact", "output_path": "/home/z/my-project/proposal-build/slides/slide_17.html" }
   ]
 }

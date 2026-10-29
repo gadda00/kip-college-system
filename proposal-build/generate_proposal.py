@@ -30,6 +30,8 @@ import hashlib
 import os
 import sys
 
+from PIL import Image as PILImage
+
 SKILL_SCRIPTS = '/home/z/my-project/skills/pdf/scripts'
 if SKILL_SCRIPTS not in sys.path:
     sys.path.insert(0, SKILL_SCRIPTS)
@@ -41,9 +43,9 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.pdfmetrics import registerFontFamily
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import (CondPageBreak, HRFlowable, KeepTogether,
-                                PageBreak, Paragraph, SimpleDocTemplate,
-                                Spacer, Table, TableStyle)
+from reportlab.platypus import (CondPageBreak, HRFlowable, Image as RLImage,
+                                KeepTogether, PageBreak, Paragraph,
+                                SimpleDocTemplate, Spacer, Table, TableStyle)
 from reportlab.platypus.tableofcontents import TableOfContents
 
 # ---------------------------------------------------------------- fonts
@@ -266,6 +268,56 @@ def bulletize(items, style=bullet, numbered_list=False):
         marker = ('%d.' % (i + 1)) if numbered_list else '\u2022'
         out.append(Paragraph(it, style, bulletText=marker))
     return out
+
+
+# ------------------------------------------------- live-site screenshot plates
+SHOTS_DIR = '/home/z/my-project/proposal-build/screenshots-final'
+
+
+def _shot_image(fname, width):
+    """Framed screenshot (thin border, white matte) at the given width."""
+    path = os.path.join(SHOTS_DIR, fname)
+    with PILImage.open(path) as im:
+        w, h = im.size
+    ih = width * h / float(w)
+    img = RLImage(path, width=width - 6, height=ih * (width - 6) / float(width))
+    frm = Table([[img]], colWidths=[width])
+    frm.setStyle(TableStyle([
+        ('BOX', (0, 0), (-1, -1), 0.75, BORDER),
+        ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+        ('TOPPADDING', (0, 0), (-1, -1), 3),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ('LEFTPADDING', (0, 0), (-1, -1), 3),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 3),
+    ]))
+    return frm
+
+
+def shot_cell(fname, caption_text, width):
+    """One screenshot + its caption, as a list of flowables for a table cell."""
+    return [_shot_image(fname, width), Paragraph(caption_text, caption)]
+
+
+def shot_row(pairs, gap=16):
+    """Row of framed screenshots (2- or 3-up) as a single flowable."""
+    n = len(pairs)
+    w = (AVAIL_W - gap * (n - 1)) / float(n)
+    cells = [shot_cell(f, c, w) for f, c in pairs]
+    t = Table([cells], colWidths=[w + (gap if i < n - 1 else 0) for i in range(n)])
+    t.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 0),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+        ('TOPPADDING', (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+    ]))
+    return t
+
+
+def shot_plate(pairs, gap=16, lead_paragraph=None):
+    """A keep-together plate: optional lead + one row of screenshots."""
+    parts = ([lead_paragraph] if lead_paragraph else []) + [shot_row(pairs, gap)]
+    return KeepTogether(parts)
 
 
 # ------------------------------------------------- doc template (TOC gate)
@@ -522,9 +574,10 @@ story.append(Paragraph(
 p = Paragraph(
     'The platform is deployed on Vercel and is running now, with a '
     'persistent PostgreSQL database keeping all records safe between visits. '
-    'You do not have to imagine the system from screenshots: open the '
+    'The plates in Section 4.2 show the running system exactly as it stood '
+    'in October 2026 — and you can go further than pictures: open the '
     'address below in any browser, on a phone or a computer, and explore the '
-    'complete platform.', body)
+    'complete platform yourself.', body)
 story.extend(h1_block('4. See It Live: Try the Platform Today', p))
 url_para = Paragraph('<b>%s</b>' % LIVE_URL, url_big)
 url_note = Paragraph('Live deployment \u00b7 running on Vercel with a '
@@ -573,6 +626,58 @@ story.append(Paragraph(
     'be cleared so that go-live starts from a clean, branded system loaded '
     'only with the college’s real programmes and staff accounts.', body))
 
+story.extend(h2_block('4.2 The platform in pictures'))
+story.append(Paragraph(
+    'The following plates were captured directly from the live deployment '
+    'while signed in with each of the three demo accounts. They show the '
+    'sapphire-and-gold visual identity applied consistently across the '
+    'public website, all three portals, mobile screens and dark mode.', body))
+story.append(Spacer(1, 4))
+story.append(shot_plate([
+    ('01-home-top.png',
+     'Plate 1: The public homepage — sapphire and gold identity, live intake '
+     'countdown, programme finder and news.'),
+]))
+story.append(Spacer(1, 10))
+story.append(shot_plate([
+    ('03-academics.png',
+     'Plate 2: Programme finder — every course, filterable by grade, campus and cost.'),
+    ('12-apply.png',
+     'Plate 3: The online application wizard with step-by-step validation.'),
+]))
+story.append(PageBreak())
+story.append(shot_plate([
+    ('17-student-portal.png',
+     'Plate 4: The student portal dashboard — fees, results, timetable and '
+     'announcements at a glance.'),
+    ('18-student-fees.png',
+     'Plate 5: The fee statement — balance, M-Pesa payment submissions and '
+     'full transaction history.'),
+]))
+story.append(Spacer(1, 10))
+story.append(shot_plate([
+    ('23-lecturer-portal.png',
+     'Plate 6: The lecturer workspace — class rosters and marks entry with a '
+     'draft-to-publish workflow.'),
+    ('25-admin-overview.png',
+     'Plate 7: The admin console — enrolment, fee collection and results '
+     'oversight in one screen.'),
+]))
+story.append(Spacer(1, 10))
+story.append(shot_plate([
+    ('33-mobile-home.png',
+     'Plate 8: The homepage on a phone.'),
+    ('34-mobile-portal.png',
+     'Plate 9: The student portal on a phone.'),
+    ('35-mobile-fees.png',
+     'Plate 10: The fee statement on a phone.'),
+], gap=14))
+story.append(Paragraph(
+    'Every screen shown is responsive, works in dark mode, and was verified '
+    'error-free in a full end-to-end pass — public pages, all three portals, '
+    'application submission, contact form and the AI assistant — on the day '
+    'this proposal was issued.', caption))
+
 # ============================================================ 5. Technology & Security
 p = Paragraph(
     'The system is built on a modern, well-supported technology stack, '
@@ -611,6 +716,10 @@ story.extend(bulletize([
     'recorded for later review.',
     '<b>Secure sessions</b>: hardened session cookies, with expired '
     'sessions cleaned up automatically.',
+    '<b>First-sign-in password change</b>: accounts provisioned by the '
+    'registrar (including students enrolled from accepted applications) '
+    'receive a random temporary password and must choose their own at first '
+    'sign-in.',
     '<b>Strict input validation</b> on every form and API route, plus '
     'protective security headers on all responses.',
 ]))
