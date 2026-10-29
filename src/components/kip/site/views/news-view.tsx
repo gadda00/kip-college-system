@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight, CalendarDays, Newspaper } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -78,10 +79,13 @@ export function NewsView() {
                 aria-label={`Read featured story: ${featured.title}`}
               >
                 <div className="relative aspect-[16/9] overflow-hidden bg-muted lg:aspect-auto lg:min-h-72">
-                  <img
+                  <Image
                     src={featured.image}
                     alt={featured.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    priority
                   />
                   <div
                     aria-hidden="true"
@@ -127,12 +131,13 @@ export function NewsView() {
                     className="group card-lift flex flex-col overflow-hidden rounded-xl border bg-card text-left shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                     aria-label={`Read: ${post.title}`}
                   >
-                    <div className="aspect-[16/9] overflow-hidden bg-muted">
-                      <img
+                    <div className="relative aspect-[16/9] overflow-hidden bg-muted">
+                      <Image
                         src={post.image}
                         alt={post.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
                     <div className="flex flex-1 flex-col p-4 sm:p-5">

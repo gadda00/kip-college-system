@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import Image from 'next/image'
 import Markdown from 'react-markdown'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, CalendarDays, Share2, UserRound } from 'lucide-react'
@@ -102,8 +103,15 @@ export function NewsDetailView({ newsId }: { newsId: string }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
       >
-        <div className="overflow-hidden rounded-2xl shadow-sm">
-          <img src={data.image} alt={data.title} className="aspect-[16/8] w-full object-cover" />
+        <div className="relative aspect-[16/8] overflow-hidden rounded-2xl shadow-sm">
+          <Image
+            src={data.image}
+            alt={data.title}
+            fill
+            priority
+            sizes="(min-width: 1024px) 66vw, 100vw"
+            className="object-cover"
+          />
         </div>
 
         <header className="mt-6">

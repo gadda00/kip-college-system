@@ -543,7 +543,7 @@ export function HomeView() {
           >
             <div className="relative overflow-hidden rounded-2xl border border-[#f2efe6]/15 shadow-2xl shadow-brand-950/50">
               <Image
-                src="/images/hero-campus.png"
+                src="/images/hero-campus.webp"
                 alt="Illustrative render of a college campus building (AI-generated placeholder image)"
                 width={520}
                 height={390}
@@ -561,7 +561,7 @@ export function HomeView() {
             </div>
             <div className="absolute -bottom-8 -left-10 w-48 overflow-hidden rounded-xl border border-[#f2efe6]/15 shadow-xl shadow-brand-950/60 xl:w-56">
               <Image
-                src="/images/gallery-computer-lab.png"
+                src="/images/gallery-computer-lab.webp"
                 alt="Illustrative image of students working in a computer laboratory (AI-generated placeholder)"
                 width={224}
                 height={168}

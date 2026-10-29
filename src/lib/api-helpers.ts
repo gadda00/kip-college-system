@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Prisma } from '@prisma/client'
 import { ZodError, z } from 'zod'
+import { randomBytes } from 'node:crypto'
 import { db, isPostgres } from '@/lib/db'
 import { HttpError } from '@/lib/auth'
 
@@ -129,13 +130,30 @@ export function currentTermLabel(): string {
   return `${now.getFullYear()}/${now.getFullYear() + 1} T${term}`
 }
 
+/** Alphabet without visually-ambiguous characters (no 0/O, 1/I) for user-facing codes. */
+export const UNAMBIGUOUS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+
+/**
+ * Cryptographically random code from `alphabet` (default A–Z0–9).
+ *
+ * SECURITY: reference numbers, temp passwords and any value an outsider
+ * must not guess are drawn from `crypto.randomBytes` — `Math.random()` is
+ * not a CSPRNG and its output can be predictable.
+ */
+export function randomCode(
+  length: number,
+  alphabet: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+): string {
+  const bytes = randomBytes(length)
+  let out = ''
+  for (let i = 0; i < length; i++) out += alphabet[bytes[i]! % alphabet.length]
+  return out
+}
+
 /** Random uppercase-alphanumeric reference (8 chars) with uniqueness retry. */
 export async function uniqueReference(prefix: string, length = 8): Promise<string> {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   for (let attempt = 0; attempt < 10; attempt++) {
-    let suffix = ''
-    for (let i = 0; i < length; i++) suffix += chars[Math.floor(Math.random() * chars.length)]
-    const candidate = `${prefix}${suffix}`
+    const candidate = `${prefix}${randomCode(length)}`
     const existing = await db.payment.findUnique({ where: { reference: candidate }, select: { id: true } })
     if (!existing) return candidate
   }

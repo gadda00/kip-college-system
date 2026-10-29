@@ -36,7 +36,10 @@ export async function POST(req: Request) {
     if (!valid) throw new HttpError(400, 'Current password is incorrect')
 
     const passwordHash = await bcrypt.hash(body.newPassword, 10)
-    await db.user.update({ where: { id: user.id }, data: { passwordHash } })
+    // mustChangePassword is cleared here: replacing a temporary password is
+    // the only way the flag ever resets (it is set when an accepted
+    // application provisions the account).
+    await db.user.update({ where: { id: user.id }, data: { passwordHash, mustChangePassword: false } })
 
     // invalidate every session except the current one (compare hashed tokens —
     // the Session table only ever stores sha256 of the raw cookie value)

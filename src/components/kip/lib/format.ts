@@ -70,7 +70,7 @@ export function categoryMeta(category: string): CategoryMeta {
       return {
         label: 'Technical & Engineering',
         icon: GraduationCap,
-        image: '/images/cat-technical.png',
+        image: '/images/cat-technical.webp',
         blurb:
           'ICT, electrical & electronic engineering, building construction, catering, fashion design and artisan trades — hands-on training in modern workshops and labs.',
       }
@@ -78,7 +78,7 @@ export function categoryMeta(category: string): CategoryMeta {
       return {
         label: 'KASNEB Professional',
         icon: BookOpenCheck,
-        image: '/images/cat-kasneb.png',
+        image: '/images/cat-kasneb.webp',
         blurb:
           'CPA, CAMS, CS, CIFA and DICT — professional examination programmes taught by qualified accountants and practitioners, with exceptional pass rates.',
       }
@@ -87,7 +87,7 @@ export function categoryMeta(category: string): CategoryMeta {
       return {
         label: 'Business & Management',
         icon: Briefcase,
-        image: '/images/cat-business.png',
+        image: '/images/cat-business.webp',
         blurb:
           'Business management, HR, supply chain, sales & marketing and project management — diplomas and certificates for the modern workplace.',
       }

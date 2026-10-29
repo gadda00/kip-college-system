@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import {
   BookOpenCheck,
   Briefcase,
@@ -117,11 +118,13 @@ export function AboutView() {
               className="absolute -left-3 -top-3 h-full w-full rounded-2xl border-2 border-gold-500/40"
             />
             <div className="relative overflow-hidden rounded-2xl shadow-lg shadow-brand-900/15">
-              <img
-                src="/images/about-campus.png"
+              <Image
+                src="/images/about-campus.webp"
                 alt="KIP College Main Campus in Wikililye, Kitui"
+                width={1200}
+                height={686}
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 className="aspect-[4/3] w-full object-cover"
-                loading="lazy"
               />
               <span
                 aria-hidden="true"

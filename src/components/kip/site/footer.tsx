@@ -121,6 +121,7 @@ export function Footer() {
               <FooterLink to="/apply">Apply online</FooterLink>
               <FooterLink to="/admissions">Fees &amp; payment</FooterLink>
               <FooterLink to="/login">Student login</FooterLink>
+              <FooterLink to="/login/staff">Staff login</FooterLink>
               <FooterLink to="/faq">FAQs</FooterLink>
             </ul>
           </nav>

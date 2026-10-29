@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft,
@@ -96,11 +97,14 @@ export function CourseDetailView({ courseId }: { courseId: string }) {
         <div className="space-y-10 lg:col-span-2">
           {/* hero + headings */}
           <motion.div {...fadeUp}>
-            <div className="relative overflow-hidden rounded-2xl shadow-sm">
-              <img
+            <div className="relative aspect-[16/8] overflow-hidden rounded-2xl shadow-sm">
+              <Image
                 src={course.image || meta.image}
                 alt={course.title}
-                className="aspect-[16/8] w-full object-cover"
+                fill
+                priority
+                sizes="(min-width: 1024px) 66vw, 100vw"
+                className="object-cover"
               />
               {/* emerald overlay for legible serif title */}
               <div

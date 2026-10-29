@@ -7,10 +7,13 @@ import {
   BookOpen,
   CalendarDays,
   IdCard,
+  KeyRound,
   LayoutDashboard,
   Receipt,
+  ShieldAlert,
   UserRound,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   PortalFullSkeleton,
   PortalShell,
@@ -108,6 +111,44 @@ function statusTone(status: string): string {
   return 'border-red-400/30 bg-red-400/10 text-red-300'
 }
 
+/**
+ * SECURITY GATE — an account still using its issued temporary password is
+ * locked out of everything except the change-password form. The flag is set
+ * when an accepted application provisions the account and clears only via
+ * POST /api/auth/password (which also logs the session out).
+ */
+function MustChangePasswordGate() {
+  return (
+    <section
+      aria-labelledby="must-change-password"
+      className="mx-auto max-w-lg pt-8 sm:pt-12"
+    >
+      <div className="rounded-2xl border border-gold-400/40 bg-gold-400/10 p-6 text-center sm:p-8">
+        <ShieldAlert
+          className="mx-auto h-10 w-10 text-gold-600 dark:text-gold-400"
+          aria-hidden="true"
+        />
+        <h2 id="must-change-password" className="mt-3 text-lg font-bold">
+          Set your own password to continue
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          Your account is still using the temporary password the admissions office issued. For the
+          security of your fees and results, replace it now — every other section unlocks
+          immediately after.
+        </p>
+        <Button
+          type="button"
+          className="btn-gold mt-5 h-11 min-w-44 font-bold"
+          onClick={() => navigate('/portal/profile')}
+        >
+          <KeyRound className="mr-2 h-4 w-4" aria-hidden="true" />
+          Change password
+        </Button>
+      </div>
+    </section>
+  )
+}
+
 /** Sidebar identity card for the signed-in student — light-on-dark emerald panel. */
 function StudentIdentity({ user }: { user: SafeUser }) {
   const sp = user.studentProfile
@@ -162,11 +203,18 @@ function StudentIdentity({ user }: { user: SafeUser }) {
  */
 export function StudentPortal({ sub }: { sub: string }) {
   const guard = usePortalGuard('STUDENT')
+  const mustChange = guard.state === 'ok' && guard.user.mustChangePassword
 
   // unknown sub-route → normalise to the dashboard
   useEffect(() => {
     if (!SUB_VIEWS.has(sub)) navigate('/portal')
   }, [sub])
+
+  // temporary-password gate: park the student on the profile view until the
+  // password is replaced (sub-views render the gate card meanwhile)
+  useEffect(() => {
+    if (mustChange && sub !== 'profile') navigate('/portal/profile')
+  }, [mustChange, sub])
 
   if (guard.state === 'loading') return <PortalFullSkeleton />
   if (guard.state === 'anonymous') return null
@@ -182,14 +230,20 @@ export function StudentPortal({ sub }: { sub: string }) {
         portalLabel="Student Portal"
         identity={<StudentIdentity user={guard.user} />}
       >
-        {activeSub === 'dashboard' && <DashboardView />}
-        {activeSub === 'learning' && <LearningView />}
-        {activeSub === 'fees' && <FeesView />}
-        {activeSub === 'results' && <ResultsView />}
-        {activeSub === 'timetable' && <TimetableView />}
-        {activeSub === 'announcements' && <AnnouncementsView />}
-        {activeSub === 'id-card' && <IdCardView />}
-        {activeSub === 'profile' && <ProfileView />}
+        {mustChange && activeSub !== 'profile' ? (
+          <MustChangePasswordGate />
+        ) : (
+          <>
+            {activeSub === 'dashboard' && <DashboardView />}
+            {activeSub === 'learning' && <LearningView />}
+            {activeSub === 'fees' && <FeesView />}
+            {activeSub === 'results' && <ResultsView />}
+            {activeSub === 'timetable' && <TimetableView />}
+            {activeSub === 'announcements' && <AnnouncementsView />}
+            {activeSub === 'id-card' && <IdCardView />}
+            {activeSub === 'profile' && <ProfileView />}
+          </>
+        )}
       </PortalShell>
       {/* bottom spacer so the fixed tab bar never covers the last row of
           content on small screens (nav height + safe area) */}

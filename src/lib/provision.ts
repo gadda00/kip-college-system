@@ -61,6 +61,7 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "phone" TEXT,
     "role" "Role" NOT NULL DEFAULT 'STUDENT',
+    "mustChangePassword" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -862,6 +863,23 @@ export async function seedDatabase(tx: Tx): Promise<void> {
 }
 
 /**
+ * In-place schema upgrades for databases provisioned by an OLDER deployment.
+ *
+ * The DDL above only runs when the tables do not exist at all; a database
+ * created before a schema change keeps its old columns forever. These
+ * idempotent, Postgres-only ALTERs run inside the provisioning transaction
+ * so existing deployments catch up on the next request (cheap probe first —
+ * nothing executes once the column is present).
+ */
+const IN_PLACE_MIGRATIONS: { table: string; column: string; sql: string }[] = [
+  {
+    table: 'User',
+    column: 'mustChangePassword',
+    sql: 'ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "mustChangePassword" BOOLEAN NOT NULL DEFAULT false',
+  },
+]
+
+/**
  * Ensure the PostgreSQL database exists, has the current schema, and holds the
  * KIP College dataset. Safe to call on every request — after the first
  * successful run it short-circuits to two cheap probes inside one transaction.
@@ -884,6 +902,18 @@ export async function ensureProvisioned(db: PrismaClient): Promise<void> {
           }
         }
         console.log('[kip-college] schema provisioned (22 tables)')
+      }
+
+      // ---- in-place column migrations (databases from older deployments) ----
+      for (const m of IN_PLACE_MIGRATIONS) {
+        const existing = (await tx.$queryRaw`
+          SELECT COUNT(*)::int AS n FROM information_schema.columns
+          WHERE table_schema = 'public' AND table_name = ${m.table} AND column_name = ${m.column}
+        `) as Array<{ n: number }>
+        if ((existing[0]?.n ?? 0) === 0) {
+          await tx.$executeRawUnsafe(m.sql)
+          console.log(`[kip-college] migrated: + ${m.table}.${m.column}`)
+        }
       }
 
       const count = (await tx.$queryRawUnsafe(

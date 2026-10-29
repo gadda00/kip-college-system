@@ -42,7 +42,7 @@ export const campuses: CampusSeed[] = [
     location: '100m from Wikililye, Mulango Road, Kitui',
     description:
       "KIP College's flagship campus on Mulango Road, 100 metres from Wikililye centre and minutes from Kitui Town. It specialises in full-time technical training — engineering workshops, ICT laboratories, the training kitchen and the Learning Resource Centre — and is the only campus with student hostels. Open Monday–Friday 8.00 am–5.00 pm and Saturday 8.00 am–1.00 pm.",
-    image: '/images/campus-main.png',
+    image: '/images/campus-main.webp',
     phone: '0703 710 879',
     email: 'main@kipskitui.com',
     facilities:
@@ -55,7 +55,7 @@ export const campuses: CampusSeed[] = [
     location: 'Muli Mall Building, Kitui CBD',
     description:
       'Located at the Muli Mall building in the heart of Kitui CBD, Town Campus specialises in KASNEB professional studies (CPA, ATD, CAMS, CS, CIFA) and business programmes, with morning, evening (5.30–8.30 pm) and Saturday classes built around students who work in town. Open Monday–Friday 8.00 am–8.30 pm and Saturday 8.00 am–4.00 pm.',
-    image: '/images/campus-town.png',
+    image: '/images/campus-town.webp',
     phone: '0703 710 879',
     email: 'town@kipskitui.com',
     facilities: 'Computer Labs,Study Rooms,Library Section,Student Lounge,Cafeteria',
@@ -67,7 +67,7 @@ export const campuses: CampusSeed[] = [
     location: 'Sunrise Building, Mwingi Town',
     description:
       'Our Mwingi Campus at the Sunrise Building brings tertiary training closer to home for Mwingi town and the greater Mwingi region — business and ICT certificates and diplomas, KASNEB evening classes, and the hairdressing, beauty and catering studios, so learners from Mwingi North and Central need not travel to Kitui daily. Open Monday–Friday 8.00 am–5.00 pm and Saturday 8.00 am–1.00 pm.',
-    image: '/images/campus-mwingi.png',
+    image: '/images/campus-mwingi.webp',
     phone: '0703 710 879',
     email: 'mwingi@kipskitui.com',
     facilities: 'Computer Lab,Business Classrooms,Beauty & Hairdressing Studio,Library Corner',
@@ -99,7 +99,7 @@ export type CourseSeed = {
 
 export const INTAKES = 'January,May,September'
 export const categoryImage = (c: string) =>
-  c === 'KASNEB' ? '/images/cat-kasneb.png' : c === 'BUSINESS' ? '/images/cat-business.png' : '/images/cat-technical.png'
+  c === 'KASNEB' ? '/images/cat-kasneb.webp' : c === 'BUSINESS' ? '/images/cat-business.webp' : '/images/cat-technical.webp'
 
 export const courses: CourseSeed[] = [
   // ---------------- KASNEB (5) ----------------
@@ -1890,7 +1890,7 @@ export const newsPosts = [
     excerpt:
       'Applications for the May 2026 intake close on Friday 24th April. Day, evening and weekend classes are available across all three campuses.',
     body: "Applications are now open for the May 2026 intake, which begins on Monday, 11th May 2026 and closes on Friday, 24th April 2026. Places in KASNEB classes and the engineering workshops are allocated on a first-come basis.\n\nThe May intake suits KCSE candidates who received their results in January: certificate and artisan programmes run alongside diploma and KASNEB Level I classes at all three campuses — Main (Wikililye, Mulango Road), Town (Muli Mall) and Mwingi (Sunrise Building).\n\nApply online through the Admissions page or visit any campus with your KCSE result slip and ID. Fees are payable in two or three instalments per term, and county bursary letters are accepted at the finance office.",
-    image: '/images/campus-main.png',
+    image: '/images/campus-main.webp',
     category: 'Admissions',
     author: 'Communications Office',
     published: true,
@@ -1901,7 +1901,7 @@ export const newsPosts = [
     excerpt:
       'New electrical installation boards, motor-control panels and plumbing rigs have been installed in the Main Campus workshops.',
     body: "KIP College has commissioned new training equipment worth KES 2.8 million for its technical workshops. The consignment includes fifteen electrical installation training boards, three three-phase motor-control panels, plumbing pipe-running rigs and upgraded catering kitchen equipment.\n\nThe investment follows what employers ask for: graduates who have already done the work with their own hands. Every wiring board added is one more student who practices on real circuits before touching a client installation.\n\nElectrical, plumbing and catering students began using the new equipment at the start of the May term, and evening workshop hours have been extended so students on attachment during the day can still complete their practical hours.",
-    image: '/images/gallery-workshop.png',
+    image: '/images/gallery-workshop.webp',
     category: 'Facilities',
     author: 'Communications Office',
     published: true,
@@ -1912,7 +1912,7 @@ export const newsPosts = [
     excerpt:
       'Six new classrooms, a 40-station computer laboratory and an expanded beauty therapy studio open at Mwingi Campus for the September intake.',
     body: "A newly completed expansion at our Mwingi Campus (Sunrise Building) opens its doors this September: six additional classrooms, a 40-station computer laboratory and an expanded beauty therapy and hairdressing studio.\n\nThe expansion responds to growing demand from Mwingi North and Mwingi Central, allowing more learners to train close to home instead of commuting daily to Kitui town. The campus now runs business and ICT certificates and diplomas, KASNEB evening classes and the full hospitality and beauty programmes.\n\nSeptember 2026 intake classes begin on Monday, 7th September 2026, with applications closing on 21st August. A limited number of scholarship slots remain for top KCSE performers from the Mwingi sub-counties.",
-    image: '/images/campus-mwingi.png',
+    image: '/images/campus-mwingi.webp',
     category: 'Campus',
     author: 'Communications Office',
     published: true,
@@ -1923,7 +1923,7 @@ export const newsPosts = [
     excerpt:
       'Candidates for the November/December 2026 KASNEB sittings must complete registration and pay examination fees by 30th September.',
     body: "All CPA, CAMS, ATD, CS, CIFA and DICT candidates intending to sit the November/December 2026 KASNEB examinations must complete registration and pay their examination fees by Wednesday, 30th September 2026. KASNEB charges penalties for late entries, and the portal closes firmly thereafter.\n\nThe Examinations Office at each campus is open Monday to Saturday to verify documents, compute fees and submit portal entries. Bring your student ID, KCSE certificate and previous result slips; first-time candidates also need one passport photograph.\n\nCandidates who miss this window should register early for the May 2027 sitting instead — registration is already open, and evening revision classes continue through the term.",
-    image: '/images/cat-kasneb.png',
+    image: '/images/cat-kasneb.webp',
     category: 'Exams',
     author: 'Examinations Office',
     published: true,
@@ -1934,7 +1934,7 @@ export const newsPosts = [
     excerpt:
       'Classes for the January 2027 intake begin Monday, 11th January 2027. Applications close on 15th December across all three campuses.',
     body: "Applications are open for the January 2027 intake, the largest of our three annual intakes. Classes begin on Monday, 11th January 2027, and applications close on Tuesday, 15th December 2026.\n\nThe intake covers all programmes: KASNEB professional courses (CPA, ATD, CAMS, CS, CIFA), business diplomas and certificates, and technical programmes in the workshops, kitchens and studios. KCSE 2026 candidates may apply with their result slips as soon as results are released.\n\nComing off a 100% CPA Level I pass rate in the May 2026 KASNEB sitting, the college has expanded evening and Saturday classes at Town Campus for working applicants. Apply online or visit any campus — Main (Wikililye), Town (Muli Mall) or Mwingi (Sunrise Building). Hostel space at Main Campus is limited and allocated on a first-come basis.",
-    image: '/images/about-campus.png',
+    image: '/images/about-campus.webp',
     category: 'Admissions',
     author: 'Communications Office',
     published: true,
@@ -1945,7 +1945,7 @@ export const newsPosts = [
     excerpt:
       'Graduation for the Class of 2026 takes place on Friday, 11th December 2026 at the Main Campus graduation square. Gown collection runs 7th to 10th December.',
     body: "The Class of 2026 graduates on Friday, 11th December 2026, at the Main Campus graduation square. The ceremony covers all diploma, certificate, artisan and KASNEB graduands across the three campuses.\n\nGraduands should collect gowns and confirm their names on the graduation list at the Registrar\u2019s office between Monday, 7th and Thursday, 10th December. Guest entry is by ticket — two guests per graduand — issued together with the gown. Rehearsal takes place on Thursday, 10th December at 2.00 pm.\n\nThis notice is still in draft pending confirmation of the guest speaker and the final graduand list from the Registrar.",
-    image: '/images/gallery-graduation.png',
+    image: '/images/gallery-graduation.webp',
     category: 'Community',
     author: 'Communications Office',
     published: false,
@@ -1963,7 +1963,7 @@ export const events = [
       "KIP College's graduation ceremony for the Class of 2026 across all diploma, certificate, artisan and KASNEB programmes. Graduands and guests should be seated by 8.00 am; gowns and two guest tickets per graduand are collected from the Registrar's office between 7th and 10th December. Rehearsal on Thursday, 10th December at 2.00 pm.",
     date: '2026-12-11T09:00:00',
     venue: 'Main Campus Graduation Square, Wikililye',
-    image: '/images/gallery-graduation.png',
+    image: '/images/gallery-graduation.webp',
   },
   {
     title: 'Career & Entrepreneurship Week 2026',
@@ -1987,7 +1987,7 @@ export const events = [
       'Prospective students and parents tour the workshops, computer labs, training kitchen and salon studios, meet lecturers, watch course demonstrations and receive on-the-spot admission ahead of the January 2027 intake (applications close 15th December). Running 9.00 am to 3.00 pm at Main (Wikililye), Town (Muli Mall) and Mwingi (Sunrise Building) — entry is free and no booking is required.',
     date: '2026-11-28T09:00:00',
     venue: 'All Campuses (Main, Town & Mwingi)',
-    image: '/images/about-campus.png',
+    image: '/images/about-campus.webp',
   },
   {
     title: 'Fee Clearance & Exam Card Collection Deadline',
@@ -2003,15 +2003,15 @@ export const events = [
 // GALLERY
 // ============================================================
 export const galleryItems = [
-  { title: 'Graduation Ceremony 2025', image: '/images/gallery-graduation.png', caption: 'The Class of 2025 — 214 graduands across diploma, certificate, artisan and KASNEB programmes — celebrates with family at Main Campus.' },
-  { title: 'Modern Computer Laboratory', image: '/images/gallery-computer-lab.png', caption: 'Diploma in ICT students on structured programming practicals in Lab 1, Main Campus — programming labs run weekly from the first term.' },
-  { title: 'The Learning Resource Centre', image: '/images/gallery-library.png', caption: 'The library stocks course texts, KASNEB past papers and KNEC revision material, with quiet study space open on weekdays until 8.00 pm.' },
-  { title: 'Engineering Workshops', image: '/images/gallery-workshop.png', caption: 'Electrical engineering students wire three-phase motor-control panels in the Main Campus workshop — real boards, real circuits.' },
-  { title: 'Catering Practical Sessions', image: '/images/gallery-catering.png', caption: 'Catering students plate for a lunch service in the training kitchen — real menus, real costings, real guests.' },
-  { title: 'Beauty & Hairdressing Studio', image: '/images/gallery-beauty.png', caption: 'Beauty therapy students on client practice at the Mwingi Campus salon studio, preparing for NITA trade tests.' },
-  { title: 'Main Campus — Wikililye', image: '/images/campus-main.png', caption: 'The flagship Main Campus on Mulango Road, Wikililye — workshops, ICT labs, training kitchen, library and hostels.' },
-  { title: 'Town Campus — Kitui CBD', image: '/images/campus-town.png', caption: 'Town Campus at the Muli Mall building — home of the 5.30–8.30 pm evening and Saturday classes for working learners.' },
-  { title: 'Mwingi Campus', image: '/images/campus-mwingi.png', caption: 'Mwingi Campus at the Sunrise Building — business, ICT, KASNEB and beauty programmes for the greater Mwingi region.' },
+  { title: 'Graduation Ceremony 2025', image: '/images/gallery-graduation.webp', caption: 'The Class of 2025 — 214 graduands across diploma, certificate, artisan and KASNEB programmes — celebrates with family at Main Campus.' },
+  { title: 'Modern Computer Laboratory', image: '/images/gallery-computer-lab.webp', caption: 'Diploma in ICT students on structured programming practicals in Lab 1, Main Campus — programming labs run weekly from the first term.' },
+  { title: 'The Learning Resource Centre', image: '/images/gallery-library.webp', caption: 'The library stocks course texts, KASNEB past papers and KNEC revision material, with quiet study space open on weekdays until 8.00 pm.' },
+  { title: 'Engineering Workshops', image: '/images/gallery-workshop.webp', caption: 'Electrical engineering students wire three-phase motor-control panels in the Main Campus workshop — real boards, real circuits.' },
+  { title: 'Catering Practical Sessions', image: '/images/gallery-catering.webp', caption: 'Catering students plate for a lunch service in the training kitchen — real menus, real costings, real guests.' },
+  { title: 'Beauty & Hairdressing Studio', image: '/images/gallery-beauty.webp', caption: 'Beauty therapy students on client practice at the Mwingi Campus salon studio, preparing for NITA trade tests.' },
+  { title: 'Main Campus — Wikililye', image: '/images/campus-main.webp', caption: 'The flagship Main Campus on Mulango Road, Wikililye — workshops, ICT labs, training kitchen, library and hostels.' },
+  { title: 'Town Campus — Kitui CBD', image: '/images/campus-town.webp', caption: 'Town Campus at the Muli Mall building — home of the 5.30–8.30 pm evening and Saturday classes for working learners.' },
+  { title: 'Mwingi Campus', image: '/images/campus-mwingi.webp', caption: 'Mwingi Campus at the Sunrise Building — business, ICT, KASNEB and beauty programmes for the greater Mwingi region.' },
 ]
 
 // ============================================================

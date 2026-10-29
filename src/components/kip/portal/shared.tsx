@@ -244,7 +244,7 @@ export function PortalShell({
       <div className="gap-6 lg:flex lg:gap-8">
         {/* Desktop sidebar — deep emerald panel with gold accents */}
         <aside className="hidden w-64 shrink-0 lg:block print:hidden">
-          <div className="bg-brand-band kip-pattern sticky top-28 space-y-5 rounded-xl border border-brand-800/60 p-4 text-[#f2efe6]">
+          <div className="bg-brand-band kip-pattern sticky top-20 space-y-5 rounded-xl border border-brand-800/60 p-4 text-[#f2efe6]">
             <KipLogo className="text-[#f2efe6]" />
             {identity}
             <PortalNavList nav={nav} sub={sub} tone="dark" />

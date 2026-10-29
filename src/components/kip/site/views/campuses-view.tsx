@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Building2, CheckCircle2, Mail, MapPin, Navigation, Phone } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -55,11 +56,12 @@ export function CampusesView() {
                 className="card-lift flex flex-col overflow-hidden rounded-2xl border border-brand-900/10 bg-card shadow-sm"
               >
                 <figure className="relative min-h-52">
-                  <img
+                  <Image
                     src={campus.image}
                     alt={`${campus.name} — ${campus.location}`}
-                    className="absolute inset-0 h-full w-full object-cover"
-                    loading="lazy"
+                    fill
+                    sizes="(min-width: 1024px) 33vw, 100vw"
+                    className="object-cover"
                   />
                   <div
                     aria-hidden="true"

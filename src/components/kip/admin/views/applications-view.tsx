@@ -358,6 +358,10 @@ function ReviewDialog({
                       <p className="mt-0.5 break-all font-mono text-lg font-bold text-[#f2efe6]">
                         {s.tempPassword}
                       </p>
+                      <p className="mt-1.5 text-[11px] leading-snug text-[#f2efe6]/60">
+                        The student must set their own password at first sign-in — the portal stays
+                        locked until they do.
+                      </p>
                     </div>
                     <Button
                       type="button"

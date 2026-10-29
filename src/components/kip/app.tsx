@@ -10,6 +10,7 @@ import { Footer } from '@/components/kip/site/footer'
 import { MobileActionBar } from '@/components/kip/site/mobile-action-bar'
 import { ChatWidget } from '@/components/kip/chat-widget'
 import { BackToTop } from '@/components/kip/components/back-to-top'
+import { PortalTopBar } from '@/components/kip/portal/portal-top-bar'
 
 import { HomeView } from '@/components/kip/site/views/home-view'
 import { AboutView } from '@/components/kip/site/views/about-view'
@@ -118,7 +119,8 @@ function resolveView(path: string, params: string[], query: Record<string, strin
     case 'contact':
       return <ContactView />
     case 'login':
-      return <LoginView />
+      // #/login → student sign-in · #/login/staff → lecturer/admin sign-in
+      return <LoginView mode={params[0] === 'staff' ? 'staff' : 'student'} />
     case 'portal':
       return <StudentPortal sub={params[0] ?? 'dashboard'} />
     case 'lecturer':
@@ -157,8 +159,26 @@ export default function KipApp() {
 
   // document title + scroll restoration per view
   useEffect(() => {
-    document.title = routeTitle(route)
+    const expected = routeTitle(route)
+    const apply = () => {
+      if (document.title !== expected) document.title = expected
+    }
+    apply()
     window.scrollTo({ top: 0 })
+
+    // Next.js's client-side metadata hydration re-applies the static layout
+    // <title> once, LATE in the mount sequence (after effects and timers) —
+    // clobbering the title of a hash deep link (#/login, #/course/…). A
+    // short-lived observer on <title> re-applies this route's title whenever
+    // anything else mutates it during startup, then stands down.
+    const titleEl = document.querySelector('title')
+    const obs = titleEl ? new MutationObserver(() => apply()) : null
+    if (titleEl && obs) obs.observe(titleEl, { childList: true, characterData: true, subtree: true })
+    const stop = setTimeout(() => obs?.disconnect(), 3000)
+    return () => {
+      clearTimeout(stop)
+      obs?.disconnect()
+    }
   }, [route.path, route.params.join('/'), route])
 
   const view = resolveView(route.path, route.params, route.query)
@@ -170,7 +190,13 @@ export default function KipApp() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <Header />
+      {isPublicRoute ? (
+        <Header />
+      ) : (
+        /* Portals own their chrome: a compact work bar, not the marketing
+         * header (no public nav, no Apply button, no utility strip). */
+        <PortalTopBar routePath={route.path} />
+      )}
       <main id="main-content" className="flex-1">
         <AnimatePresence mode="wait">
           <motion.div
@@ -184,7 +210,7 @@ export default function KipApp() {
           </motion.div>
         </AnimatePresence>
       </main>
-      <Footer />
+      {isPublicRoute && <Footer />}
       {/* Reserve scroll space on phones (<lg) so the fixed quick-action bar
           never covers footer content — safe area included for the iOS home
           indicator. Rendered only when the bar itself shows (public routes). */}
@@ -194,13 +220,16 @@ export default function KipApp() {
       {/* Sticky phone quick actions (Apply / WhatsApp / Call) — public pages
           only; the bar also self-hides on private routes and when printing. */}
       {isPublicRoute && <MobileActionBar />}
-      {/* Floating utilities (AI assistant, back-to-top) — lifted above the
-          mobile quick-action bar on phones so they never cover the Apply or
-          Call buttons; desktop positions are untouched. */}
-      <div className="max-lg:[&>button]:bottom-[calc(env(safe-area-inset-bottom)_+_5rem)] max-lg:[&>section]:bottom-[calc(env(safe-area-inset-bottom)_+_9rem)]">
-        <ChatWidget />
-        <BackToTop />
-      </div>
+      {/* Floating utilities (AI assistant, back-to-top) — public pages only;
+          portals keep a clean workspace. On phones they are lifted above the
+          mobile quick-action bar so they never cover the Apply or Call
+          buttons; desktop positions are untouched. */}
+      {isPublicRoute && (
+        <div className="max-lg:[&>button]:bottom-[calc(env(safe-area-inset-bottom)_+_5rem)] max-lg:[&>section]:bottom-[calc(env(safe-area-inset-bottom)_+_9rem)]">
+          <ChatWidget />
+          <BackToTop />
+        </div>
+      )}
     </div>
   )
 }

@@ -19,7 +19,7 @@ const createSchema = z.object({
   title: z.string().trim().min(3, 'Title is required'),
   excerpt: z.string().trim().min(3, 'Excerpt is required'),
   body: z.string().trim().min(10, 'Body is required (min 10 characters)'),
-  image: z.string().trim().default('/images/about-campus.png'),
+  image: z.string().trim().default('/images/about-campus.webp'),
   category: z.string().trim().default('News'),
   author: z.string().trim().default('Communications Office'),
   published: boolish.default(false),

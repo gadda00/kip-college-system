@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     const codeTaken = await db.course.findUnique({ where: { code }, select: { id: true } })
     if (codeTaken) throw new HttpError(409, `Course code "${code}" is already in use`)
 
-    const image = body.image || `/images/cat-${body.category.toLowerCase()}.png`
+    const image = body.image || `/images/cat-${body.category.toLowerCase()}.webp`
     const course = await db.course.create({
       data: {
         code,

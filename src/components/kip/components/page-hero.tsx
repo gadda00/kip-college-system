@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { ChevronRight, Home } from 'lucide-react'
 import { navigate } from '@/components/kip/lib/router'
 import { cn } from '@/lib/utils'
@@ -33,11 +34,13 @@ export function PageHero({
     >
       {image ? (
         <>
-          <img
+          <Image
             src={image}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover opacity-25"
+            fill
+            sizes="100vw"
+            className="object-cover opacity-25"
           />
           <div
             aria-hidden="true"

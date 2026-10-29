@@ -166,10 +166,10 @@ async function main() {
 
     const expectedCounts: Record<string, number> = {
       campus: 3, course: 28, unit: 321, user: 17, lecturerProfile: 4,
-      studentProfile: 12, feeItem: 45, payment: 24, result: 52,
-      timetableEntry: 17, application: 8, announcement: 5, newsPost: 4,
-      event: 4, galleryItem: 9, testimonial: 6, contactMessage: 3,
-      studyMaterial: 8, fAQ: 10, downloadResource: 2,
+      studentProfile: 12, feeItem: 48, payment: 24, result: 52,
+      timetableEntry: 17, application: 8, announcement: 6, newsPost: 6,
+      event: 5, galleryItem: 9, testimonial: 6, contactMessage: 3,
+      studyMaterial: 8, fAQ: 8, downloadResource: 2,
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const d = db as any
@@ -209,6 +209,17 @@ async function main() {
     await ensureProvisioned(target)
     check('idempotent user count', 17, await db.user.count())
     check('idempotent unit count', 321, await db.unit.count())
+
+    console.log('— in-place migration: User.mustChangePassword —')
+    // Simulate the LIVE database state after this deploy: provisioned by the
+    // older schema (no mustChangePassword column), then hit by the new code.
+    await db.$executeRawUnsafe('ALTER TABLE "User" DROP COLUMN IF EXISTS "mustChangePassword"')
+    await ensureProvisioned(target)
+    const col = (await db.$queryRawUnsafe(
+      "SELECT COUNT(*)::int AS n FROM information_schema.columns WHERE table_schema='public' AND table_name='User' AND column_name='mustChangePassword'",
+    )) as Array<{ n: number }>
+    check('migration re-added User.mustChangePassword', 1, col[0]?.n ?? 0)
+    check('existing rows default to mustChangePassword=false', 0, await db.user.count({ where: { mustChangePassword: true } }))
 
     console.log(`\nPG_E2E: ${pass}/${pass + fail} checks passed`)
     if (fail > 0) process.exitCode = 1

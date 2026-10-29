@@ -448,12 +448,20 @@ export function Header() {
                       </Button>
                     </>
                   ) : (
-                    <KipLink
-                      to="/login"
-                      className="flex h-11 w-full items-center justify-center rounded-xl border border-brand-700/30 text-sm font-semibold text-foreground transition-colors hover:border-brand-700/60 hover:bg-muted"
-                    >
-                      Student Login
-                    </KipLink>
+                    <div className="grid grid-cols-2 gap-2">
+                      <KipLink
+                        to="/login"
+                        className="flex h-11 items-center justify-center rounded-xl border border-brand-700/30 text-sm font-semibold text-foreground transition-colors hover:border-brand-700/60 hover:bg-muted"
+                      >
+                        Student Login
+                      </KipLink>
+                      <KipLink
+                        to="/login/staff"
+                        className="flex h-11 items-center justify-center rounded-xl border border-brand-700/30 text-sm font-semibold text-foreground transition-colors hover:border-brand-700/60 hover:bg-muted"
+                      >
+                        Staff Login
+                      </KipLink>
+                    </div>
                   )}
                   <div className="grid grid-cols-2 gap-2 pt-0.5">
                     <a

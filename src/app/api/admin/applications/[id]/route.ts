@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
-import { currentTermLabel, handle, mergeAdminNote, ok, nextAdmissionNo, readJson } from '@/lib/api-helpers'
+import { currentTermLabel, handle, mergeAdminNote, ok, nextAdmissionNo, randomCode, readJson, UNAMBIGUOUS } from '@/lib/api-helpers'
 import { logAudit } from '@/lib/audit'
 
 export const dynamic = 'force-dynamic'
@@ -73,7 +73,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       await db.user.delete({ where: { id: existingUser.id } })
     }
 
-    const tempPassword = `Kip${Math.floor(1000 + Math.random() * 9000)}`
+    // Crypto-random temporary password (~41 bits from an unambiguous
+    // alphabet — not guessable like the old `Kip####`). The account is created
+    // with mustChangePassword=true, and the student portal locks everything
+    // but the password-change form until they replace it.
+    const tempPassword = `Kip-${randomCode(4, UNAMBIGUOUS)}-${randomCode(4, UNAMBIGUOUS)}`
     const passwordHash = await bcrypt.hash(tempPassword, 10)
     const admissionNo = await nextAdmissionNo()
     const term = currentTermLabel()
@@ -86,6 +90,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
           phone: application.phone,
           role: 'STUDENT',
           passwordHash,
+          mustChangePassword: true,
         },
       })
       const profile = await tx.studentProfile.create({

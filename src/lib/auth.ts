@@ -99,6 +99,9 @@ export type SafeUser = {
   name: string
   phone: string | null
   role: Role
+  /** true while the account still uses its issued temporary password — the
+   *  student portal gates every view behind the change-password form. */
+  mustChangePassword: boolean
   studentProfile: SafeStudentProfile | null
   lecturerProfile: SafeLecturerProfile | null
 }
@@ -111,6 +114,7 @@ function toSafeUser(raw: {
   name: string
   phone: string | null
   role: Role
+  mustChangePassword: boolean
   studentProfile?:
     | (Omit<SafeStudentProfile, 'course' | 'campus'> & {
         course?: { id: string; title: string; code: string; category: string } | null
@@ -127,6 +131,7 @@ function toSafeUser(raw: {
     name: raw.name,
     phone: raw.phone,
     role: raw.role,
+    mustChangePassword: raw.mustChangePassword,
     studentProfile:
       raw.role === 'STUDENT' && sp
         ? {

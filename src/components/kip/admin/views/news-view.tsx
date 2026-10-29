@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
@@ -56,20 +57,20 @@ import type { AdminEvent, AdminNewsPost } from '@/components/kip/admin/types'
 
 /** Site image library available for news posts. */
 const IMAGE_OPTIONS = [
-  '/images/hero-campus.png',
-  '/images/about-campus.png',
-  '/images/campus-main.png',
-  '/images/campus-town.png',
-  '/images/campus-mwingi.png',
-  '/images/cat-technical.png',
-  '/images/cat-business.png',
-  '/images/cat-kasneb.png',
-  '/images/gallery-computer-lab.png',
-  '/images/gallery-library.png',
-  '/images/gallery-workshop.png',
-  '/images/gallery-graduation.png',
-  '/images/gallery-catering.png',
-  '/images/gallery-beauty.png',
+  '/images/hero-campus.webp',
+  '/images/about-campus.webp',
+  '/images/campus-main.webp',
+  '/images/campus-town.webp',
+  '/images/campus-mwingi.webp',
+  '/images/cat-technical.webp',
+  '/images/cat-business.webp',
+  '/images/cat-kasneb.webp',
+  '/images/gallery-computer-lab.webp',
+  '/images/gallery-library.webp',
+  '/images/gallery-workshop.webp',
+  '/images/gallery-graduation.webp',
+  '/images/gallery-catering.webp',
+  '/images/gallery-beauty.webp',
 ]
 
 export function NewsView() {
@@ -218,12 +219,12 @@ function NewsCard({
   return (
     <Card className="h-full overflow-hidden">
       <div className="relative aspect-[16/7] w-full overflow-hidden bg-muted">
-        {/* plain <img> — public site asset, remote next/image not needed */}
-        <img
+        <Image
           src={post.image}
           alt={post.title}
-          className="h-full w-full object-cover"
-          loading="lazy"
+          fill
+          sizes="(min-width: 1280px) 25vw, 50vw"
+          className="object-cover"
         />
         <div className="absolute right-2 top-2 flex gap-1.5">
           <Badge
@@ -427,7 +428,7 @@ function NewsDialog({
                     <SelectContent className="max-h-60">
                       {IMAGE_OPTIONS.map((img) => (
                         <SelectItem key={img} value={img}>
-                          {img.replace('/images/', '').replace('.png', '')}
+                          {img.replace('/images/', '').replace('.webp', '')}
                         </SelectItem>
                       ))}
                     </SelectContent>

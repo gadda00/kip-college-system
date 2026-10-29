@@ -6,14 +6,16 @@ import {
   AlertCircle,
   BadgeCheck,
   Banknote,
+  Briefcase,
+  CalendarDays,
   Eye,
   EyeOff,
+  GraduationCap,
   Info,
   LogIn,
   MapPin,
   Quote,
   ShieldCheck,
-  GraduationCap,
   UserRound,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -30,66 +32,144 @@ import { cn } from '@/lib/utils'
 /** Demo credentials are only shown when explicitly enabled via env. */
 const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === '1'
 
-const DEMO_ACCOUNTS = [
+type LoginMode = 'student' | 'staff'
+
+const DEMO_ACCOUNTS: Array<{
+  mode: LoginMode
+  role: 'Admin' | 'Lecturer' | 'Student'
+  icon: typeof ShieldCheck
+  email: string
+  password: string
+  masked: string
+}> = [
   {
-    role: 'Admin' as const,
-    icon: ShieldCheck,
-    email: 'admin@kipskitui.com',
-    password: 'Admin@123',
-    masked: 'Admin@•••',
-  },
-  {
-    role: 'Lecturer' as const,
-    icon: GraduationCap,
-    email: 'lecturer@kipskitui.com',
-    password: 'Lecturer@123',
-    masked: 'Lecturer@•••',
-  },
-  {
-    role: 'Student' as const,
+    mode: 'student',
+    role: 'Student',
     icon: UserRound,
     email: 'student@kipskitui.com',
     password: 'Student@123',
     masked: 'Student@•••',
   },
   {
-    role: 'Student' as const,
+    mode: 'student',
+    role: 'Student',
     icon: UserRound,
     email: 'mutune@kipskitui.com',
     password: 'Student@123',
     masked: 'Student@•••',
   },
-]
-
-const DEMO_ROLES = ['Student', 'Lecturer', 'Admin'] as const
-
-/** Gold-bullet trust points on the emerald brand panel. */
-const TRUST_POINTS = [
   {
-    icon: BadgeCheck,
-    title: 'KASNEB-examined programmes',
-    text: 'Professional and technical courses examined by KASNEB, KNEC, CDACC and NITA.',
+    mode: 'staff',
+    role: 'Admin',
+    icon: ShieldCheck,
+    email: 'admin@kipskitui.com',
+    password: 'Admin@123',
+    masked: 'Admin@•••',
   },
   {
-    icon: MapPin,
-    title: 'Three campuses',
-    text: 'Kitui Main, Kitui Town and Mwingi — study close to home.',
-  },
-  {
-    icon: Banknote,
-    title: 'Flexible fees',
-    text: 'Pay by instalment via M-Pesa, bank or cash — intakes every January, May and September.',
+    mode: 'staff',
+    role: 'Lecturer',
+    icon: GraduationCap,
+    email: 'lecturer@kipskitui.com',
+    password: 'Lecturer@123',
+    masked: 'Lecturer@•••',
   },
 ]
 
-export function LoginView() {
+/** Gold-bullet trust points on the emerald brand panel — per audience. */
+type TrustPoint = {
+  icon: typeof ShieldCheck
+  title: string
+  text: string
+}
+
+type PanelContent = {
+  eyebrow: string
+  headlineA: string
+  headlineB: string
+  blurb: string
+  points: TrustPoint[]
+  quote: string
+  quoteBy: string
+}
+
+const PANEL_CONTENT: Record<LoginMode, PanelContent> = {
+  student: {
+    eyebrow: 'Student sign-in',
+    headlineA: 'Welcome back to ',
+    headlineB: 'your classes.',
+    blurb:
+      'Karibu tena — your timetable, results, fees balance and learning materials are ready and waiting.',
+    points: [
+      {
+        icon: CalendarDays,
+        title: 'Timetable & classes',
+        text: 'Day, evening and weekend classes across three campuses — your personal schedule lives here.',
+      },
+      {
+        icon: BadgeCheck,
+        title: 'Results & transcripts',
+        text: 'Published unit results and progress feedback as soon as lecturers release them.',
+      },
+      {
+        icon: Banknote,
+        title: 'Fees you can track',
+        text: 'See your balance, submit M-Pesa payment slips and download statements anytime.',
+      },
+    ],
+    quote:
+      'Flexible instalments and understanding lecturers carried me through CPA while I worked — they walk with you until you pass.',
+    quoteBy: 'CPA Student · Kitui Town Campus',
+  },
+  staff: {
+    eyebrow: 'Staff sign-in',
+    headlineA: 'Run the college, ',
+    headlineB: 'not paperwork.',
+    blurb:
+      'Lecturer and administrator tools — class registers, marks entry, fee reconciliation and student records in one place.',
+    points: [
+      {
+        icon: GraduationCap,
+        title: 'Marks & class tools',
+        text: 'Enter unit results with draft/publish control, track attendance and manage class materials.',
+      },
+      {
+        icon: Briefcase,
+        title: 'Registrar workspace',
+        text: 'Review applications, enrol students, post fees and export the registers the ministry asks for.',
+      },
+      {
+        icon: ShieldCheck,
+        title: 'Audited & secure',
+        text: 'Role-scoped access with a full audit trail — finance, admissions and academics stay accountable.',
+      },
+    ],
+    quote:
+      'Marks entry that used to take an afternoon now takes minutes — and students see results the moment we publish.',
+    quoteBy: 'Department Head · Kitui Main Campus',
+  },
+}
+
+export function LoginView({ mode }: { mode: LoginMode }) {
   const login = useAuthStore((s) => s.login)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [demoRole, setDemoRole] = useState<(typeof DEMO_ROLES)[number]>('Student')
+  const [demoRole, setDemoRole] = useState<'Student' | 'Lecturer' | 'Admin'>(
+    mode === 'staff' ? 'Admin' : 'Student',
+  )
+
+  const isStaff = mode === 'staff'
+  const panel = PANEL_CONTENT[mode]
+  const demoRoles: Array<'Student' | 'Lecturer' | 'Admin'> = isStaff
+    ? ['Admin', 'Lecturer']
+    : ['Student']
+
+  const switchMode = (next: LoginMode) => {
+    navigate(next === 'staff' ? '/login/staff' : '/login')
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -101,6 +181,8 @@ export function LoginView() {
     setError(null)
     try {
       const user = await login(email.trim(), password)
+      // Staff page is for LECTURER/ADMIN accounts; students arriving here are
+      // still routed to their own portal (and vice versa) — never an error.
       toast.success(`Welcome back, ${user.name.split(' ')[0]}`, {
         description: `Signed in as ${user.role.toLowerCase()}.`,
       })
@@ -131,7 +213,7 @@ export function LoginView() {
         <div className="relative flex items-center justify-between px-4 py-4 sm:px-6">
           <KipLogo className="text-[#f2efe6]" />
           <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-gold-300">
-            Portal sign-in
+            {isStaff ? 'Staff sign-in' : 'Student sign-in'}
           </span>
         </div>
         <div
@@ -141,7 +223,7 @@ export function LoginView() {
       </div>
 
       {/* ── left: emerald brand panel (lg+) ── */}
-      <aside className="bg-brand-band kip-pattern kip-grain relative hidden overflow-hidden lg:flex lg:flex-col lg:justify-between lg:px-12 lg:py-12 xl:px-16">
+      <aside className="bg-brand-band kip-grain relative hidden overflow-hidden lg:flex lg:flex-col lg:justify-between lg:px-12 lg:py-12 xl:px-16">
         {/* corner gold glows */}
         <div
           aria-hidden="true"
@@ -168,18 +250,18 @@ export function LoginView() {
           className="relative max-w-md"
         >
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-gold-300">
-            Student · Lecturer · Admin
+            {panel.eyebrow}
           </p>
           <p className="font-display mt-4 text-balance text-3xl font-semibold leading-tight tracking-tight text-[#f2efe6] xl:text-4xl">
-            Welcome back to <em className="text-gold-gradient italic">excellence</em>.
+            {panel.headlineA}
+            <em className="text-gold-gradient italic">{panel.headlineB}</em>
           </p>
           <p className="mt-4 text-pretty text-sm leading-relaxed text-[#f2efe6]/70 sm:text-base">
-            Karibu tena — one sign-in for the student, lecturer and admin portals. Your classes,
-            results and fees are waiting.
+            {panel.blurb}
           </p>
 
           <ul className="mt-10 space-y-4">
-            {TRUST_POINTS.map((point) => (
+            {panel.points.map((point) => (
               <li key={point.title} className="flex items-start gap-3.5">
                 <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gold-400/15 text-gold-300 ring-1 ring-gold-400/30">
                   <point.icon className="h-4 w-4" aria-hidden="true" />
@@ -195,11 +277,10 @@ export function LoginView() {
           <figure className="relative mt-10 rounded-xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-sm">
             <Quote className="h-5 w-5 text-gold-400" aria-hidden="true" />
             <blockquote className="mt-3 text-sm italic leading-relaxed text-[#f2efe6]/85">
-              “Flexible instalments and understanding lecturers carried me through CPA while I
-              worked — they walk with you until you pass.”
+              “{panel.quote}”
             </blockquote>
             <figcaption className="mt-3 text-xs font-medium text-[#f2efe6]/60">
-              CPA Student · Kitui Town Campus
+              {panel.quoteBy}
             </figcaption>
           </figure>
         </motion.div>
@@ -219,6 +300,11 @@ export function LoginView() {
           <a href="mailto:info@kipskitui.com" className="transition-colors hover:text-gold-300">
             info@kipskitui.com
           </a>
+          <span aria-hidden="true" className="text-gold-400/60">
+            ·
+          </span>
+          <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+          Kitui · Mwingi
         </motion.div>
       </aside>
 
@@ -236,13 +322,51 @@ export function LoginView() {
           transition={{ duration: 0.3 }}
           className="relative mx-auto w-full max-w-md"
         >
-          <div>
-            <p className="eyebrow">Portal sign-in</p>
+          {/* audience switcher — Student | Staff */}
+          <div
+            role="group"
+            aria-label="Choose sign-in area"
+            className="grid grid-cols-2 gap-1 rounded-xl border bg-muted p-1"
+          >
+            <button
+              type="button"
+              aria-pressed={!isStaff}
+              onClick={() => switchMode('student')}
+              className={cn(
+                'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+                !isStaff
+                  ? 'bg-brand-700 text-[#f2efe6] shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              <UserRound className="h-4 w-4" aria-hidden="true" />
+              Student
+            </button>
+            <button
+              type="button"
+              aria-pressed={isStaff}
+              onClick={() => switchMode('staff')}
+              className={cn(
+                'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+                isStaff
+                  ? 'bg-brand-700 text-[#f2efe6] shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              <Briefcase className="h-4 w-4" aria-hidden="true" />
+              Lecturer / Admin
+            </button>
+          </div>
+
+          <div className="mt-8">
+            <p className="eyebrow">{panel.eyebrow}</p>
             <h1 className="mt-2 text-balance text-2xl font-bold tracking-tight sm:text-3xl">
-              Welcome back
+              {isStaff ? 'Staff sign-in' : 'Welcome back'}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Sign in to your student, lecturer or admin portal.
+              {isStaff
+                ? 'For KIP College lecturers and administrators.'
+                : 'Sign in to your student portal to continue learning.'}
             </p>
           </div>
 
@@ -261,7 +385,7 @@ export function LoginView() {
                 id="login-email"
                 type="email"
                 autoComplete="email"
-                placeholder="you@kipskitui.com"
+                placeholder={isStaff ? 'you@kipskitui.com' : 'you@example.com'}
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value)
@@ -272,7 +396,12 @@ export function LoginView() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="login-password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="login-password">Password</Label>
+                <span className="text-xs text-muted-foreground">
+                  {isStaff ? 'Issued by the registrar' : 'Set at first sign-in'}
+                </span>
+              </div>
               <div className="relative">
                 <Input
                   id="login-password"
@@ -325,16 +454,44 @@ export function LoginView() {
             </Button>
           </form>
 
-          <p className="mt-5 text-center text-sm text-muted-foreground">
-            New student?{' '}
-            <button
-              type="button"
-              onClick={() => navigate('/apply')}
-              className="font-semibold text-primary underline-offset-2 hover:underline"
-            >
-              Apply for admission first
-            </button>
-          </p>
+          {/* audience cross-links */}
+          <div className="mt-6 space-y-2 text-center text-sm">
+            {isStaff ? (
+              <p className="text-muted-foreground">
+                Student?{' '}
+                <button
+                  type="button"
+                  onClick={() => switchMode('student')}
+                  className="font-semibold text-primary underline-offset-2 hover:underline"
+                >
+                  Use the student sign-in
+                </button>
+              </p>
+            ) : (
+              <>
+                <p className="text-muted-foreground">
+                  New student?{' '}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/apply')}
+                    className="font-semibold text-primary underline-offset-2 hover:underline"
+                  >
+                    Apply for admission first
+                  </button>
+                </p>
+                <p className="text-muted-foreground">
+                  Lecturer or administrator?{' '}
+                  <button
+                    type="button"
+                    onClick={() => switchMode('staff')}
+                    className="font-semibold text-primary underline-offset-2 hover:underline"
+                  >
+                    Staff sign-in
+                  </button>
+                </p>
+              </>
+            )}
+          </div>
 
           {/* demo accounts — only shown when NEXT_PUBLIC_DEMO_MODE=1 */}
           {DEMO_MODE && (
@@ -344,7 +501,9 @@ export function LoginView() {
                   className="h-4 w-4 shrink-0 text-gold-700 dark:text-gold-400"
                   aria-hidden="true"
                 />
-                <h2 className="text-sm font-semibold">Demo accounts</h2>
+                <h2 className="text-sm font-semibold">
+                  Demo accounts — {isStaff ? 'staff' : 'student'}
+                </h2>
                 <Badge variant="secondary" className="ml-auto text-[10px]">
                   One-click fill
                 </Badge>
@@ -354,9 +513,9 @@ export function LoginView() {
               <div
                 role="group"
                 aria-label="Choose a demo role"
-                className="mt-3 grid grid-cols-3 gap-1 rounded-lg bg-muted p-1"
+                className="mt-3 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1"
               >
-                {DEMO_ROLES.map((role) => (
+                {demoRoles.map((role) => (
                   <button
                     key={role}
                     type="button"
@@ -376,7 +535,9 @@ export function LoginView() {
 
               {/* credential quick-fill chips for the selected role */}
               <ul className="mt-3 space-y-2">
-                {DEMO_ACCOUNTS.filter((account) => account.role === demoRole).map((account) => (
+                {DEMO_ACCOUNTS.filter(
+                  (account) => account.mode === mode && account.role === demoRole,
+                ).map((account) => (
                   <li key={account.email}>
                     <button
                       type="button"

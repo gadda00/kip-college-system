@@ -320,7 +320,7 @@ export function AdminDashboard({ sub, id }: { sub: string; id?: string }) {
         <aside className="hidden w-64 shrink-0 lg:block print:hidden">
           <div
             className={cn(
-              'sticky top-28 space-y-5 rounded-xl border border-brand-800/60 p-4',
+              'sticky top-20 space-y-5 rounded-xl border border-brand-800/60 p-4',
               SIDEBAR_BG,
               SIDEBAR_TEXT,
             )}

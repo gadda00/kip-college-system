@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { BookOpen, CheckCircle2, Search, SearchX } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -86,8 +87,14 @@ export function AcademicsView({ initialCategory = '' }: { initialCategory?: stri
                     : 'card-lift border-border bg-card hover:border-gold-500/50 hover:shadow-sm'
                 }`}
               >
-                <span className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted ring-1 ring-border">
-                  <img src={meta.image} alt="" aria-hidden="true" className="h-full w-full object-cover" loading="lazy" />
+                <span className="relative block h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted ring-1 ring-border">
+                  <Image
+                    src={meta.image}
+                    alt=""
+                    fill
+                    sizes="56px"
+                    className="object-cover"
+                  />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold">{meta.label}</span>

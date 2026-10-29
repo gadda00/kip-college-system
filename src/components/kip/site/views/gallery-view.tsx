@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import Image from 'next/image'
 import { ChevronLeft, ChevronRight, ImageOff, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
@@ -71,12 +72,16 @@ export function GalleryView() {
                 aria-label={`Open photo: ${item.title}`}
                 className="group relative mb-4 block w-full overflow-hidden rounded-xl shadow-sm ring-1 ring-transparent transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-gold-400/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
+                <span className="relative block">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    width={1200}
+                    height={686}
+                    sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </span>
                 <span className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-brand-950/80 via-brand-950/20 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
                   <span className="text-sm font-semibold text-[#f2efe6]">{item.title}</span>
                   {item.caption && (
@@ -101,9 +106,12 @@ export function GalleryView() {
             <figure className="flex flex-col">
               <DialogTitle className="sr-only">{current.title}</DialogTitle>
               <div className="relative flex min-h-0 items-center justify-center">
-                <img
+                <Image
                   src={current.image}
                   alt={current.title}
+                  width={1200}
+                  height={686}
+                  sizes="90vw"
                   className="max-h-[70vh] w-full object-contain"
                 />
                 {items.length > 1 && (

@@ -13,6 +13,7 @@ import {
   Mail,
   MapPin,
   Phone,
+  ShieldAlert,
   ShieldCheck,
   UserRound,
   UserSquare2,
@@ -63,6 +64,7 @@ export function ProfileView() {
 function ProfileBody({ profile }: { profile: StudentProfileFull }) {
   const queryClient = useQueryClient()
   const refreshSession = useAuthStore((s) => s.refresh)
+  const sessionUser = useAuthStore((s) => s.user)
 
   const [editOpen, setEditOpen] = useState(false)
   const [phone, setPhone] = useState(profile.phone ?? '')
@@ -120,6 +122,22 @@ function ProfileBody({ profile }: { profile: StudentProfileFull }) {
 
   return (
     <div className="space-y-6">
+      {sessionUser?.mustChangePassword && (
+        <div
+          role="status"
+          className="flex items-start gap-3 rounded-xl border border-gold-400/50 bg-gold-400/10 p-4"
+        >
+          <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-gold-600 dark:text-gold-400" aria-hidden="true" />
+          <div>
+            <p className="text-sm font-bold">Action needed — set your own password</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              You are signed in with the temporary password issued by admissions. Use the
+              <strong className="font-semibold text-foreground"> Change password </strong>
+              form below to replace it — the rest of the portal stays locked until you do.
+            </p>
+          </div>
+        </div>
+      )}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
         <ViewHeading title="Profile" description="Your personal, academic and contact details." />
       </motion.div>

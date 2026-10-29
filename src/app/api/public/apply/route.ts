@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { assertSameOrigin, HttpError } from '@/lib/auth'
-import { handle, ok, readJson } from '@/lib/api-helpers'
+import { handle, ok, randomCode, readJson, UNAMBIGUOUS } from '@/lib/api-helpers'
 import { clientIp, rateLimited, RATE_LIMITS } from '@/lib/rate-limit'
 import { logAudit } from '@/lib/audit'
 
@@ -31,12 +31,9 @@ const applySchema = z.object({
   message: z.string().trim().max(2000, 'Message is too long').optional(),
 })
 
-/** Human-readable application reference, e.g. KIP/APP/2026/4F7K. */
+/** Human-readable application reference, e.g. KIP/APP/2026/4F7K (crypto-random). */
 function applicationReference(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // no ambiguous 0/O/1/I
-  let suffix = ''
-  for (let i = 0; i < 5; i++) suffix += chars[Math.floor(Math.random() * chars.length)]
-  return `KIP/APP/${new Date().getFullYear()}/${suffix}`
+  return `KIP/APP/${new Date().getFullYear()}/${randomCode(5, UNAMBIGUOUS)}`
 }
 
 /** Public admission application submission. */

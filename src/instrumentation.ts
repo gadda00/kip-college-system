@@ -8,39 +8,15 @@
  * box without a managed database service.
  *
  * Local development and production Postgres deployments are unaffected.
+ *
+ * The node-only implementation lives in ./instrumentation-node and is
+ * dynamically imported below ONLY for the Node.js runtime — the documented
+ * Next.js pattern, so the Edge-variant compilation never follows the
+ * `node:fs` / `node:path` imports (no edge-runtime warnings).
  */
 export async function register() {
-  if (process.env.NEXT_RUNTIME !== 'nodejs') return // skip the Edge variant
-  const url = process.env.DATABASE_URL || ''
-  if (!url.startsWith('file:/tmp/')) return
-
-  const dest = url.slice('file:'.length)
-  const fs = await import('node:fs/promises')
-  const path = await import('node:path')
-
-  try {
-    await fs.access(dest)
-    return // already bootstrapped on this instance
-  } catch {
-    // not present yet — copy the bundled seed database
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    const { bootstrapDemoDatabase } = await import('./instrumentation-node')
+    await bootstrapDemoDatabase()
   }
-
-  const candidates = [
-    path.join(process.cwd(), 'db', 'custom.db'),
-    path.join(process.cwd(), 'db', 'custom.db'), // traced copies may land at bundle root
-    'db/custom.db',
-  ]
-
-  for (const src of candidates) {
-    try {
-      await fs.copyFile(src, dest)
-      return
-    } catch {
-      // try the next candidate
-    }
-  }
-
-  console.warn(
-    '[kip-college] demo database not found for /tmp bootstrap — set DATABASE_URL to a PostgreSQL URL for production (see DEPLOYMENT.md)',
-  )
 }

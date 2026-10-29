@@ -269,18 +269,27 @@
     color: transparent;
   }
 
-  /* Deep emerald hero band */
-  .bg-brand-band {
-    background:
-      radial-gradient(120% 90% at 85% -10%, color-mix(in oklch, var(--gold-400) 16%, transparent) 0%, transparent 55%),
-      linear-gradient(160deg, var(--brand-900) 0%, var(--brand-950) 62%, oklch(0.16 0.02 168) 100%);
-  }
-
-  /* Subtle "woven reeds" diagonal texture for dark green surfaces */
+  /* Subtle "woven reeds" diagonal texture for dark green surfaces.
+   * DECLARED BEFORE .bg-brand-band on purpose: elements that combine both
+   * classes (portal sidebars, brand panels) must let the band's own layered
+   * background-image (which already includes this texture) win — with the
+   * pattern declared last it would override the band gradient entirely and
+   * leave the surface transparent (the "white sidebar" contrast bug). */
   .kip-pattern {
     background-image:
       repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.028) 0 2px, transparent 2px 14px),
       repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 9px);
+  }
+
+  /* Deep emerald band — gold glow + woven-reeds texture + emerald gradient
+   * in ONE background-image stack so no other class can clobber it. */
+  .bg-brand-band {
+    background-image:
+      radial-gradient(120% 90% at 85% -10%, color-mix(in oklch, var(--gold-400) 16%, transparent) 0%, transparent 55%),
+      repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.028) 0 2px, transparent 2px 14px),
+      repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 9px),
+      linear-gradient(160deg, var(--brand-900) 0%, var(--brand-950) 62%, oklch(0.16 0.02 168) 100%);
+    background-color: var(--brand-950);
   }
 
   /* Fine dot grid for light sections */

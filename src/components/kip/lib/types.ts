@@ -31,6 +31,8 @@ export type SafeUser = {
   name: string
   phone: string | null
   role: Role
+  /** true while the account still uses its issued temporary password. */
+  mustChangePassword: boolean
   studentProfile: SafeStudentProfile | null
   lecturerProfile: SafeLecturerProfile | null
 }
