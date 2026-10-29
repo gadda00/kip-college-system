@@ -12,7 +12,7 @@ Next.js 16 (App Router) · TypeScript (strict) · Tailwind CSS 4 + shadcn/ui · 
 bun install        # postinstall generates the SQLite Prisma client automatically
 bun run dev        # http://localhost:3000
 ```
-A seeded demo database (`db/custom.db`) ships with the repo — 3 campuses, 28 courses with full unit curricula, 12 students with fees/payments/results, staff, timetables, news and events. Re-seed anytime: `bun run db:push && bun run db:seed`.
+A local SQLite demo database is created on demand — 3 campuses, 28 courses with full unit curricula, 12 students with fees/payments/results, staff, timetables, news and events. First run: `bun run db:push && bun run db:seed`. Re-seed anytime with the same command (it wipes and reseeds `db/custom.db`, which is git-ignored).
 
 ## Demo accounts
 Shown on the login page when `NEXT_PUBLIC_DEMO_MODE=1` (see `.env.example`).
@@ -45,6 +45,7 @@ Set `DATABASE_URL` to a PostgreSQL connection string (e.g. Prisma Postgres). The
 | `bun run test:smoke` | 24 integration checks against the dev server |
 | `bash scripts/pg-e2e-run.sh` | Full PostgreSQL E2E: boots embedded PG, verifies auto-provisioning + seed + idempotence |
 | `bun run db:push` / `db:seed` / `db:generate` | SQLite schema push / re-seed / regenerate client for the active DATABASE_URL |
+| `DATABASE_URL="postgres://…" DEMO_MODE=1 bun run scripts/reseed-demo.ts` | **Refresh the live demo's content**: wipes + reseeds the remote Prisma Postgres (e.g. the Vercel-linked DB) with the latest `prisma/seed-data.ts` — use after content updates. Run `bun run db:generate` afterwards if you develop locally against SQLite |
 
 ## Documents
 - **Proposal (PDF):** https://kip-college-system.vercel.app/downloads/KIP-College-System-Proposal.pdf
