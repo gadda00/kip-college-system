@@ -26,6 +26,7 @@ export async function GET(req: Request) {
       },
       orderBy: { sortOrder: 'asc' },
       include: { _count: { select: { units: true } } },
+      take: 300,
     })
 
     const data = courses.map((c) => ({

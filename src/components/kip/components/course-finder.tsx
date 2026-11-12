@@ -205,7 +205,7 @@ export function CourseFinder({
     <Card className="shadow-sm">
       <CardContent className="p-4 sm:p-6">
         {/* ── controls ─────────────────────────────────────────── */}
-        <div className="grid gap-x-6 gap-y-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <Label className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Pathway

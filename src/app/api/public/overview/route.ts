@@ -52,7 +52,7 @@ export async function GET() {
         orderBy: { date: 'asc' },
         take: 4,
       }),
-      db.testimonial.findMany(),
+      db.testimonial.findMany({ take: 12 }),
     ])
 
     // 3 random testimonials

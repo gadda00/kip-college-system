@@ -28,6 +28,7 @@ import {
 import { EmptyState } from '@/components/kip/components/empty-state'
 import { QueryBoundary } from '@/components/kip/components/loading'
 import { api, post } from '@/components/kip/lib/api'
+import { TERM_OPTIONS } from '@/components/kip/lib/tones'
 import {
   GradeBadge,
   TableSkeleton,
@@ -41,7 +42,6 @@ import type {
 import type { CourseDetail } from '@/components/kip/lib/types'
 import { cn } from '@/lib/utils'
 
-const TERM_OPTIONS = ['2026/2027 T1', '2026/2027 T2', '2025/2026 T3', '2025/2026 T2', '2025/2026 T1']
 const ALL_COURSES = '__all__'
 
 export function ResultsView() {

@@ -42,6 +42,7 @@ import { EmptyState } from '@/components/kip/components/empty-state'
 import { QueryBoundary } from '@/components/kip/components/loading'
 import { api, del, patch, post } from '@/components/kip/lib/api'
 import { fmtDateTime } from '@/components/kip/lib/format'
+import { audienceTone } from '@/components/kip/lib/tones'
 import { RowsSkeleton, ViewHeading } from '@/components/kip/portal/shared'
 import { DialogBody, Field, FieldGrid, SubmitButton } from '@/components/kip/admin/form-bits'
 import type { AdminAnnouncement, ExportStats } from '@/components/kip/admin/types'
@@ -51,17 +52,6 @@ const AUDIENCES = ['ALL', 'STUDENTS', 'STAFF'] as const
 
 function audienceLabel(audience: string): string {
   return audience === 'ALL' ? 'Everyone' : audience === 'STUDENTS' ? 'Students' : 'Staff'
-}
-
-function audienceTone(audience: string): string {
-  switch (audience) {
-    case 'STUDENTS':
-      return 'border-transparent bg-emerald-600/10 text-emerald-700 dark:text-emerald-400'
-    case 'STAFF':
-      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
-    default:
-      return 'border-transparent bg-teal-600/10 text-teal-700 dark:text-teal-400'
-  }
 }
 
 export function AnnouncementsView() {

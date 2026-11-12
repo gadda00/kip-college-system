@@ -5,37 +5,15 @@
  * Mirrors the Task-4 API contract (see worklog.md §Task 4).
  */
 
-export type Role = 'ADMIN' | 'LECTURER' | 'STUDENT'
+import type {
+  SafeLecturerProfile,
+  SafeStudentProfile,
+  SafeUser,
+} from '@/lib/auth-types'
 
-export type SafeStudentProfile = {
-  admissionNo: string
-  yearOfStudy: number
-  currentTerm: number
-  status: string
-  courseId: string
-  campusId: string
-  course: { id: string; title: string; code: string; category: string } | null
-  campus: { id: string; name: string } | null
-}
-
-export type SafeLecturerProfile = {
-  staffNo: string
-  title: string
-  department: string
-  specialization: string
-}
-
-export type SafeUser = {
-  id: string
-  email: string
-  name: string
-  phone: string | null
-  role: Role
-  /** true while the account still uses its issued temporary password. */
-  mustChangePassword: boolean
-  studentProfile: SafeStudentProfile | null
-  lecturerProfile: SafeLecturerProfile | null
-}
+// Auth response types are shared with the server via '@/lib/auth-types';
+// re-exported here so existing consumers of this module keep working.
+export type { SafeLecturerProfile, SafeStudentProfile, SafeUser }
 
 // ---------- public ----------
 

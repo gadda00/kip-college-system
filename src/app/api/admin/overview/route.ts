@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { requireRole } from '@/lib/auth'
 import { handle, ok } from '@/lib/api-helpers'
+import { subKES } from '@/lib/money'
 
 export const dynamic = 'force-dynamic'
 
@@ -8,13 +9,13 @@ function monthKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 }
 
-/** Admin dashboard KPIs + chart data. */
+/** Admin dashboard KPIs + chart data (aggregated in SQL — no unbounded row
+ * materialisation, so the dashboard stays fast as real data accumulates). */
 export async function GET() {
   return handle(async () => {
     await requireRole('ADMIN')
     const now = new Date()
     const fourMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 4, now.getDate())
-    const eightMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 7, 1)
 
     const [
       studentsActive,
@@ -23,10 +24,12 @@ export async function GET() {
       chargedAgg,
       paidAgg,
       paidThisTermAgg,
-      activeStudents,
+      activeByCampus,
+      activeByCourse,
+      courses,
       campuses,
       recentPaymentRows,
-      payments8mo,
+      monthAggs,
     ] = await Promise.all([
       db.studentProfile.count({ where: { status: 'ACTIVE' } }),
       db.application.count({ where: { status: 'PENDING' } }),
@@ -37,10 +40,9 @@ export async function GET() {
         where: { status: 'CONFIRMED', paidAt: { gte: fourMonthsAgo } },
         _sum: { amount: true },
       }),
-      db.studentProfile.findMany({
-        where: { status: 'ACTIVE' },
-        select: { courseId: true, campusId: true, course: { select: { title: true, category: true } } },
-      }),
+      db.studentProfile.groupBy({ by: ['campusId'], where: { status: 'ACTIVE' }, _count: { _all: true } }),
+      db.studentProfile.groupBy({ by: ['courseId'], where: { status: 'ACTIVE' }, _count: { _all: true } }),
+      db.course.findMany({ select: { id: true, title: true, category: true } }),
       db.campus.findMany({ select: { id: true, name: true }, orderBy: { sortOrder: 'asc' } }),
       db.payment.findMany({
         where: { status: 'CONFIRMED' },
@@ -56,34 +58,33 @@ export async function GET() {
           },
         },
       }),
-      db.payment.findMany({
-        where: { status: 'CONFIRMED', paidAt: { gte: eightMonthsAgo } },
-        select: { paidAt: true, amount: true },
-      }),
+      // revenue by month: one bounded aggregate per month (last 8, zero-filled)
+      Promise.all(
+        Array.from({ length: 8 }, (_, k) => {
+          const start = new Date(now.getFullYear(), now.getMonth() - (7 - k), 1)
+          const end = new Date(now.getFullYear(), now.getMonth() - (7 - k) + 1, 1)
+          return db.payment
+            .aggregate({ where: { status: 'CONFIRMED', paidAt: { gte: start, lt: end } }, _sum: { amount: true } })
+            .then((agg) => ({ month: monthKey(start), total: agg._sum.amount ?? 0 }))
+        }),
+      ),
     ])
 
-    // revenue by month (last 8 months, zero-filled)
-    const byMonth = new Map<string, number>()
-    for (const p of payments8mo) {
-      const key = monthKey(p.paidAt)
-      byMonth.set(key, (byMonth.get(key) ?? 0) + p.amount)
-    }
-    const revenueByMonth: { month: string; total: number }[] = []
-    for (let i = 7; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      revenueByMonth.push({ month: monthKey(d), total: byMonth.get(monthKey(d)) ?? 0 })
-    }
+    const revenueByMonth: { month: string; total: number }[] = monthAggs
 
     // students by campus / by course category / enrollments by course
-    const byCampus = new Map<string, number>()
+    // (counts from SQL groupBys joined against the small course lookup table)
+    const courseById = new Map(courses.map((c) => [c.id, c]))
+    const byCampus = new Map<string, number>(activeByCampus.map((row) => [row.campusId, row._count._all]))
     const byCategory = new Map<string, number>()
     const byCourse = new Map<string, { course: string; count: number }>()
-    for (const s of activeStudents) {
-      byCampus.set(s.campusId, (byCampus.get(s.campusId) ?? 0) + 1)
-      byCategory.set(s.course.category, (byCategory.get(s.course.category) ?? 0) + 1)
-      const entry = byCourse.get(s.courseId) ?? { course: s.course.title, count: 0 }
-      entry.count += 1
-      byCourse.set(s.courseId, entry)
+    for (const row of activeByCourse) {
+      const course = courseById.get(row.courseId)
+      if (!course) continue
+      byCategory.set(course.category, (byCategory.get(course.category) ?? 0) + row._count._all)
+      const entry = byCourse.get(row.courseId) ?? { course: course.title, count: 0 }
+      entry.count += row._count._all
+      byCourse.set(row.courseId, entry)
     }
 
     const totalCharged = chargedAgg._sum.amount ?? 0
@@ -107,7 +108,7 @@ export async function GET() {
       totalBilled: totalCharged,
       collectionsTotal: totalPaid,
       collectionsThisTerm: paidThisTermAgg._sum.amount ?? 0,
-      outstandingBalance: Math.round((totalCharged - totalPaid) * 100) / 100,
+      outstandingBalance: subKES(totalCharged, totalPaid),
       revenueByMonth,
       enrollmentsByCourse: [...byCourse.values()].sort((a, b) => b.count - a.count).slice(0, 8),
       recentPayments: recentPaymentRows.map((p) => ({

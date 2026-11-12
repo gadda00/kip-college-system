@@ -11,6 +11,7 @@ export async function GET() {
     const announcements = await db.announcement.findMany({
       where: { active: true, audience: { in: ['ALL', 'STUDENTS'] } },
       orderBy: [{ pinned: 'desc' }, { createdAt: 'desc' }],
+      take: 100,
     })
     return ok(announcements)
   })

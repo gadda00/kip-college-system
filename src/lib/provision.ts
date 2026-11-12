@@ -239,6 +239,7 @@ CREATE TABLE "Application" (
     "guardianPhone" TEXT,
     "message" TEXT,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "reference" TEXT,
     "adminNote" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "reviewedAt" TIMESTAMP(3),
@@ -443,13 +444,16 @@ CREATE INDEX "Payment_studentId_idx" ON "Payment"("studentId");
 CREATE INDEX "Payment_status_idx" ON "Payment"("status");
 
 -- CreateIndex
+CREATE INDEX "Payment_paidAt_idx" ON "Payment"("paidAt");
+
+-- CreateIndex
 CREATE INDEX "Result_unitId_idx" ON "Result"("unitId");
 
 -- CreateIndex
 CREATE INDEX "Result_term_idx" ON "Result"("term");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Result_studentId_unitId_key" ON "Result"("studentId", "unitId");
+CREATE UNIQUE INDEX "Result_studentId_unitId_term_key" ON "Result"("studentId", "unitId", "term");
 
 -- CreateIndex
 CREATE INDEX "Application_status_idx" ON "Application"("status");
@@ -458,10 +462,22 @@ CREATE INDEX "Application_status_idx" ON "Application"("status");
 CREATE INDEX "Application_courseId_idx" ON "Application"("courseId");
 
 -- CreateIndex
-CREATE INDEX "NewsPost_published_idx" ON "NewsPost"("published");
+CREATE INDEX "Application_createdAt_idx" ON "Application"("createdAt");
 
 -- CreateIndex
-CREATE INDEX "ContactMessage_status_idx" ON "ContactMessage"("status");
+CREATE UNIQUE INDEX "Application_reference_key" ON "Application"("reference");
+
+-- CreateIndex
+CREATE INDEX "Announcement_active_createdAt_idx" ON "Announcement"("active", "createdAt");
+
+-- CreateIndex
+CREATE INDEX "NewsPost_published_publishedAt_idx" ON "NewsPost"("published", "publishedAt");
+
+-- CreateIndex
+CREATE INDEX "Event_date_idx" ON "Event"("date");
+
+-- CreateIndex
+CREATE INDEX "ContactMessage_createdAt_idx" ON "ContactMessage"("createdAt");
 
 -- CreateIndex
 CREATE INDEX "StudyMaterial_courseId_idx" ON "StudyMaterial"("courseId");
@@ -518,10 +534,10 @@ ALTER TABLE "Result" ADD CONSTRAINT "Result_studentId_fkey" FOREIGN KEY ("studen
 ALTER TABLE "Result" ADD CONSTRAINT "Result_unitId_fkey" FOREIGN KEY ("unitId") REFERENCES "Unit"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Application" ADD CONSTRAINT "Application_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Application" ADD CONSTRAINT "Application_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Application" ADD CONSTRAINT "Application_campusId_fkey" FOREIGN KEY ("campusId") REFERENCES "Campus"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Application" ADD CONSTRAINT "Application_campusId_fkey" FOREIGN KEY ("campusId") REFERENCES "Campus"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "StudyMaterial" ADD CONSTRAINT "StudyMaterial_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -789,6 +805,7 @@ export async function seedDatabase(tx: Tx): Promise<void> {
       guardianPhone: a.guardianPhone,
       message: a.message,
       status: a.status ?? 'PENDING',
+      reference: a.reference ?? null,
       adminNote: a.adminNote,
       createdAt: iso(a.createdAt),
       reviewedAt: a.reviewedAt ? iso(a.reviewedAt) : null,
@@ -866,16 +883,92 @@ export async function seedDatabase(tx: Tx): Promise<void> {
  * In-place schema upgrades for databases provisioned by an OLDER deployment.
  *
  * The DDL above only runs when the tables do not exist at all; a database
- * created before a schema change keeps its old columns forever. These
- * idempotent, Postgres-only ALTERs run inside the provisioning transaction
- * so existing deployments catch up on the next request (cheap probe first —
- * nothing executes once the column is present).
+ * created before a schema change keeps its old structure forever. These
+ * idempotent, Postgres-only upgrades run inside the provisioning transaction
+ * so existing deployments catch up on the next request. Each entry carries a
+ * cheap probe (returns >0 when the change is already present) and the SQL
+ * steps to apply when it is not.
+ *
+ * CONTRACT: every change to prisma/schema.prisma MUST land here as well
+ * (when it must reach existing databases) — see DEPLOYMENT.md. Both schemas
+ * are kept identical via `bun run schema:check`.
  */
-const IN_PLACE_MIGRATIONS: { table: string; column: string; sql: string }[] = [
+const IN_PLACE_MIGRATIONS: { id: string; probe: string; steps: string[] }[] = [
   {
-    table: 'User',
-    column: 'mustChangePassword',
-    sql: 'ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "mustChangePassword" BOOLEAN NOT NULL DEFAULT false',
+    id: 'User.mustChangePassword',
+    probe:
+      "SELECT COUNT(*)::int AS n FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'User' AND column_name = 'mustChangePassword'",
+    steps: ['ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "mustChangePassword" BOOLEAN NOT NULL DEFAULT false'],
+  },
+  {
+    // Application.reference: proper indexed column (applicants quote it to
+    // admissions), backfilled from the legacy adminNote storage, then uniquely
+    // indexed. Multiple NULLs are allowed (rows with no reference anywhere).
+    id: 'Application.reference (column + backfill + unique index)',
+    probe: "SELECT COUNT(*)::int AS n FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Application_reference_key'",
+    steps: [
+      'ALTER TABLE "Application" ADD COLUMN IF NOT EXISTS "reference" TEXT',
+      "UPDATE \"Application\" SET \"reference\" = (regexp_match(\"adminNote\", '(KIP/APP/[0-9]{4}/[A-Z0-9]{4,})'))[1] WHERE \"reference\" IS NULL AND \"adminNote\" IS NOT NULL",
+      'CREATE UNIQUE INDEX IF NOT EXISTS "Application_reference_key" ON "Application"("reference")',
+    ],
+  },
+  {
+    // Term-scoped result identity: a resit in a later term no longer
+    // overwrites the earlier attempt.
+    id: 'Result unique (studentId, unitId, term)',
+    probe: "SELECT COUNT(*)::int AS n FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Result_studentId_unitId_term_key'",
+    steps: [
+      'CREATE UNIQUE INDEX IF NOT EXISTS "Result_studentId_unitId_term_key" ON "Result"("studentId", "unitId", "term")',
+      'DROP INDEX IF EXISTS "Result_studentId_unitId_key"',
+    ],
+  },
+  {
+    // Admission history survives course/campus deletion attempts at the
+    // database level (route guards give the friendly error; this is the
+    // backstop for raw/programmatic deletes).
+    id: 'Application FKs ON DELETE RESTRICT',
+    probe:
+      "SELECT COUNT(*)::int AS n FROM information_schema.referential_constraints WHERE constraint_schema = 'public' AND constraint_name IN ('Application_courseId_fkey', 'Application_campusId_fkey') AND delete_rule = 'RESTRICT'",
+    steps: [
+      'ALTER TABLE "Application" DROP CONSTRAINT IF EXISTS "Application_courseId_fkey"',
+      'ALTER TABLE "Application" ADD CONSTRAINT "Application_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE',
+      'ALTER TABLE "Application" DROP CONSTRAINT IF EXISTS "Application_campusId_fkey"',
+      'ALTER TABLE "Application" ADD CONSTRAINT "Application_campusId_fkey" FOREIGN KEY ("campusId") REFERENCES "Campus"("id") ON DELETE RESTRICT ON UPDATE CASCADE',
+    ],
+  },
+  {
+    id: 'Application.createdAt index',
+    probe: "SELECT COUNT(*)::int AS n FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Application_createdAt_idx'",
+    steps: ['CREATE INDEX IF NOT EXISTS "Application_createdAt_idx" ON "Application"("createdAt")'],
+  },
+  {
+    id: 'Payment.paidAt index',
+    probe: "SELECT COUNT(*)::int AS n FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Payment_paidAt_idx'",
+    steps: ['CREATE INDEX IF NOT EXISTS "Payment_paidAt_idx" ON "Payment"("paidAt")'],
+  },
+  {
+    id: 'Announcement.active+createdAt index',
+    probe: "SELECT COUNT(*)::int AS n FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Announcement_active_createdAt_idx'",
+    steps: ['CREATE INDEX IF NOT EXISTS "Announcement_active_createdAt_idx" ON "Announcement"("active", "createdAt")'],
+  },
+  {
+    id: 'NewsPost.published+publishedAt index',
+    probe: "SELECT COUNT(*)::int AS n FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'NewsPost_published_publishedAt_idx'",
+    steps: [
+      'CREATE INDEX IF NOT EXISTS "NewsPost_published_publishedAt_idx" ON "NewsPost"("published", "publishedAt")',
+      // superseded by the composite — drop the old single-column index
+      'DROP INDEX IF EXISTS "NewsPost_published_idx"',
+    ],
+  },
+  {
+    id: 'Event.date index',
+    probe: "SELECT COUNT(*)::int AS n FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'Event_date_idx'",
+    steps: ['CREATE INDEX IF NOT EXISTS "Event_date_idx" ON "Event"("date")'],
+  },
+  {
+    id: 'ContactMessage.createdAt index',
+    probe: "SELECT COUNT(*)::int AS n FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'ContactMessage_createdAt_idx'",
+    steps: ['CREATE INDEX IF NOT EXISTS "ContactMessage_createdAt_idx" ON "ContactMessage"("createdAt")'],
   },
 ]
 
@@ -904,15 +997,14 @@ export async function ensureProvisioned(db: PrismaClient): Promise<void> {
         console.log('[kip-college] schema provisioned (22 tables)')
       }
 
-      // ---- in-place column migrations (databases from older deployments) ----
+      // ---- in-place migrations (databases from older deployments) ----
       for (const m of IN_PLACE_MIGRATIONS) {
-        const existing = (await tx.$queryRaw`
-          SELECT COUNT(*)::int AS n FROM information_schema.columns
-          WHERE table_schema = 'public' AND table_name = ${m.table} AND column_name = ${m.column}
-        `) as Array<{ n: number }>
+        const existing = (await tx.$queryRawUnsafe(m.probe)) as Array<{ n: number }>
         if ((existing[0]?.n ?? 0) === 0) {
-          await tx.$executeRawUnsafe(m.sql)
-          console.log(`[kip-college] migrated: + ${m.table}.${m.column}`)
+          for (const stmt of m.steps) {
+            await tx.$executeRawUnsafe(stmt)
+          }
+          console.log(`[kip-college] migrated: ${m.id}`)
         }
       }
 
@@ -928,6 +1020,15 @@ export async function ensureProvisioned(db: PrismaClient): Promise<void> {
         const demoSeedingEnabled =
           process.env.DEMO_MODE === '1' || process.env.NODE_ENV !== 'production'
         if (demoSeedingEnabled) {
+          if (process.env.NODE_ENV === 'production') {
+            // Deliberate loud warning: DEMO_MODE publishes the README's widely
+            // known credentials against this database — correct for the public
+            // demo deployment, never for real student data.
+            console.warn(
+              '[kip-college] DEMO_MODE=1 in PRODUCTION — seeded demo credentials are PUBLIC; ' +
+                'never enable DEMO_MODE on a database holding real student data',
+            )
+          }
           await seedDatabase(tx)
           console.log('[kip-college] demo dataset seeded')
         } else {
@@ -938,6 +1039,9 @@ export async function ensureProvisioned(db: PrismaClient): Promise<void> {
         }
       }
     },
-    { timeout: 120_000, maxWait: 60_000 },
+    // Bounded so a fresh-database cold start cannot pin a serverless function
+    // beyond its execution window — on timeout the whole transaction rolls
+    // back cleanly and the next request retries.
+    { timeout: 60_000, maxWait: 30_000 },
   )
 }

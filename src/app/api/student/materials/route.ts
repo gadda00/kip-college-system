@@ -12,6 +12,7 @@ export async function GET() {
       where: { courseId: profile.courseId },
       include: { unit: { select: { id: true, name: true, stageLabel: true } } },
       orderBy: { createdAt: 'desc' },
+      take: 200,
     })
     return ok(
       materials.map((m) => ({

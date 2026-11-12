@@ -79,13 +79,18 @@ export function AdminStudentIdCard({ student }: { student: AdminStudentDetail })
             </p>
           </div>
           <Badge
-            className={`shrink-0 gap-1 border-transparent px-2 py-0.5 text-[9px] font-bold ${
+            className={`shrink-0 gap-1 px-2 py-0.5 text-[9px] font-bold ${
               student.status === 'ACTIVE'
-                ? 'bg-gold-400 text-[#0a1626]'
-                : 'bg-white/20 text-[#f2efe6]'
+                ? 'border-emerald-300/40 bg-emerald-400/20 text-emerald-200'
+                : 'border-transparent bg-white/20 text-[#f2efe6]'
             }`}
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true" />
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                student.status === 'ACTIVE' ? 'bg-emerald-300' : 'bg-white'
+              }`}
+              aria-hidden="true"
+            />
             {student.status === 'ACTIVE' ? 'ACTIVE' : student.status}
           </Badge>
         </div>

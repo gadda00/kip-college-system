@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
-import { boolish, handle, ok, readJson } from '@/lib/api-helpers'
+import { boolish, handle, ok, readJson, twoDp, TWO_DP_MSG } from '@/lib/api-helpers'
 import { logAudit } from '@/lib/audit'
 import type { Prisma } from '@prisma/client'
 
@@ -15,9 +15,9 @@ const updateSchema = z.object({
   examBody: z.string().trim().min(2).optional(),
   durationMonths: z.coerce.number().int().min(1).max(60).optional(),
   intakeMonths: z.string().trim().optional(),
-  tuitionPerTerm: z.coerce.number().min(0).optional(),
-  registrationFee: z.coerce.number().min(0).optional(),
-  examFee: z.coerce.number().min(0).optional(),
+  tuitionPerTerm: z.coerce.number().min(0).refine(twoDp, { message: TWO_DP_MSG }).optional(),
+  registrationFee: z.coerce.number().min(0).refine(twoDp, { message: TWO_DP_MSG }).optional(),
+  examFee: z.coerce.number().min(0).refine(twoDp, { message: TWO_DP_MSG }).optional(),
   description: z.string().trim().optional(),
   requirements: z.string().trim().optional(),
   image: z.string().trim().optional(),
@@ -73,7 +73,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   })
 }
 
-/** Delete a course (blocked while students are enrolled). */
+/** Delete a course (blocked while students are enrolled or applications exist —
+ * admission history must survive; the DB also enforces ON DELETE RESTRICT). */
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
     assertSameOrigin(req, { requireOrigin: true })
@@ -83,8 +84,14 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     const existing = await db.course.findUnique({ where: { id } })
     if (!existing) throw new HttpError(404, 'Course not found')
 
-    const studentsCount = await db.studentProfile.count({ where: { courseId: id } })
+    const [studentsCount, applicationsCount] = await Promise.all([
+      db.studentProfile.count({ where: { courseId: id } }),
+      db.application.count({ where: { courseId: id } }),
+    ])
     if (studentsCount > 0) throw new HttpError(400, 'Cannot delete a course with enrolled students')
+    if (applicationsCount > 0) {
+      throw new HttpError(400, 'Cannot delete a course with admission applications — admission history must be kept (deactivate the course instead)')
+    }
 
     await db.course.delete({ where: { id } })
     await logAudit({

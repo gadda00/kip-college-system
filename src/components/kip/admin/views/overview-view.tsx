@@ -48,6 +48,7 @@ import { KipLink } from '@/components/kip/components/link'
 import { api } from '@/components/kip/lib/api'
 import { navigate } from '@/components/kip/lib/router'
 import { fmtKES, fmtDate } from '@/components/kip/lib/format'
+import { methodTone } from '@/components/kip/lib/tones'
 import {
   KpiGridSkeleton,
   LoadErrorCard,
@@ -276,17 +277,6 @@ function CollectionsAndFunnelSection({ data }: { data: AdminOverview }) {
       </Card>
     </div>
   )
-}
-
-function methodBadgeVariant(method: string): string {
-  switch (method) {
-    case 'MPESA':
-      return 'border-transparent bg-emerald-600/15 text-emerald-700 dark:text-emerald-400'
-    case 'BANK':
-      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
-    default:
-      return 'border-transparent bg-muted text-muted-foreground'
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -820,7 +810,7 @@ export function OverviewView() {
                               {fmtKES(p.amount)}
                             </TableCell>
                             <TableCell>
-                              <Badge className={`text-[10px] ${methodBadgeVariant(p.method)}`}>
+                              <Badge className={`text-[10px] ${methodTone(p.method)}`}>
                                 {p.method}
                               </Badge>
                             </TableCell>
@@ -855,7 +845,7 @@ export function OverviewView() {
                           </p>
                         </div>
                         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                          <Badge className={`text-[10px] ${methodBadgeVariant(p.method)}`}>
+                          <Badge className={`text-[10px] ${methodTone(p.method)}`}>
                             {p.method}
                           </Badge>
                           <span className="font-mono text-[11px]">{p.reference}</span>

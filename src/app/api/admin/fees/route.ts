@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
-import { handle, ok, readJson } from '@/lib/api-helpers'
+import { handle, kesAmount, ok, readJson } from '@/lib/api-helpers'
 import { computeBalance } from '@/lib/fees'
 import { logAudit } from '@/lib/audit'
 
@@ -56,7 +56,7 @@ const postFeeSchema = z
     term: z.string().trim().min(1, 'Term is required'),
     type: z.enum(['TUITION', 'REGISTRATION', 'EXAM', 'OTHER']),
     description: z.string().trim().min(2, 'Description is required'),
-    amount: z.coerce.number().positive('Amount must be positive'),
+    amount: kesAmount(),
     dueDate: z.coerce.date().optional(),
   })
   .refine((b) => (b.studentId ? 1 : 0) + (b.courseId ? 1 : 0) === 1, {

@@ -52,10 +52,12 @@ export function clientIp(req: Request): string {
 
 /** Recommended presets (per key). */
 export const RATE_LIMITS = {
-  login: { limit: 10, windowMs: 15 * 60_000 }, // 10 / 15 min
+  login: { limit: 10, windowMs: 15 * 60_000 }, // 10 / 15 min (per IP)
+  loginAccount: { limit: 20, windowMs: 15 * 60_000 }, // 20 failed / 15 min (per account — brute-force lockout)
   password: { limit: 5, windowMs: 15 * 60_000 }, // 5 / 15 min
   application: { limit: 5, windowMs: 60 * 60_000 }, // 5 / hour
   contact: { limit: 5, windowMs: 60 * 60_000 }, // 5 / hour
   ai: { limit: 20, windowMs: 60_000 }, // 20 / min
+  feesPay: { limit: 10, windowMs: 60_000 }, // 10 payment intents / min (per student)
   mutation: { limit: 60, windowMs: 60_000 }, // 60 / min generic write guard
 } as const

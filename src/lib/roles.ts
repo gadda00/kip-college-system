@@ -11,9 +11,23 @@ type StudentProfileWithContext = StudentProfile & {
 /**
  * Guard + resolve the signed-in STUDENT with full profile context
  * (course, campus, own user contact fields).
+ *
+ * SERVER-SIDE temporary-password gate: an account still on its issued
+ * `Kip-XXXX-XXXX` password cannot use any student API except the Profile
+ * page (which hosts the change-password form — pass allowTempPassword to
+ * opt out, as the profile route does). Previously this was only enforced
+ * in the React client, which curl-style clients could simply bypass.
  */
-export async function currentStudent(): Promise<{ user: SafeUser; profile: StudentProfileWithContext }> {
+export async function currentStudent(
+  opts?: { allowTempPassword?: boolean },
+): Promise<{ user: SafeUser; profile: StudentProfileWithContext }> {
   const user = await requireRole('STUDENT')
+  if (user.mustChangePassword && !opts?.allowTempPassword) {
+    throw new HttpError(
+      403,
+      'Please change your temporary password first — open the Profile page to set a new one',
+    )
+  }
   const profile = await db.studentProfile.findUnique({
     where: { userId: user.id },
     include: {

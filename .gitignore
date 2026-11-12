@@ -58,3 +58,10 @@ db/*.db
 # agent work records + verification screenshots — local only
 agent-ctx/
 screenshots/
+
+# --- sandbox artifacts — never ship ---
+Caddyfile
+.zscripts/
+examples/
+download/
+proposal-build/build/

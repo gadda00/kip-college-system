@@ -1,19 +1,16 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { assertSameOrigin, HttpError } from '@/lib/auth'
-import { handle, ok, readJson, uniqueReference } from '@/lib/api-helpers'
+import { handle, kesAmount, ok, readJson, uniqueReference } from '@/lib/api-helpers'
 import { computeBalance } from '@/lib/fees'
 import { currentStudent } from '@/lib/roles'
 import { logAudit } from '@/lib/audit'
-import { clientIp } from '@/lib/rate-limit'
+import { clientIp, rateLimited, RATE_LIMITS } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
 const paySchema = z.object({
-  amount: z.coerce
-    .number()
-    .positive('Amount must be a positive number')
-    .max(1_000_000, 'Amount is too large'),
+  amount: kesAmount(),
   method: z.enum(['MPESA', 'BANK']),
   phone: z
     .string()
@@ -34,10 +31,35 @@ export async function POST(req: Request) {
   return handle(async () => {
     assertSameOrigin(req, { requireOrigin: true })
     const { user, profile } = await currentStudent()
+    // per-student brake: scripted submission spam cannot flood the finance
+    // queue with thousands of PENDING rows per minute
+    if (rateLimited(`fees-pay:${user.id}`, RATE_LIMITS.feesPay.limit, RATE_LIMITS.feesPay.windowMs)) {
+      throw new HttpError(429, 'Too many payment submissions — please wait a minute and try again')
+    }
     const body = paySchema.parse(await readJson(req))
 
     if (body.method === 'MPESA' && !body.phone) {
       throw new HttpError(400, 'Phone number is required for M-Pesa payments')
+    }
+
+    // Double-submit guard: an identical PENDING intent from the last minute
+    // is almost certainly a double-click, not a second genuine payment.
+    // (Payment has no createdAt; paidAt starts as the submission timestamp.)
+    const dupe = await db.payment.findFirst({
+      where: {
+        studentId: profile.id,
+        amount: body.amount,
+        method: body.method,
+        status: 'PENDING',
+        paidAt: { gte: new Date(Date.now() - 60_000) },
+      },
+      select: { id: true },
+    })
+    if (dupe) {
+      throw new HttpError(
+        409,
+        'An identical payment submission is already awaiting finance confirmation — please wait a minute before submitting again',
+      )
     }
 
     const reference = await uniqueReference(body.method === 'MPESA' ? 'MPESA' : 'BNK')

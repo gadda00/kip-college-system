@@ -36,6 +36,19 @@ export async function POST(req: Request) {
     // bcrypt.compare ALWAYS runs, even without a matching user
     const valid = await bcrypt.compare(body.password, user?.passwordHash ?? DUMMY_HASH)
     if (!user || !valid) {
+      // Per-ACCOUNT brake (in addition to the per-IP limit above): attackers
+      // rotating IPs still hit this bucket, so targeted guessing against a
+      // known student email cannot proceed 20+ failures / 15 min.
+      if (
+        user &&
+        rateLimited(`login-acct:${user.id}`, RATE_LIMITS.loginAccount.limit, RATE_LIMITS.loginAccount.windowMs)
+      ) {
+        await logAudit({ actorId: user.id, actorEmail: email, action: 'AUTH_LOGIN_LOCKED', ip })
+        throw new HttpError(
+          429,
+          'Too many failed sign-in attempts for this account — please wait a few minutes and try again',
+        )
+      }
       await logAudit({ actorId: user?.id ?? null, actorEmail: email, action: 'AUTH_LOGIN_FAILED', ip })
       throw new HttpError(401, 'Invalid email or password')
     }

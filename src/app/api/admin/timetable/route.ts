@@ -22,6 +22,7 @@ export async function GET(req: Request) {
       },
       include: timetableInclude,
       orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
+      take: 500,
     })
     return ok(entries.map(mapTimetableEntry))
   })

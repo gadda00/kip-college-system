@@ -57,7 +57,14 @@ export async function POST(req: Request) {
     ])
     if (!course) throw new HttpError(400, 'Selected course was not found')
     if (!campus) throw new HttpError(400, 'Selected campus was not found')
-    if (duplicate) throw new HttpError(409, 'You already have a pending application')
+    if (duplicate) {
+      // deliberately non-specific: whether an email has applied is the
+      // applicant's business, not an anonymous prober's
+      throw new HttpError(
+        409,
+        'We could not submit your application — one may already be awaiting review with this email. Contact admissions@kipskitui.com if you believe this is an error',
+      )
+    }
 
     const reference = applicationReference()
     const application = await db.application.create({
@@ -76,6 +83,7 @@ export async function POST(req: Request) {
         message: body.message || null,
         // Structured so later admin review notes APPEND after the reference
         // (see mergeAdminNote) instead of overwriting it.
+        reference,
         adminNote: `Ref: ${reference}`,
       },
       include: { course: { select: { title: true, code: true } }, campus: { select: { name: true } } },

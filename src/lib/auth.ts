@@ -2,6 +2,11 @@ import { db } from '@/lib/db'
 import type { Prisma, Role } from '@prisma/client'
 import { createHash, randomBytes } from 'node:crypto'
 import { cookies } from 'next/headers'
+import type { SafeLecturerProfile, SafeStudentProfile, SafeUser } from './auth-types'
+
+// Pure auth response types live in './auth-types' (shared with the client);
+// re-exported here so existing '@/lib/auth' consumers keep working.
+export type { SafeLecturerProfile, SafeStudentProfile, SafeUser }
 
 export const SESSION_COOKIE = 'kip_session'
 const SESSION_DAYS = 30
@@ -46,13 +51,22 @@ export function assertSameOrigin(req: Request, opts?: { requireOrigin?: boolean 
   }
 }
 
+let lastGlobalPrune = 0
+
 export async function createSession(userId: string) {
   const token = randomBytes(32).toString('hex')
   const tokenHash = hashSessionToken(token) // only the hash is persisted
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 3600 * 1000)
   await db.session.create({ data: { token: tokenHash, userId, expiresAt } })
-  // opportunistic cleanup of this user's expired sessions
+  // opportunistic cleanup of this user's expired sessions…
   await db.session.deleteMany({ where: { userId, expiresAt: { lt: new Date() } } }).catch(() => {})
+  // …and, at most once per hour per instance, of EVERYONE's — users who never
+  // return would otherwise leave rows forever (table growth without a TTL job)
+  const now = Date.now()
+  if (now - lastGlobalPrune > 3_600_000) {
+    lastGlobalPrune = now
+    await db.session.deleteMany({ where: { expiresAt: { lt: new Date() } } }).catch(() => {})
+  }
   const jar = await cookies()
   jar.set(SESSION_COOKIE, token, {
     httpOnly: true,
@@ -73,37 +87,6 @@ export async function destroySession() {
     await db.session.deleteMany({ where: { token: hashSessionToken(token) } })
   }
   jar.delete(SESSION_COOKIE)
-}
-
-export type SafeStudentProfile = {
-  admissionNo: string
-  yearOfStudy: number
-  currentTerm: number
-  status: string
-  courseId: string
-  campusId: string
-  course: { id: string; title: string; code: string; category: string } | null
-  campus: { id: string; name: string } | null
-}
-
-export type SafeLecturerProfile = {
-  staffNo: string
-  title: string
-  department: string
-  specialization: string
-}
-
-export type SafeUser = {
-  id: string
-  email: string
-  name: string
-  phone: string | null
-  role: Role
-  /** true while the account still uses its issued temporary password — the
-   *  student portal gates every view behind the change-password form. */
-  mustChangePassword: boolean
-  studentProfile: SafeStudentProfile | null
-  lecturerProfile: SafeLecturerProfile | null
 }
 
 // Conditional Prisma includes make relation fields optional (`| undefined`),

@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
-import { contains, handle, ok, nextAdmissionNo, readJson } from '@/lib/api-helpers'
+import { contains, handle, listLimit, ok, nextAdmissionNo, readJson } from '@/lib/api-helpers'
 import { computeBalances } from '@/lib/fees'
 import { logAudit } from '@/lib/audit'
 
@@ -39,6 +39,7 @@ export async function GET(req: Request) {
         campus: { select: { id: true, name: true } },
       },
       orderBy: { admissionNo: 'asc' },
+      take: listLimit(req, 500),
     })
 
     const balances = await computeBalances(students.map((s) => s.id))
@@ -65,7 +66,13 @@ const createStudentSchema = z.object({
   name: z.string().trim().min(3, 'Name is required (min 3 characters)'),
   email: z.string().trim().email('Enter a valid email address').toLowerCase(),
   phone: z.string().trim().optional(),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  // Same strength rule the self-service change-password form enforces — an
+  // admin-issued password must never be weaker than one a student sets.
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Za-z]/, 'Password must include a letter')
+    .regex(/[0-9]/, 'Password must include a number'),
   courseId: z.string().min(1, 'Select a course'),
   campusId: z.string().min(1, 'Select a campus'),
   yearOfStudy: z.coerce.number().int().min(1).max(8).default(1),
@@ -99,7 +106,7 @@ export async function POST(req: Request) {
       if (taken) throw new HttpError(409, 'That admission number is already in use')
     }
 
-    const passwordHash = await bcrypt.hash(body.password, 10)
+    const passwordHash = await bcrypt.hash(body.password, 12)
     const { user, profile } = await db.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
@@ -108,6 +115,9 @@ export async function POST(req: Request) {
           phone: body.phone || null,
           role: 'STUDENT',
           passwordHash,
+          // admin-issued passwords are temporary by policy: the student must
+          // rotate on first sign-in (same gate as the admissions accept flow)
+          mustChangePassword: true,
         },
       })
       const profile = await tx.studentProfile.create({

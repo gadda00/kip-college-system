@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { handle, ok, readJson } from '@/lib/api-helpers'
 
 export const dynamic = 'force-dynamic'
@@ -16,6 +16,7 @@ const unitSchema = z.object({
 /** Add a unit to a course. */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
+    assertSameOrigin(req, { requireOrigin: true })
     await requireRole('ADMIN')
     const { id } = await params
     const body = unitSchema.parse(await readJson(req))

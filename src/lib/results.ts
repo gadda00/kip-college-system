@@ -8,6 +8,9 @@ import { gradeFor } from '@/lib/api-helpers'
  *
  * Marks are SAVED AS DRAFT unless `publish: true` is passed — students never
  * see results until an explicit publish action flips `published`.
+ *
+ * Results are unique per (student, unit, TERM): a resit in a later term
+ * creates a new row instead of overwriting the earlier attempt.
  */
 export async function upsertResults(input: {
   unitId: string
@@ -25,7 +28,7 @@ export async function upsertResults(input: {
   const studentIds = [...new Set(input.entries.map((e) => e.studentId))]
   const students = await db.studentProfile.findMany({
     where: { id: { in: studentIds } },
-    select: { id: true, courseId: true, admissionNo: true, user: { select: { name: true } } },
+    select: { id: true, courseId: true, currentTerm: true, admissionNo: true, user: { select: { name: true } } },
   })
   const byId = new Map(students.map((s) => [s.id, s]))
   for (const sid of studentIds) {
@@ -34,6 +37,15 @@ export async function upsertResults(input: {
     if (s.courseId !== unit.courseId) {
       throw new HttpError(400, `A selected student is not enrolled in ${unit.course.title}`)
     }
+    // stage guard: marks are for students CURRENTLY studying this stage (the
+    // class roster only lists those); a mismatched submission means the
+    // caller is reaching outside their class — reject with a clear reason
+    if (s.currentTerm !== unit.stage) {
+      throw new HttpError(
+        400,
+        `${s.user.name} (${s.admissionNo}) is not currently studying ${unit.stageLabel} — marks can only be entered for students in this stage`,
+      )
+    }
   }
 
   const publish = input.publish === true
@@ -41,7 +53,7 @@ export async function upsertResults(input: {
     input.entries.map((e) => {
       const { grade, remark } = gradeFor(e.marks)
       return db.result.upsert({
-        where: { studentId_unitId: { studentId: e.studentId, unitId: unit.id } },
+        where: { studentId_unitId_term: { studentId: e.studentId, unitId: unit.id, term: input.term } },
         create: {
           studentId: e.studentId,
           unitId: unit.id,
@@ -53,7 +65,6 @@ export async function upsertResults(input: {
           examBody: unit.course.examBody,
         },
         update: {
-          term: input.term,
           marks: e.marks,
           grade,
           remark,

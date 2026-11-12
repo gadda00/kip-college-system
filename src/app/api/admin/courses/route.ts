@@ -1,18 +1,19 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError, requireRole } from '@/lib/auth'
-import { boolish, csvList, generateCourseCode, handle, ok, readJson } from '@/lib/api-helpers'
+import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
+import { boolish, csvList, generateCourseCode, handle, listLimit, ok, readJson, twoDp, TWO_DP_MSG } from '@/lib/api-helpers'
 
 export const dynamic = 'force-dynamic'
 
 /** Course management list with units + active-student counts. */
-export async function GET() {
+export async function GET(req: Request) {
   return handle(async () => {
     await requireRole('ADMIN')
     const [courses, activeByCourse] = await Promise.all([
       db.course.findMany({
         orderBy: { sortOrder: 'asc' },
         include: { _count: { select: { units: true } } },
+        take: listLimit(req, 300),
       }),
       db.studentProfile.groupBy({ by: ['courseId'], where: { status: 'ACTIVE' }, _count: true }),
     ])
@@ -36,9 +37,9 @@ export const courseInputSchema = z.object({
   examBody: z.string().trim().min(2, 'Exam body is required'),
   durationMonths: z.coerce.number().int().min(1).max(60),
   intakeMonths: z.string().trim().default('January,May,September'),
-  tuitionPerTerm: z.coerce.number().min(0),
-  registrationFee: z.coerce.number().min(0),
-  examFee: z.coerce.number().min(0),
+  tuitionPerTerm: z.coerce.number().min(0).refine(twoDp, { message: TWO_DP_MSG }),
+  registrationFee: z.coerce.number().min(0).refine(twoDp, { message: TWO_DP_MSG }),
+  examFee: z.coerce.number().min(0).refine(twoDp, { message: TWO_DP_MSG }),
   description: z.string().trim().default(''),
   requirements: z.string().trim().default(''),
   image: z.string().trim().optional(),
@@ -50,6 +51,7 @@ export const courseInputSchema = z.object({
 /** Create a course (auto code from title initials when omitted). */
 export async function POST(req: Request) {
   return handle(async () => {
+    assertSameOrigin(req, { requireOrigin: true })
     await requireRole('ADMIN')
     const body = courseInputSchema.parse(await readJson(req))
 

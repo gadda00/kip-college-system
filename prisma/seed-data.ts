@@ -1679,6 +1679,8 @@ export type ApplicationSeed = {
   guardianPhone?: string
   message?: string
   status?: string
+  /** KIP/APP/{year}/{code} — the reference applicants quote to admissions. */
+  reference?: string
   adminNote?: string
   createdAt: string
   reviewedAt?: string
@@ -1699,6 +1701,7 @@ export const applications: ApplicationSeed[] = [
     guardianPhone: '+254 726 884 700',
     message: 'I want to join the January intake for CPA Level 1. Kindly send me the fee structure and class timetable.',
     adminNote: 'Ref: KIP/APP/2026/7QK4M',
+    reference: 'KIP/APP/2026/7QK4M',
     createdAt: '2026-10-19T09:24:00',
   },
   {
@@ -1715,6 +1718,7 @@ export const applications: ApplicationSeed[] = [
     guardianPhone: '+254 735 909 800',
     message: 'I am interested in the electrical engineering diploma (power option). When does the January intake begin, and are there hostel facilities?',
     adminNote: 'Ref: KIP/APP/2026/3XB9T',
+    reference: 'KIP/APP/2026/3XB9T',
     createdAt: '2026-10-16T14:02:00',
   },
   {
@@ -1731,6 +1735,7 @@ export const applications: ApplicationSeed[] = [
     guardianPhone: '+254 718 226 100',
     message: 'I want to join hairdressing and beauty therapy at Mwingi Campus in January. Do you offer evening classes?',
     adminNote: 'Ref: KIP/APP/2026/9JN2W',
+    reference: 'KIP/APP/2026/9JN2W',
     createdAt: '2026-10-12T11:47:00',
   },
   {
@@ -1747,6 +1752,7 @@ export const applications: ApplicationSeed[] = [
     guardianPhone: '+254 704 337 900',
     message: 'Please send me the admission requirements and fee structure for the catering diploma. I would like to join the January intake.',
     adminNote: 'Ref: KIP/APP/2026/5TD8K',
+    reference: 'KIP/APP/2026/5TD8K',
     createdAt: '2026-10-08T16:31:00',
   },
   {
@@ -1763,6 +1769,7 @@ export const applications: ApplicationSeed[] = [
     guardianPhone: '+254 743 550 001',
     message: 'I want to join the January intake for supply chain management at the Town Campus. I work during the day — are there evening classes?',
     adminNote: 'Ref: KIP/APP/2026/2VM7C',
+    reference: 'KIP/APP/2026/2VM7C',
     createdAt: '2026-10-04T08:55:00',
   },
   {
@@ -1779,6 +1786,7 @@ export const applications: ApplicationSeed[] = [
     guardianPhone: '+254 791 642 000',
     message: 'I would like to bridge to CPA through CAMS. Is the January intake available, and what are the KASNEB examination dates?',
     adminNote: 'Ref: KIP/APP/2026/8HJ5R',
+    reference: 'KIP/APP/2026/8HJ5R',
     createdAt: '2026-09-29T13:18:00',
   },
   {
@@ -1795,6 +1803,7 @@ export const applications: ApplicationSeed[] = [
     guardianPhone: '+254 733 118 400',
     message: 'I applied online for the Diploma in ICT and I am ready to join in January. Thank you for the quick response.',
     status: 'ACCEPTED',
+    reference: 'KIP/APP/2026/4W2KQ',
     adminNote:
       'Admitted to the January 2027 intake — Diploma in ICT, Main Campus (Ref: KIP/APP/2026/4W2KQ). Registration fee paid via M-Pesa; admission letter issued and portal login credentials sent by SMS.',
     createdAt: '2026-09-21T10:12:00',
@@ -1814,6 +1823,7 @@ export const applications: ApplicationSeed[] = [
     guardianPhone: '+254 705 774 100',
     message: 'I want to study business management. Please consider my application.',
     status: 'REJECTED',
+    reference: 'KIP/APP/2026/6RF3N',
     adminNote:
       'Below minimum entry requirements for diploma entry — KCSE D- (2023). Advised to apply for the Certificate in Business Management (minimum D plain) before the 15th December 2026 deadline. Ref: KIP/APP/2026/6RF3N.',
     createdAt: '2026-09-15T12:40:00',

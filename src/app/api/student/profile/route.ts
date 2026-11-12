@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { HttpError } from '@/lib/auth'
+import { assertSameOrigin, HttpError } from '@/lib/auth'
 import { handle, ok, readJson } from '@/lib/api-helpers'
 import { currentStudent } from '@/lib/roles'
 import type { Campus, Course, StudentProfile, User } from '@prisma/client'
@@ -56,10 +56,15 @@ async function loadProfile(userId: string): Promise<ProfileRow> {
   return profile
 }
 
-/** Full student profile for the portal "Profile" page. */
+/** Full student profile for the portal "Profile" page.
+ *
+ * allowTempPassword: this page HOSTS the change-password form, so an account
+ * still on its temporary password must be able to load (and edit) it — every
+ * other student route stays blocked until the password is replaced.
+ */
 export async function GET() {
   return handle(async () => {
-    const { user } = await currentStudent()
+    const { user } = await currentStudent({ allowTempPassword: true })
     const profile = await loadProfile(user.id)
     return ok(mapProfile(profile))
   })
@@ -80,21 +85,23 @@ const patchSchema = z.object({
 /** Self-service profile edit: phone (User) + address (StudentProfile). */
 export async function PATCH(req: Request) {
   return handle(async () => {
-    const { user } = await currentStudent()
+    assertSameOrigin(req, { requireOrigin: true })
+    const { user } = await currentStudent({ allowTempPassword: true })
     const body = patchSchema.parse(await readJson(req))
     if (body.phone === undefined && body.address === undefined) {
       return ok({ updated: false, profile: mapProfile(await loadProfile(user.id)) })
     }
 
-    if (body.phone !== undefined) {
-      await db.user.update({ where: { id: user.id }, data: { phone: body.phone } })
-    }
-    if (body.address !== undefined) {
-      await db.studentProfile.updateMany({
-        where: { userId: user.id },
-        data: { address: body.address },
-      })
-    }
+    // ONE atomic write: a failure between the phone and address updates
+    // must never leave them half-applied.
+    await db.$transaction([
+      ...(body.phone !== undefined
+        ? [db.user.update({ where: { id: user.id }, data: { phone: body.phone } })]
+        : []),
+      ...(body.address !== undefined
+        ? [db.studentProfile.updateMany({ where: { userId: user.id }, data: { address: body.address } })]
+        : []),
+    ])
 
     const profile = await loadProfile(user.id)
     return ok({ updated: true, profile: mapProfile(profile) })

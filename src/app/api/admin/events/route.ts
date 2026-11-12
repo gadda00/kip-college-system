@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 export async function GET() {
   return handle(async () => {
     await requireRole('ADMIN')
-    const events = await db.event.findMany({ orderBy: { date: 'asc' } })
+    const events = await db.event.findMany({ orderBy: { date: 'asc' }, take: 200 })
     return ok(events)
   })
 }

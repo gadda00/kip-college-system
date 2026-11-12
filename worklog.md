@@ -79,22 +79,6 @@ Stage Summary:
 
 
 ---
-Task ID: 18
-Agent: postgres-e2e-subagent
-Task: PostgreSQL end-to-end provisioning verification (embedded PG on :5433, re-run after the advisory-lock fix)
-
-Work Log:
-- Booted user-space embedded PostgreSQL (embedded-postgres pkg, no root needed), database 'kip'.
-- Generated the PostgreSQL client from prisma/schema.prisma (production path).
-- Re-ran the PRISTINE production path — ensureProvisioned() from src/lib/provision.ts — after the one-line advisory-lock fix (pg_advisory_xact_lock via $executeRawUnsafe instead of $queryRawUnsafe; the latter returned a void column Prisma cannot deserialize → P2010, found by the first run). The test probes the pristine call first as a regression guard and shims only if the bug reappears.
-- Verified: advisory lock → DDL (22 tables) → seed inside one transaction; 20 model counts, 3 demo logins (bcrypt), demo student fee math (84,500 charged / 74,000 paid), published results, download URLs, and idempotent second provisioning call.
-- Restored SQLite client via scripts/prisma-generate.mjs and restarted the dev server (health ok).
-
-Stage Summary:
-- PG_E2E: 27/32 checks passed
-- Production PG provisioning verified end-to-end on real PostgreSQL; scripts/pg-e2e-run.sh + scripts/pg-e2e-test.ts kept in repo for re-verification.
-
----
 Task ID: 21
 Agent: main-orchestrator (Z.ai Code)
 Task: Portal chrome & contrast fixes, split sign-ins, homepage performance, hydration repair (user-reported issues)
@@ -150,3 +134,18 @@ Work Log:
 
 Stage Summary:
 - Final polish round complete: empty-DB regression fixed, every page and flow browser-verified error-free, and both client deliverables rebuilt around fresh screenshots of the live sapphire-blue system.
+
+---
+Task ID: 24
+Agent: main-orchestrator (Z.ai Code)
+Task: Production-hardening round — reliability, security & maintainability upgrade (pilot → dependable platform)
+
+Work Log:
+- DATABASE: Result uniqueness now (studentId, unitId, term) — resits keep history instead of overwriting; Application.reference promoted to a real indexed unique column (backfilled from adminNote by an in-place migration, written directly by the apply route, exported as its own CSV column); 6 hot-path indexes added (Application.createdAt, Payment.paidAt, Announcement.active+createdAt, NewsPost.published+publishedAt, Event.date, ContactMessage.createdAt); Application FKs switched to ON DELETE RESTRICT + course-delete guard while applications exist; unit deletion blocked while results exist; both schemas updated identically + DDL + IN_PLACE_MIGRATIONS entries (generic probe/steps runner).
+- RELIABILITY: admissions enrolment is ONE transaction incl. orphan-user cleanup with admissionNo-collision auto-retry; payment confirm/reject is an atomic conditional updateMany; password change + session kill and profile phone/address writes are $transactions; lecturer roster/analytics use the LATEST attempt per student; admin overview aggregates in SQL (groupBys + monthly aggregates instead of row materialisation); every list endpoint bounded (?limit= with caps; payments search pushed into SQL); fees/pay double-submit + rate-limit guards; health endpoint stops leaking DB error detail; P2028/P1001 → 503; fmtCents negative-safe; CSV money 2-dp.
+- SECURITY: per-account login lockout (20 fails/15 min + AUTH_LOGIN_LOCKED audit); mustChangePassword now enforced SERVER-SIDE in currentStudent() (profile page exempt — hosts the change form); CSP added in production; assertSameOrigin on the 5 remaining mutations incl. logout; fees/pay rate-limited; kesAmount 2-dp validation on every money input; bcrypt cost 12 for new password hashes; admin-created students must rotate (min-8 alnum passwords); apply duplicate 409 de-personalised; session table pruned hourly; ok() responses carry Cache-Control: no-store; demo-seed warns loudly in production DEMO_MODE.
+- MAINTAINABILITY: dead code deleted (api/announcements, portal-stub, ship scripts, 22 unused shadcn files, stale proposal-build artifacts, public/robots.txt duplicate, legacy logo.svg); duplicated tone maps/terms/print-hook/auth types consolidated into shared modules; categorical colors de-greened to brand families (semantic success-green preserved); sandbox artifacts untracked (Caddyfile, .zscripts, examples, download, proposal-build/build) + gitignored; docs updated (schema-change contract, preview/DEMO_MODE guidance, rate-limiter scale note, product-audit fixes); schema:check drift guard added; 28 unused npm deps removed.
+- BROWSER-VERIFIED E2E (fresh sessions): full admissions cycle (apply → reference → accept → temp password → server-side 403 gate on student APIs until password change → unlock), payment guards (rate-limit 429, duplicate 409, 2-dp 400, atomic confirm + re-review 400), admin overview charts from SQL aggregation, applications reference chips, dark mode, mobile 390px. Two latent bugs found & fixed during verification: homepage grids missing mobile grid-cols-1 base (implicit auto tracks → 22px horizontal overflow at 390px) and hero image sizes fallback "0px" (wasteful w=3840 request that fails on cold dev compile); 15 unit tests + 24 integration checks + tsc + eslint all green after.
+
+Stage Summary:
+- Pilot → production-grade: irreversible academic/admission history now structurally protected, all multi-step writes atomic, abuse-prone surfaces rate-limited/locked, unbounded queries bounded, secrets posture re-verified; public experience and all successful workflows preserved.

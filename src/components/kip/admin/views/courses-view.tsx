@@ -56,22 +56,12 @@ import { QueryBoundary } from '@/components/kip/components/loading'
 import { api, del, patch, post } from '@/components/kip/lib/api'
 import { navigate } from '@/components/kip/lib/router'
 import { fmtDuration, fmtKES } from '@/components/kip/lib/format'
+import { categoryTone } from '@/components/kip/lib/tones'
 import { TableSkeleton, ViewHeading } from '@/components/kip/portal/shared'
 import { DialogBody, Field, FieldGrid, SubmitButton } from '@/components/kip/admin/form-bits'
 import type { AdminCourse } from '@/components/kip/admin/types'
 
 const CATEGORIES = ['TECHNICAL', 'BUSINESS', 'KASNEB'] as const
-
-function categoryTone(category: string): string {
-  switch (category) {
-    case 'TECHNICAL':
-      return 'border-transparent bg-emerald-600/10 text-emerald-700 dark:text-emerald-400'
-    case 'KASNEB':
-      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
-    default:
-      return 'border-transparent bg-teal-600/10 text-teal-700 dark:text-teal-400'
-  }
-}
 
 export function CoursesView() {
   const [dialogOpen, setDialogOpen] = useState(false)

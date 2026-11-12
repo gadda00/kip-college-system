@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 /** A parsed hash route: '' → home. */
 export type AppRoute = {
@@ -80,11 +80,6 @@ export function useHashRoute(): AppRoute {
   }, [])
 
   return route
-}
-
-/** Stable navigate callback for onClick handlers. */
-export function useNavigate() {
-  return useCallback((to: string) => navigate(to), [])
 }
 
 /** Map a route to a readable document title. */

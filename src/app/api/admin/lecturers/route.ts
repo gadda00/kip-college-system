@@ -21,6 +21,7 @@ export async function GET() {
         user: { select: { name: true, email: true } },
       },
       orderBy: { staffNo: 'asc' },
+      take: 200,
     })
     return ok(
       lecturers.map((l) => ({

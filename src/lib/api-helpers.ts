@@ -10,9 +10,12 @@ export const boolish = z
   .union([z.boolean(), z.string()])
   .transform((v) => (typeof v === 'boolean' ? v : ['true', '1', 'yes'].includes(v.trim().toLowerCase())))
 
-/** success response shape: { ok: true, data } */
+/** success response shape: { ok: true, data }
+ *  (no-store: authenticated/portal data must never be cached by intermediaries) */
 export function ok(data: unknown, status = 200) {
-  return NextResponse.json({ ok: true, data }, { status })
+  const res = NextResponse.json({ ok: true, data }, { status })
+  res.headers.set('Cache-Control', 'no-store')
+  return res
 }
 
 /** error response shape: { ok: false, error } */
@@ -36,6 +39,11 @@ export async function handle(fn: () => Promise<NextResponse>): Promise<NextRespo
       if (err.code === 'P2002') return fail('A record with the same unique value already exists', 409)
       if (err.code === 'P2025') return fail('Record not found', 404)
       if (err.code === 'P2003') return fail('Related record does not exist', 400)
+      // server-side conditions the client should simply retry later —
+      // not the caller's fault, so not a 400
+      if (err.code === 'P2028' || err.code === 'P1001') {
+        return fail('Service temporarily unavailable — please try again', 503)
+      }
       return fail('Database operation failed', 400)
     }
     console.error('[api]Unhandled error:', err)
@@ -55,6 +63,32 @@ export async function readJson(req: Request): Promise<unknown> {
 /** Parse dynamic route params (Next.js 16: params is a Promise). */
 export async function routeParams<T extends Record<string, string>>(params: Promise<T>): Promise<T> {
   return await params
+}
+
+/** True when a number carries at most 2 decimal places. */
+export const twoDp = (v: number) => Math.abs(v * 100 - Math.round(v * 100)) < 1e-6
+export const TWO_DP_MSG = 'Amount must have at most 2 decimal places'
+
+/**
+ * KES money input: positive, capped, and AT MOST 2 decimal places — the last
+ * float-drift leak (storage stays Float; cents math assumes ≤2dp inputs).
+ */
+export function kesAmount(max = 1_000_000) {
+  return z
+    .coerce.number()
+    .positive('Amount must be a positive number')
+    .max(max, 'Amount is too large')
+    .refine(twoDp, { message: TWO_DP_MSG })
+}
+
+/**
+ * List-endpoint row cap from the optional `?limit=` query parameter
+ * (arrays stay arrays — responses are unchanged, just bounded).
+ */
+export function listLimit(req: Request, fallback = 500, max = 2000): number {
+  const raw = Number(new URL(req.url).searchParams.get('limit') ?? fallback)
+  if (!Number.isFinite(raw) || raw <= 0) return fallback
+  return Math.min(Math.floor(raw), max)
 }
 
 /** Auto-generate the next admission number: KIP/{yyyy}/{4-digit seq}. */

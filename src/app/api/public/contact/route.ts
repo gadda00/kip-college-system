@@ -8,11 +8,11 @@ import { logAudit } from '@/lib/audit'
 export const dynamic = 'force-dynamic'
 
 const contactSchema = z.object({
-  name: z.string().trim().min(2, 'Name is required (min 2 characters)'),
+  name: z.string().trim().min(2, 'Name is required (min 2 characters)').max(120, 'Name is too long'),
   email: z.string().trim().email('Enter a valid email address').optional().or(z.literal('')),
-  phone: z.string().trim().optional().or(z.literal('')),
-  subject: z.string().trim().min(2, 'Subject is required'),
-  message: z.string().trim().min(5, 'Message must be at least 5 characters'),
+  phone: z.string().trim().max(30, 'Phone number is too long').optional().or(z.literal('')),
+  subject: z.string().trim().min(2, 'Subject is required').max(200, 'Subject is too long'),
+  message: z.string().trim().min(5, 'Message must be at least 5 characters').max(4000, 'Message is too long'),
 })
 
 /** Public contact form submission. */

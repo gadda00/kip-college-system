@@ -52,22 +52,11 @@ import type {
   PostFeeResult,
   RecordPaymentResult,
 } from '@/components/kip/admin/types'
+import { TERM_OPTIONS, methodTone } from '@/components/kip/lib/tones'
 import { cn } from '@/lib/utils'
 
-const TERM_SUGGESTIONS = ['2026/2027 T1', '2026/2027 T2', '2025/2026 T3']
 const FEE_TYPES = ['TUITION', 'REGISTRATION', 'EXAM', 'OTHER'] as const
 const PAY_METHODS = ['MPESA', 'BANK', 'CASH'] as const
-
-function methodTone(method: string): string {
-  switch (method) {
-    case 'MPESA':
-      return 'border-transparent bg-emerald-600/15 text-emerald-700 dark:text-emerald-400'
-    case 'BANK':
-      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
-    default:
-      return 'border-transparent bg-muted text-muted-foreground'
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Finance review of student-submitted payments (shared with overview queue)
@@ -516,7 +505,7 @@ function PostFeeForm({
   const [target, setTarget] = useState<'student' | 'course'>('student')
   const [studentId, setStudentId] = useState('')
   const [courseId, setCourseId] = useState('')
-  const [term, setTerm] = useState(TERM_SUGGESTIONS[0]!)
+  const [term, setTerm] = useState(TERM_OPTIONS[0]!)
   const [type, setType] = useState<string>('TUITION')
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
@@ -656,7 +645,7 @@ function PostFeeForm({
                   required
                 />
                 <datalist id="fee-term-suggestions">
-                  {TERM_SUGGESTIONS.map((t) => (
+                  {TERM_OPTIONS.map((t) => (
                     <option key={t} value={t} />
                   ))}
                 </datalist>

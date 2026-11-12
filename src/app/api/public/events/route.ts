@@ -3,12 +3,13 @@ import { handle, ok } from '@/lib/api-helpers'
 
 export const dynamic = 'force-dynamic'
 
-/** Upcoming events ordered by date ascending. */
+/** Upcoming events ordered by date ascending (bounded public surface). */
 export async function GET() {
   return handle(async () => {
     const events = await db.event.findMany({
       where: { date: { gte: new Date() } },
       orderBy: { date: 'asc' },
+      take: 100,
     })
     return ok(events)
   })

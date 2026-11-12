@@ -18,9 +18,9 @@ const actionSchema = z.object({
  *   confirm → status CONFIRMED, paidAt = now, note + ' — confirmed by finance',
  *             recordedBy = the admin's name (balance now includes it).
  *   reject   → status REJECTED, note + ' — rejected by finance'.
- * Only PENDING payments can be reviewed; returns the updated payment row
- * (same shape as GET /api/admin/payments rows, plus the student's refreshed
- * balance summary when confirming).
+ * Only PENDING payments can be reviewed (checked atomically in the update
+ * itself); returns the updated payment row (same shape as GET /api/admin/
+ * payments rows, plus the student's refreshed balance when confirming).
  */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
@@ -41,21 +41,26 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     const existing = await db.payment.findUnique({ where: { id }, include: studentInclude })
     if (!existing) throw new HttpError(404, 'Payment not found')
-    if (existing.status !== 'PENDING') {
-      throw new HttpError(400, 'This payment has already been reviewed by finance')
-    }
 
     const confirming = body.action === 'confirm'
     const noteSuffix = confirming ? 'confirmed by finance' : 'rejected by finance'
-    const updated = await db.payment.update({
-      where: { id },
+
+    // Atomic PENDING guard: the status check and the write are ONE conditional
+    // update — two finance staff reviewing concurrently cannot both pass
+    // (the loser gets a clean 400 instead of double-appending notes).
+    const review = await db.payment.updateMany({
+      where: { id, status: 'PENDING' },
       data: {
         status: confirming ? 'CONFIRMED' : 'REJECTED',
         ...(confirming ? { paidAt: new Date(), recordedBy: admin.name } : {}),
         note: existing.note ? `${existing.note} — ${noteSuffix}` : noteSuffix,
       },
-      include: studentInclude,
     })
+    if (review.count === 0) {
+      throw new HttpError(400, 'This payment has already been reviewed by finance')
+    }
+    const updated = await db.payment.findUnique({ where: { id }, include: studentInclude })
+    if (!updated) throw new HttpError(404, 'Payment not found')
 
     await logAudit({
       actorId: admin.id,

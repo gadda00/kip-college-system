@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
+import { Prisma } from '@prisma/client'
 import { db } from '@/lib/db'
 import { assertSameOrigin, HttpError, requireRole } from '@/lib/auth'
 import { currentTermLabel, handle, mergeAdminNote, ok, nextAdmissionNo, randomCode, readJson, UNAMBIGUOUS } from '@/lib/api-helpers'
@@ -70,84 +71,108 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       if (existingUser.role !== 'STUDENT') {
         throw new HttpError(400, 'A user with this email already exists')
       }
-      await db.user.delete({ where: { id: existingUser.id } })
     }
 
     // Crypto-random temporary password (~41 bits from an unambiguous
     // alphabet — not guessable like the old `Kip####`). The account is created
-    // with mustChangePassword=true, and the student portal locks everything
-    // but the password-change form until they replace it.
+    // with mustChangePassword=true, and the server blocks every student API
+    // except the profile/password-change page until they replace it.
     const tempPassword = `Kip-${randomCode(4, UNAMBIGUOUS)}-${randomCode(4, UNAMBIGUOUS)}`
-    const passwordHash = await bcrypt.hash(tempPassword, 10)
-    const admissionNo = await nextAdmissionNo()
+    const passwordHash = await bcrypt.hash(tempPassword, 12)
     const term = currentTermLabel()
 
-    const { profile, feeItemsPosted, updatedApplication } = await db.$transaction(async (tx) => {
-      const user = await tx.user.create({
-        data: {
-          email: application.email,
-          name: application.applicantName,
-          phone: application.phone,
-          role: 'STUDENT',
-          passwordHash,
-          mustChangePassword: true,
-        },
-      })
-      const profile = await tx.studentProfile.create({
-        data: {
-          userId: user.id,
-          admissionNo,
-          courseId: application.courseId,
-          campusId: application.campusId,
-          yearOfStudy: 1,
-          currentTerm: 1,
-          kcseGrade: application.kcseGrade,
-          gender: application.gender,
-          guardianName: application.guardianName,
-          guardianPhone: application.guardianPhone,
-        },
-      })
-      const feeItems = await tx.feeItem.createMany({
-        data: [
-          {
-            studentId: profile.id,
-            term,
-            description: 'Registration Fee',
-            amount: application.course.registrationFee,
-            type: 'REGISTRATION',
+    // The whole enrolment — orphan-user cleanup, User, StudentProfile, FeeItems
+    // and the application flip — is ONE transaction: a mid-flow failure must
+    // never leave a deleted user with no student record. A rare admissionNo
+    // unique collision (two admins accepting simultaneously) retries once
+    // with a freshly computed number.
+    const enrol = async () => {
+      const admissionNo = await nextAdmissionNo()
+      const txResult = await db.$transaction(async (tx) => {
+        if (existingUser) {
+          await tx.user.delete({ where: { id: existingUser.id } })
+        }
+        const user = await tx.user.create({
+          data: {
+            email: application.email,
+            name: application.applicantName,
+            phone: application.phone,
+            role: 'STUDENT',
+            passwordHash,
+            mustChangePassword: true,
           },
-          {
-            studentId: profile.id,
-            term,
-            description: `Tuition Fee — ${application.course.title}`,
-            amount: application.course.tuitionPerTerm,
-            type: 'TUITION',
+        })
+        const profile = await tx.studentProfile.create({
+          data: {
+            userId: user.id,
+            admissionNo,
+            courseId: application.courseId,
+            campusId: application.campusId,
+            yearOfStudy: 1,
+            currentTerm: 1,
+            kcseGrade: application.kcseGrade,
+            gender: application.gender,
+            guardianName: application.guardianName,
+            guardianPhone: application.guardianPhone,
           },
-          {
-            studentId: profile.id,
-            term,
-            description: `${application.course.examBody} Examination Fee`,
-            amount: application.course.examFee,
-            type: 'EXAM',
+        })
+        const feeItems = await tx.feeItem.createMany({
+          data: [
+            {
+              studentId: profile.id,
+              term,
+              description: 'Registration Fee',
+              amount: application.course.registrationFee,
+              type: 'REGISTRATION',
+            },
+            {
+              studentId: profile.id,
+              term,
+              description: `Tuition Fee — ${application.course.title}`,
+              amount: application.course.tuitionPerTerm,
+              type: 'TUITION',
+            },
+            {
+              studentId: profile.id,
+              term,
+              description: `${application.course.examBody} Examination Fee`,
+              amount: application.course.examFee,
+              type: 'EXAM',
+            },
+          ],
+        })
+        const updatedApplication = await tx.application.update({
+          where: { id: application.id },
+          data: {
+            status: 'ACCEPTED',
+            // preserve the applicant's reference (Ref: KIP/APP/…) — the admin's
+            // note is appended after it instead of overwriting it
+            adminNote: mergeAdminNote(application.adminNote, body.adminNote),
+            reviewedAt: new Date(),
           },
-        ],
+          include: {
+            course: { select: { id: true, code: true, title: true } },
+            campus: { select: { id: true, name: true } },
+          },
+        })
+        return { profile, feeItemsPosted: feeItems.count, updatedApplication }
       })
-      const updatedApplication = await tx.application.update({
-        where: { id: application.id },
-        data: {
-          status: 'ACCEPTED',
-          // preserve the applicant's reference (Ref: KIP/APP/…) — the admin's
-          // note is appended after it instead of overwriting it
-          adminNote: mergeAdminNote(application.adminNote, body.adminNote),
-          reviewedAt: new Date(),
-        },
-        include: {
-          course: { select: { id: true, code: true, title: true } },
-          campus: { select: { id: true, name: true } },
-        },
-      })
-      return { profile, feeItemsPosted: feeItems.count, updatedApplication }
-    })
+      return { ...txResult, admissionNo }
+    }
+
+    let outcome
+    try {
+      outcome = await enrol()
+    } catch (err) {
+      const retryable =
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002' &&
+        Array.isArray(err.meta?.target) &&
+        (err.meta?.target as string[]).some((t) => String(t).toLowerCase().includes('admissionno'))
+      if (!retryable) throw err
+      outcome = await enrol()
+    }
+    const { profile, feeItemsPosted, updatedApplication, admissionNo } = outcome
 
     await logAudit({
       actorId: admin.id,

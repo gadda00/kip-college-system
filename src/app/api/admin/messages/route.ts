@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 export async function GET() {
   return handle(async () => {
     await requireRole('ADMIN')
-    const messages = await db.contactMessage.findMany({ orderBy: { createdAt: 'desc' } })
+    const messages = await db.contactMessage.findMany({ orderBy: { createdAt: 'desc' }, take: 500 })
     return ok(messages)
   })
 }

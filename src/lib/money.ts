@@ -32,10 +32,13 @@ export function addKES(a: number, b: number): number {
   return fromCents(toCents(a) + toCents(b))
 }
 
-/** Format cents integer as "KES 12,345" / "KES 12,345.50". */
+/** Format cents integer as "KES 12,345" / "KES 12,345.50" (negative-safe). */
 export function fmtCents(cents: number): string {
-  const whole = Math.floor(cents / 100)
-  const frac = Math.abs(cents % 100)
+  const sign = cents < 0 ? '-' : ''
+  const abs = Math.abs(cents)
+  const whole = Math.floor(abs / 100)
+  const frac = abs % 100
   const base = `KES ${whole.toLocaleString('en-KE')}`
-  return frac === 0 ? base : `${base}.${String(frac).padStart(2, '0')}`
+  const rest = frac === 0 ? base : `${base}.${String(frac).padStart(2, '0')}`
+  return `${sign}${rest}`
 }

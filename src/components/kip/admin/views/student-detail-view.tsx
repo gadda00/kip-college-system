@@ -61,8 +61,8 @@ import type {
   PostFeeResult,
   RecordPaymentResult,
 } from '@/components/kip/admin/types'
+import { TERM_OPTIONS, feeTypeTone, methodTone } from '@/components/kip/lib/tones'
 
-const TERM_SUGGESTIONS = ['2026/2027 T1', '2026/2027 T2', '2025/2026 T3']
 const FEE_TYPES = ['TUITION', 'REGISTRATION', 'EXAM', 'OTHER'] as const
 const PAY_METHODS = ['MPESA', 'BANK', 'CASH'] as const
 
@@ -70,30 +70,6 @@ function statusVariant(status: string): 'default' | 'secondary' | 'destructive' 
   if (status === 'ACTIVE') return 'default'
   if (status === 'GRADUATED') return 'secondary'
   return 'destructive'
-}
-
-function feeTypeTone(type: string): string {
-  switch (type) {
-    case 'TUITION':
-      return 'border-transparent bg-emerald-600/10 text-emerald-700 dark:text-emerald-400'
-    case 'REGISTRATION':
-      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
-    case 'EXAM':
-      return 'border-transparent bg-orange-500/15 text-orange-700 dark:text-orange-400'
-    default:
-      return 'border-transparent bg-muted text-muted-foreground'
-  }
-}
-
-function methodTone(method: string): string {
-  switch (method) {
-    case 'MPESA':
-      return 'border-transparent bg-emerald-600/15 text-emerald-700 dark:text-emerald-400'
-    case 'BANK':
-      return 'border-transparent bg-gold-400/15 text-gold-700 dark:text-gold-300'
-    default:
-      return 'border-transparent bg-muted text-muted-foreground'
-  }
 }
 
 export function StudentDetailView({ studentId }: { studentId: string }) {
@@ -618,7 +594,7 @@ function PostFeeDialog({
   student: AdminStudentDetail
 }) {
   const queryClient = useQueryClient()
-  const [term, setTerm] = useState(TERM_SUGGESTIONS[0]!)
+  const [term, setTerm] = useState(TERM_OPTIONS[0]!)
   const [type, setType] = useState<string>('TUITION')
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
@@ -683,7 +659,7 @@ function PostFeeDialog({
                     required
                   />
                   <datalist id="term-suggestions">
-                    {TERM_SUGGESTIONS.map((t) => (
+                    {TERM_OPTIONS.map((t) => (
                       <option key={t} value={t} />
                     ))}
                   </datalist>

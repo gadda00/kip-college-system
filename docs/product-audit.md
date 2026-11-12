@@ -58,7 +58,7 @@
 | Results | **Draft → explicit publish workflow** (was: instant publish on save) |
 | Health | `GET /api/health` (db connectivity + uptime) |
 | Security headers | `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` via `next.config.ts` |
-| Demo mode | Demo credentials shown on the login screen only when `NEXT_PUBLIC_DEMO_MODE=1` (README documents `demo-accounts.md` as the trusted source) |
+| Demo mode | Demo credentials shown on the login screen only when `NEXT_PUBLIC_DEMO_MODE=1` (the **Demo accounts** section of `README.md` is the trusted source) |
 | Tests | `bun test` unit suites: money math, grade boundaries, rate limiter, Zod schemas, authorization guards; integration smoke script against a running server |
 | SEO | metadata, OG/Twitter cards, canonical, robots.txt, sitemap, `EducationalOrganization` JSON-LD |
 | A11y | skip-link, landmarks, labelled inputs, focus-visible rings, 44px touch targets, reduced-motion honored (`motion-safe:`) |
@@ -67,13 +67,18 @@
 
 | # | Risk | Severity | Status |
 |---|---|---|---|
-| R1 | **Money stored as Prisma `Float`** — safe for the demo, but production should use `Decimal(12,2)` on PostgreSQL. Integer-cents arithmetic mitigates calculation drift; storage migration documented in `DEPLOYMENT.md`. | Medium | Mitigated (calc) / documented (storage) |
+| R1 | **Money stored as Prisma `Float`** — safe for the demo, but production should use `Decimal(12,2)` on PostgreSQL. Input is now validated to **≤2 dp at every money-entry boundary** (`kesAmount`) and CSV exports print exact 2-dp; integer-cents arithmetic keeps balance math exact. Storage **remains Float** — the Decimal migration is tracked as a follow-up (no longer claimed as “documented in DEPLOYMENT.md”). | Medium | Mitigated (validation + calc) / follow-up (storage) |
 | R2 | SQLite demo DB on serverless (`/tmp`) is **ephemeral** — writes (sessions, new applications) reset on cold start. Intended for demo only; production path = PostgreSQL + migrations (`DEPLOYMENT.md`). | Medium | Documented |
 | R3 | AI assistants can still be coaxed off-topic despite grounding; injection resistance is prompt-based, not sandboxed. Rate limits + fallback + "confirm with admissions" handoff reduce impact. | Low-Med | Mitigated |
 | R4 | M-PESA payment flow is a **simulated** ledger entry (no Daraja credentials) — clearly a demo capability, never presented as live to students. | Low | By design |
 | R5 | Institutional facts (phone `0703 710 879`, M-PESA Paybill `522 890`, Equity A/C, hostel/transport claims) come from the college's own site and seeded data — **owner must verify before go-live** (see §7). | Medium | Flagged |
 | R6 | No email/SMS delivery — application confirmations are on-screen + reference number only. | Low | Roadmap |
 | R7 | Single-tenant, single currency (KES). | Info | — |
+| R8 | Rate limiting is **in-memory, per serverless instance** — effective limits scale with instance count on Vercel; swap `src/lib/rate-limit.ts` for Upstash Redis / Vercel KV (same `rateLimited()` signature) when running multiple persistent instances. | Low | Mitigated (documented trade-off; see DEPLOYMENT.md) |
+| R9 | Brute force / credential stuffing on login — now additionally guarded by a **per-account lockout** (20 failed attempts → 15 min lock + `AUTH_LOGIN_LOCKED` audit) alongside per-IP limits, and `fees/pay` is rate-limited + double-submit-guarded. | Low | **Addressed** (hardening round) |
+| R10 | Multi-step writes tearing on failure — admissions enrolment is now **one `$transaction`** (incl. orphan-user cleanup, `admissionNo`-collision retry), payment confirm/reject is an atomic conditional `updateMany`, password change + session kill transactional. | Low | **Addressed** (hardening round) |
+| R11 | CSP is a **static header** (no per-request nonces) — script/style nonce-based CSP is a follow-up for full XSS defence-in-depth. | Low | Mitigated (header shipped; nonce-based CSP = follow-up) |
+| R12 | Dual-schema drift / existing-DB migrations — `bun run schema:check` guards `schema.prisma` ↔ `schema.sqlite.prisma` drift, and the **schema change contract** (DEPLOYMENT.md) requires every existing-DB change to land in `IN_PLACE_MIGRATIONS` (`src/lib/provision.ts`, probe + idempotent steps). | Low | **Addressed** (hardening round) |
 
 ## 6. Institutional facts requiring owner confirmation
 

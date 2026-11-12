@@ -82,7 +82,7 @@ function DashboardBody({ data }: { data: StudentDashboard }) {
   const nextClass = nextClasses[0] ?? null
   const nowMin = new Date().getHours() * 60 + new Date().getMinutes()
 
-  // fee standing: paid = sapphire, partial = gold, heavy balance = destructive
+  // fee standing: paid = semantic green (policy), partial = gold, heavy balance = destructive
   const feeStanding =
     fees.balance <= 0
       ? {

@@ -32,21 +32,29 @@ export async function GET(_req: Request, { params }: { params: Promise<{ unitId:
       orderBy: { admissionNo: 'asc' },
     })
 
+    // Results are term-scoped (a resit in a later term is a separate row):
+    // order by term DESC and keep the FIRST row per student, so the roster
+    // always shows each student's LATEST attempt for this unit.
     const results = await db.result.findMany({
       where: { unitId, studentId: { in: students.map((s) => s.id) } },
+      orderBy: { term: 'desc' },
     })
-    const resultsByStudent = new Map(results.map((r) => [r.studentId, r]))
-
-    // ---- class analytics (one result per student; Result is unique per student+unit) ----
-    const marks = results.map((r) => r.marks)
-    const gradeCounts: Record<string, number> = { A: 0, B: 0, C: 0, D: 0, E: 0 }
+    const resultsByStudent = new Map<string, (typeof results)[number]>()
     for (const r of results) {
+      if (!resultsByStudent.has(r.studentId)) resultsByStudent.set(r.studentId, r)
+    }
+    const latest = [...resultsByStudent.values()]
+
+    // ---- class analytics (latest attempt per student) ----
+    const marks = latest.map((r) => r.marks)
+    const gradeCounts: Record<string, number> = { A: 0, B: 0, C: 0, D: 0, E: 0 }
+    for (const r of latest) {
       if (r.grade in gradeCounts) gradeCounts[r.grade] = (gradeCounts[r.grade] ?? 0) + 1
     }
     const round1 = (v: number) => Math.round(v * 10) / 10
     const analytics = {
       totalStudents: students.length,
-      withResults: results.length,
+      withResults: latest.length,
       average: marks.length ? round1(marks.reduce((s, m) => s + m, 0) / marks.length) : null,
       highest: marks.length ? Math.max(...marks) : null,
       lowest: marks.length ? Math.min(...marks) : null,

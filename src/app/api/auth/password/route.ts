@@ -35,22 +35,29 @@ export async function POST(req: Request) {
     const valid = await bcrypt.compare(body.currentPassword, dbUser.passwordHash)
     if (!valid) throw new HttpError(400, 'Current password is incorrect')
 
-    const passwordHash = await bcrypt.hash(body.newPassword, 10)
+    const passwordHash = await bcrypt.hash(body.newPassword, 12)
     // mustChangePassword is cleared here: replacing a temporary password is
     // the only way the flag ever resets (it is set when an accepted
-    // application provisions the account).
-    await db.user.update({ where: { id: user.id }, data: { passwordHash, mustChangePassword: false } })
+    // application provisions the account). Cost 12 per OWASP guidance for
+    // interactive password hashing.
 
     // invalidate every session except the current one (compare hashed tokens —
     // the Session table only ever stores sha256 of the raw cookie value)
     const jar = await cookies()
     const currentToken = jar.get(SESSION_COOKIE)?.value
-    await db.session.deleteMany({
-      where: {
-        userId: user.id,
-        ...(currentToken ? { NOT: { token: hashSessionToken(currentToken) } } : {}),
-      },
-    })
+
+    // Password write + session invalidation are ONE atomic unit: a failure
+    // between the two must never leave the old password dead while other
+    // sessions stay alive.
+    await db.$transaction([
+      db.user.update({ where: { id: user.id }, data: { passwordHash, mustChangePassword: false } }),
+      db.session.deleteMany({
+        where: {
+          userId: user.id,
+          ...(currentToken ? { NOT: { token: hashSessionToken(currentToken) } } : {}),
+        },
+      }),
+    ])
 
     await logAudit({
       actorId: user.id,

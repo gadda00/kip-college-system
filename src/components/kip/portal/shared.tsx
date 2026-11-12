@@ -58,7 +58,7 @@ export function usePortalGuard(
 export function PortalFullSkeleton() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="grid gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
         <div className="hidden space-y-3 lg:block">
           <Skeleton className="h-28 w-full rounded-xl" />
           {Array.from({ length: 7 }).map((_, i) => (

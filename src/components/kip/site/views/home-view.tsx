@@ -548,7 +548,7 @@ export function HomeView() {
                 width={520}
                 height={390}
                 priority
-                sizes="(min-width: 1024px) 40vw, 0px"
+                sizes="(min-width: 1024px) 40vw, 92vw"
                 className="h-auto w-full object-cover"
               />
               <div
@@ -618,7 +618,7 @@ export function HomeView() {
           <motion.div
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.05 }}
-            className="grid gap-6 md:grid-cols-3"
+            className="grid grid-cols-1 gap-6 md:grid-cols-3"
           >
             {(['TECHNICAL', 'BUSINESS', 'KASNEB'] as const).map((key) => (
               <PathwayCard key={key} pathwayKey={key} count={pathwayCounts[key]} />
@@ -640,7 +640,7 @@ export function HomeView() {
           <motion.div
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.05 }}
-            className="grid gap-6 lg:grid-cols-3"
+            className="grid grid-cols-1 gap-6 lg:grid-cols-3"
           >
             {courses.isPending ? (
               Array.from({ length: 3 }).map((_, i) => (
@@ -722,7 +722,7 @@ export function HomeView() {
           <motion.div
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.05 }}
-            className="grid gap-6 md:grid-cols-3"
+            className="grid grid-cols-1 gap-6 md:grid-cols-3"
           >
             {testimonials.isPending
               ? Array.from({ length: 3 }).map((_, i) => (
@@ -789,7 +789,7 @@ export function HomeView() {
           <motion.div
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.05 }}
-            className="grid gap-6 md:grid-cols-3"
+            className="grid grid-cols-1 gap-6 md:grid-cols-3"
           >
             {overview.isPending
               ? Array.from({ length: 3 }).map((_, i) => (

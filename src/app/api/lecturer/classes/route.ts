@@ -13,6 +13,7 @@ export async function GET() {
       where: { lecturerId: profile.id },
       include: timetableInclude,
       orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
+      take: 500,
     })
 
     // group timetable entries per taught unit

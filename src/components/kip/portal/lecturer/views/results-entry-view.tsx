@@ -36,6 +36,7 @@ import {
 import { EmptyState } from '@/components/kip/components/empty-state'
 import { QueryBoundary } from '@/components/kip/components/loading'
 import { api, post } from '@/components/kip/lib/api'
+import { TERM_OPTIONS } from '@/components/kip/lib/tones'
 import { navigate } from '@/components/kip/lib/router'
 import {
   RowsSkeleton,
@@ -51,9 +52,6 @@ import type {
   SavedResultsResponse,
 } from '@/components/kip/portal/types'
 import { cn } from '@/lib/utils'
-
-/** Term labels offered on results entry (current-first, per registrar practice). */
-const TERM_OPTIONS = ['2026/2027 T1', '2025/2026 T3', '2025/2026 T2', '2025/2026 T1']
 
 export function ResultsEntryView({ unitId }: { unitId: string }) {
   if (!unitId) return <ResultsPicker />

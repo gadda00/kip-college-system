@@ -345,7 +345,7 @@
     background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
   }
 
-  /* Buttons on dark green: gold primary */
+  /* Buttons on dark sapphire: gold primary */
   .btn-gold {
     background: linear-gradient(180deg, var(--gold-400), var(--gold-500));
     color: oklch(0.24 0.05 60);

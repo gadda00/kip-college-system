@@ -191,12 +191,13 @@ model Payment {
   method     String        @default("MPESA") // MPESA | BANK | CASH
   reference  String        @unique
   paidAt     DateTime      @default(now())
-  status     String        @default("CONFIRMED") // CONFIRMED | PENDING
+  status     String        @default("CONFIRMED") // CONFIRMED | PENDING | REJECTED
   note       String?
   recordedBy String?
 
   @@index([studentId])
   @@index([status])
+  @@index([paidAt])
 }
 
 model Result {
@@ -212,7 +213,9 @@ model Result {
   published Boolean       @default(false)
   examBody  String?
 
-  @@unique([studentId, unitId])
+  // Term-scoped: a student resitting a unit in a later term keeps their
+  // earlier attempt instead of overwriting academic history.
+  @@unique([studentId, unitId, term])
   @@index([unitId])
   @@index([term])
 }
@@ -223,9 +226,9 @@ model Application {
   email         String
   phone         String
   courseId      String
-  course        Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course        Course    @relation(fields: [courseId], references: [id], onDelete: Restrict)
   campusId      String
-  campus        Campus    @relation(fields: [campusId], references: [id], onDelete: Cascade)
+  campus        Campus    @relation(fields: [campusId], references: [id], onDelete: Restrict)
   kcseGrade     String
   kcseYear      Int
   gender        String?
@@ -234,12 +237,16 @@ model Application {
   guardianPhone String?
   message       String?
   status        String    @default("PENDING") // PENDING | ACCEPTED | REJECTED
+  // Applicant's reference (KIP/APP/{year}/{code}) — quoted to admissions on
+  // follow-up. Legacy rows keep it only inside adminNote (see api-helpers).
+  reference     String?   @unique
   adminNote     String?
   createdAt     DateTime  @default(now())
   reviewedAt    DateTime?
 
   @@index([status])
   @@index([courseId])
+  @@index([createdAt])
 }
 
 // ============ CONTENT & ENGAGEMENT ============
@@ -253,6 +260,8 @@ model Announcement {
   active     Boolean  @default(true)
   authorName String   @default("Registrar")
   createdAt  DateTime @default(now())
+
+  @@index([active, createdAt])
 }
 
 model NewsPost {
@@ -266,7 +275,7 @@ model NewsPost {
   published   Boolean  @default(false)
   publishedAt DateTime @default(now())
 
-  @@index([published])
+  @@index([published, publishedAt])
 }
 
 model Event {
@@ -276,6 +285,8 @@ model Event {
   date        DateTime
   venue       String
   image       String?
+
+  @@index([date])
 }
 
 model GalleryItem {
@@ -296,6 +307,7 @@ model ContactMessage {
   createdAt DateTime @default(now())
 
   @@index([status])
+  @@index([createdAt])
 }
 
 model StudyMaterial {

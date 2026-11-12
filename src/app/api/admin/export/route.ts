@@ -58,6 +58,12 @@ function fmtCsvDateTime(value: Date | null): string {
   return `${value.getFullYear()}-${p(value.getMonth() + 1)}-${p(value.getDate())} ${p(value.getHours())}:${p(value.getMinutes())}`
 }
 
+/** Money cells: exact 2-dp string so a stored 84500.00000001 never appears
+ * in a registrar file (integer-cents rounding, same rule as money.ts). */
+function fmt2(v: number): string {
+  return (Math.round(v * 100) / 100).toFixed(2)
+}
+
 function csvResponse(type: ExportType, csv: string): Response {
   return new Response(`\ufeff${csv}`, {
     status: 200,
@@ -139,9 +145,9 @@ export async function GET(req: Request) {
           s.gender ?? '',
           s.guardianName ?? '',
           s.guardianPhone ?? '',
-          balances.get(s.id)?.totalCharged ?? 0,
-          balances.get(s.id)?.totalPaid ?? 0,
-          balances.get(s.id)?.balance ?? 0,
+          fmt2(balances.get(s.id)?.totalCharged ?? 0),
+          fmt2(balances.get(s.id)?.totalPaid ?? 0),
+          fmt2(balances.get(s.id)?.balance ?? 0),
         ]),
       )
       return await auditedCsvResponse(admin, 'students', csv, students.length)
@@ -186,7 +192,7 @@ export async function GET(req: Request) {
           p.reference,
           p.student.admissionNo,
           p.student.user.name,
-          p.amount,
+          fmt2(p.amount),
           p.method,
           p.status,
           p.recordedBy ?? '',
@@ -206,7 +212,7 @@ export async function GET(req: Request) {
       })
       const csv = toCsv(
         [
-          'Applied At', 'Name', 'Email', 'Phone', 'Course', 'Campus', 'KCSE Grade',
+          'Applied At', 'Name', 'Email', 'Phone', 'Reference', 'Course', 'Campus', 'KCSE Grade',
           'KCSE Year', 'Gender', 'Guardian', 'Status', 'Admin Note', 'Reviewed At',
         ],
         applications.map((a) => [
@@ -214,6 +220,7 @@ export async function GET(req: Request) {
           a.applicantName,
           a.email,
           a.phone,
+          a.reference ?? '',
           a.course.title,
           a.campus.name,
           a.kcseGrade,

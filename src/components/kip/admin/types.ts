@@ -143,6 +143,8 @@ export type AdminApplication = {
   message: string | null
   status: string
   adminNote: string | null
+  /** application reference (e.g. KIP/APP/2026/7QK4M) */
+  reference?: string | null
   createdAt: string
   reviewedAt: string | null
   course?: { id: string; code: string; title: string; level?: string; category?: string }

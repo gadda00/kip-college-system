@@ -180,6 +180,11 @@ function ApplicationCard({ app, onReview }: { app: AdminApplication; onReview: (
               <Badge className={`text-[10px] font-semibold ${statusToneBadge(app.status)}`}>
                 {app.status}
               </Badge>
+              {app.reference && (
+                <span className="inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  Ref · {app.reference}
+                </span>
+              )}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               Applied {fmtDate(app.createdAt)}
